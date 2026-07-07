@@ -7,6 +7,7 @@ import {
 import { PostsList } from "@/features/home/src/components/posts-list";
 import { postsQueryOptions } from "@/features/home/src/queries/posts";
 import { UploadDialog } from "@/features/uploads/components/upload-dialog";
+import Header from "@/features/landing/components/header";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -21,5 +22,11 @@ export default async function Home({ params }: Props) {
 
   await queryClient.prefetchQuery(postsQueryOptions);
 
-  return <h1>{t("title")}</h1>;
+  return (
+    <div className="container bg-white!">
+      <Header />
+      {/* <h1>{t("title")}</h1> */}
+      {/* <h1 className="font-semibold text-2xl">راسلنا عبر البريد الإلكتـــــــروني</h1> */}
+    </div>
+  );
 }

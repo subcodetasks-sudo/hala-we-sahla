@@ -1,5 +1,25 @@
 {
   "HomePage": {
     "title": "Hello world!"
+  },
+  "Header": {
+    "brand": {
+      "first": "Hala",
+      "second": "Wa Sahla"
+    },
+    "announcement": {
+      "text": "Stop wasting time on traditional procedures – renew your domestic worker contract now",
+      "cta": "online and track your request easily"
+    },
+    "nav": {
+      "home": "Home",
+      "renewal": "Renewal",
+      "trackOrders": "Track Orders",
+      "support": "Support"
+    },
+    "login": "Log In",
+    "getStarted": "Get Started",
+    "menu": "Menu",
+    "language": "Language"
   }
 }

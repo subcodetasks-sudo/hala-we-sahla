@@ -121,10 +121,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-foreground;
   }
-  html {
-    @apply font-sans;
+}
+
+@layer components {
+  .container {
+    @apply max-w-4xl mx-auto;
   }
 }
