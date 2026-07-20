@@ -1,6 +1,69 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "Hero": {
+    "badge": "Get started easily",
+    "heading": "The <primary>trusted</primary> and integrated platform for <primary>renewing</primary> domestic worker contracts",
+    "description": "We help you create a contract renewal request, upload the required documents, and track your request status with ease, through a fully automated system that gives you a clear and secure digital experience.",
+    "primaryCta": "Start your renewal now",
+    "secondaryCta": "Learn about us",
+    "imageAlt": "Illustration of the domestic worker contract renewal platform"
+  },
+  "Stats": {
+    "eyebrow": "Our Numbers",
+    "heading": "Numbers that <primary>reflect</primary> customer trust",
+    "description": "We help employers renew domestic worker contracts with ease",
+    "items": {
+      "satisfaction": "Customer satisfaction rate with the renewal experience",
+      "contracts": "Domestic worker contracts documented",
+      "requests": "Renewal requests completed through the platform"
+    }
+  },
+  "Pricing": {
+    "eyebrow": "Requirements & Service Fees",
+    "heading": "Requirements <primary>and Pricing</primary>",
+    "description": "Learn about the basic requirements and service fees before starting a domestic worker contract renewal request",
+    "planTitle": "Comprehensive Renewal Package",
+    "planDescription": "Renew labor contracts easily and reliably",
+    "priceSuffix": "minimum",
+    "requirements": {
+      "nationalId": "National ID / Iqama",
+      "passport": "Worker's passport",
+      "previousContract": "Previous contract"
+    },
+    "cta": "Start the renewal now"
+  },
+  "Services": {
+    "eyebrow": "Essential Services",
+    "heading": "Everything you need to renew <accent>your contract</accent> in one platform",
+    "items": {
+      "request": {
+        "titleLine1": "Start",
+        "titleLine2": "your renewal now",
+        "description": "Create your contract renewal request online in clear, fast steps.",
+        "cta": "Start your renewal now",
+        "imageAlt": "New domestic worker contract renewal request form"
+      },
+      "whatsapp": {
+        "titleLine1": "Apply",
+        "titleLine2": "via WhatsApp",
+        "description": "Chat directly with our support team on WhatsApp to complete your procedures easily.",
+        "cta": "Start the chat",
+        "imageAlt": "WhatsApp conversation with the support team"
+      },
+      "tracking": {
+        "titleLine1": "Inquire",
+        "titleLine2": "about a request",
+        "description": "Track your request status and get the latest updates moment by moment.",
+        "cta": "Track the request",
+        "imageAlt": "Renewal request status tracking page"
+      }
+    }
+  },
+  "Faq": {
+    "eyebrow": "FAQs",
+    "heading": "Questions <primary>that might come to mind</primary>",
+    "description": "Answers to the most common questions",
+    "loading": "Loading frequently asked questions...",
+    "error": "Couldn't load the FAQs. Please try again."
   },
   "Header": {
     "brand": {
@@ -21,5 +84,42 @@
     "getStarted": "Get Started",
     "menu": "Menu",
     "language": "Language"
+  },
+  "Footer": {
+    "logoAlt": "Hala Wa Sahla logo",
+    "description": "We help you create a contract renewal request, upload the required documents, and track your request status with ease, through a fully automated system that gives you a clear and secure digital experience across the Kingdom.",
+    "cta": "Start your renewal now",
+    "contact": {
+      "supportText": "Our team is happy to hear from you"
+    },
+    "social": {
+      "follow": "Follow us on",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "x": "X"
+    },
+    "columns": {
+      "importantLinks": {
+        "title": "Important Links",
+        "renewal": "Renewal",
+        "trackOrders": "Track Orders",
+        "support": "Support"
+      },
+      "quickLinks": {
+        "title": "Quick Links",
+        "blog": "Blog",
+        "faq": "FAQ"
+      },
+      "licenses": {
+        "title": "Licenses",
+        "commercialRegister": "Commercial Registration",
+        "taxNumber": "Tax Number"
+      }
+    },
+    "legal": {
+      "terms": "Terms & Conditions",
+      "privacy": "Privacy Policy"
+    },
+    "copyright": "All rights reserved to Hala Wa Sahla platform © {year}"
   }
 }

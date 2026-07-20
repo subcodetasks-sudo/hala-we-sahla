@@ -42,14 +42,20 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
+          "group/accordion-trigger relative flex flex-1 items-center justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-6 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
           className
         )}
         {...props}
       >
         {children}
-        <ChevronDownIcon data-slot="accordion-trigger-icon" className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
-        <ChevronUpIcon data-slot="accordion-trigger-icon" className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
+        <div>
+          <div data-slot="accordion-trigger-icon" className="bg-background flex items-center justify-center shadow-sm rounded-full group-aria-expanded/accordion-trigger:hidden">
+            <ChevronDownIcon className="pointer-events-none text-primary shrink-0 size-4" />
+          </div>
+          <div data-slot="accordion-trigger-icon" className="hidden bg-background items-center justify-center shadow-sm rounded-full group-aria-expanded/accordion-trigger:flex">
+            <ChevronUpIcon className="pointer-events-none text-primary shrink-0 size-4" />
+          </div>
+        </div>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )

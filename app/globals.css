@@ -39,6 +39,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-footer: var(--footer);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -52,6 +53,7 @@
   --background: #eaf6f7;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
+  --footer: #fcfcfc;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -87,6 +89,7 @@
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
+  --footer: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -129,6 +132,12 @@
 
 @layer components {
   .container {
-    @apply max-w-4xl mx-auto;
+    @apply max-w-4xl mx-auto md:px-20;
+  }
+}
+
+@layer utilities {
+    .corner-squircle {
+      border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
   }
 }
