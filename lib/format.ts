@@ -12,7 +12,10 @@ export function formatNumber(
     locale: string,
     options?: Intl.NumberFormatOptions,
 ) {
-    return new Intl.NumberFormat(toIntlLocale(locale), options).format(value)
+    return new Intl.NumberFormat(toIntlLocale(locale), {
+        numberingSystem: "latn",
+        ...options,
+    }).format(value)
 }
 
 export function formatCurrency(amount: number, currency: string, locale: string) {
@@ -20,5 +23,6 @@ export function formatCurrency(amount: number, currency: string, locale: string)
         style: "currency",
         currency,
         maximumFractionDigits: 0,
+        numberingSystem: "latn",
     }).format(amount)
 }

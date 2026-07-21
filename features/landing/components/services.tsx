@@ -4,12 +4,13 @@ import { ArrowLeft, FilePenLine, MessageCircle, Sparkles } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import CustomIcon from "@/components/custom-icon";
 
 const SERVICE_ITEMS = [
     {
         key: "request",
         href: "/renewal",
-        icon: FilePenLine,
+        icon: "/icons/receipt-edit.svg",
         image: "/landing/servcies-1.svg",
         tone: "primary",
         imageFirst: false,
@@ -17,7 +18,7 @@ const SERVICE_ITEMS = [
     {
         key: "whatsapp",
         href: "/support",
-        icon: MessageCircle,
+        icon: "/icons/message.svg",
         image: "/landing/services-2.svg",
         tone: "primary",
         imageFirst: true,
@@ -25,7 +26,7 @@ const SERVICE_ITEMS = [
     {
         key: "tracking",
         href: "/track-orders",
-        icon: Sparkles,
+        icon: "/icons/magicpen.svg",
         image: "/landing/services-3.svg",
         tone: "accent",
         imageFirst: false,
@@ -62,9 +63,11 @@ export default async function Services() {
                                     key="text"
                                     className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-start"
                                 >
-                                    <span className="flex size-12 items-center justify-center rounded-full bg-white/10">
-                                        <Icon
-                                            className={cn("size-5", toneText)}
+                                    <span className="flex size-12 items-center justify-center rounded-full bg-primary/20">
+                                        <CustomIcon
+                                            size={22}
+                                            src={Icon as string}
+                                            className={cn("size-5 text-black")}
                                             aria-hidden="true"
                                         />
                                     </span>
@@ -83,18 +86,23 @@ export default async function Services() {
                                     </p>
 
                                     <Button
-                                        size="lg"
+            
                                         className={cn(
-                                            "gap-1.5 rounded-2xl",
+                                            "gap-1.5 h-12! text-base! rounded-full  text-white",
                                             tone === "accent" &&
-                                                "bg-accent text-accent-foreground hover:bg-accent/80!",
+                                                "bg-accent  hover:bg-accent/80!",
                                         )}
                                         asChild
                                     >
                                         <Link href={href}>
-                                            <Icon />
+                                            <CustomIcon
+                                                size={16}
+                                                src={Icon as string}
+                                                className="size-4 shrink-0 text-white"
+                                                aria-hidden="true"
+                                            />
                                             {t(`items.${key}.cta`)}
-                                            <ArrowLeft />
+                                            <ArrowLeft className="ltr:rotate-180" />
                                         </Link>
                                     </Button>
                                 </div>

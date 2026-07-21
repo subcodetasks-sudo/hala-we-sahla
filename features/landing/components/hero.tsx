@@ -3,6 +3,7 @@ import Image from "next/image"
 import { ArrowLeft, ArrowUpRight, CircleCheck } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
+import CustomIcon from "@/components/custom-icon";
 
 export default async function Hero() {
     const t = await getTranslations("Hero")
@@ -30,21 +31,24 @@ export default async function Hero() {
                 </p>
 
                 <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                    <Button size="lg" className="gap-1.5 rounded-2xl" asChild>
+                    <Button  className="gap-1.5 rounded-full text-base! h-fit! p-3 bg-black hover:bg-accent! shadow-primary/20! shadow-xl" asChild>
                         <Link href="/renewal">
+                            <CustomIcon src="/icons/receipt-edit.svg" className="size-4" />
                             {t("primaryCta")}
-                            <ArrowLeft />
+                            <div className="flex items-center gap-2 size-8 shrink-0  justify-center rounded-full bg-white text-black ">
+                                <ArrowUpRight className="rtl:-rotate-90" />
+                            </div>
                         </Link>
                     </Button>
                     <Button
-                        size="lg"
-                        variant="outline"
-                        className="gap-1.5 rounded-2xl"
+                    
+                        className="gap-1.5 h-12! text-lg! bg-transparent! text-black"
                         asChild
                     >
                         <Link href="/about">
+                            <CustomIcon src="/icons/box-time.svg" className="size-4" />
                             {t("secondaryCta")}
-                            <ArrowUpRight />
+                            <ArrowLeft className="ltr:rotate-180" />
                         </Link>
                     </Button>
                 </div>

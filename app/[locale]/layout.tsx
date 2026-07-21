@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { Noto_Sans_Arabic } from 'next/font/google';
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -8,10 +8,10 @@ import Providers from "@/app/providers";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
+const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
   weight: ['100', '200', '300', '400', '500', '600', '700'],
-  variable: '--font-ibm-arabic',
+  variable: '--font-noto-sans-arabic',
 });
 
 export const metadata: Metadata = {
@@ -52,7 +52,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={direction}
-      className={`${ibmPlexSansArabic.className} h-full antialiased`}
+      className={`${notoSansArabic.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Providers>

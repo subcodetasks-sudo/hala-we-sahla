@@ -1,11 +1,12 @@
 import { getLocale, getTranslations } from "next-intl/server"
 import { FileSignature, Receipt, UserCheck } from "lucide-react"
 import { formatNumber } from "@/lib/format"
+import CustomIcon from "@/components/custom-icon";
 
 const STATS_ITEMS = [
-    { key: "satisfaction", icon: UserCheck, kind: "percent", value: 0.96 },
-    { key: "contracts", icon: FileSignature, kind: "count", value: 8000 },
-    { key: "requests", icon: Receipt, kind: "count", value: 13500 },
+    { key: "satisfaction", icon: "/icons/profile-tick.svg", kind: "percent", value: 0.96 },
+    { key: "contracts", icon: "/icons/receipt-edit.svg", kind: "count", value: 8000 },
+    { key: "requests", icon: "/icons/receipt-item.svg", kind: "count", value: 13500 },
 ] as const
 
 function formatStatValue(
@@ -46,9 +47,9 @@ export default async function Stats() {
                 {STATS_ITEMS.map(({ key, icon: Icon, kind, value }) => (
                     <div
                         key={key}
-                        className="flex flex-col items-center gap-3 rounded-4xl bg-background px-6 py-10 text-center border-t-2 border-primary/80"
+                        className="flex flex-col items-center gap-6 rounded-4xl bg-background px-6 py-10 text-center border-t-2 border-primary/80"
                     >
-                        <Icon className="size-12 text-primary" aria-hidden="true" />
+                        <CustomIcon size={48} src={Icon as string} className="size-12 text-primary" aria-hidden="true" />
                         <span className="text-3xl font-bold text-primary">
                             {formatStatValue(locale, kind, value)}
                         </span>

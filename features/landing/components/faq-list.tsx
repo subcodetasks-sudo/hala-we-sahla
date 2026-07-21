@@ -23,17 +23,19 @@ export default function FaqList() {
     }
 
     return (
-        <Accordion
-            type="single"
-            collapsible
-            className="rounded-2xl bg-card px-4 sm:px-6"
-        >
+        <Accordion type="single" collapsible className="w-full">
             {data.map((item) => (
-                <AccordionItem key={item.id} value={item.id}>
-                    <AccordionTrigger className="text-base font-medium">
+                <AccordionItem
+                    key={item.id}
+                    value={item.id}
+                    className="border-border/70"
+                >
+                    <AccordionTrigger className="gap-4 py-5 text-start text-base font-medium text-foreground hover:no-underline sm:text-[17px]">
                         {item.question}
                     </AccordionTrigger>
-                    <AccordionContent>{item.answer}</AccordionContent>
+                    <AccordionContent className="pb-5 text-muted-foreground">
+                        {item.answer}
+                    </AccordionContent>
                 </AccordionItem>
             ))}
         </Accordion>

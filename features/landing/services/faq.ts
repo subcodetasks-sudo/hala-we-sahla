@@ -36,7 +36,7 @@ const FAQS: Record<string, FaqItem[]> = {
     },
     {
       id: "electronic-contract",
-      question: "هل يمكن استخدام العقد إلكترونيًا؟",
+      question: "هل يمكن استلام العقد إلكترونيًا؟",
       answer:
         "نعم، بمجرد اعتماد الطلب يصلك العقد الإلكتروني الجاهز مباشرة داخل المنصة.",
     },
@@ -80,7 +80,7 @@ const FAQS: Record<string, FaqItem[]> = {
     },
     {
       id: "electronic-contract",
-      question: "Can the contract be used electronically?",
+      question: "Can the contract be received electronically?",
       answer:
         "Yes, as soon as your request is approved, the ready electronic contract is delivered directly within the platform.",
     },
