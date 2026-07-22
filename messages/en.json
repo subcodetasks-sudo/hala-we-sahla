@@ -11,6 +11,31 @@
       "placeholder": "Search articles ..",
       "ariaLabel": "Search articles",
       "submit": "Search"
+    },
+    "featured": {
+      "category": "Contract Renewal",
+      "title": "Your complete guide to renewing a domestic worker contract online",
+      "description": "Clear steps to prepare documents, submit your request, and track its status until renewal is complete—without the hassle.",
+      "meta": "{date} - {minutes} min",
+      "views": "{count} views"
+    },
+    "latest": {
+      "title": "Latest Articles",
+      "meta": "{date} - {minutes} min",
+      "items": {
+        "docs": {
+          "title": "What documents are required to renew a contract?"
+        },
+        "timeline": {
+          "title": "How long does renewing a domestic worker contract take?"
+        },
+        "status": {
+          "title": "How to track your renewal request step by step"
+        },
+        "mistakes": {
+          "title": "Common mistakes that delay renewal approval"
+        }
+      }
     }
   },
   "Support": {

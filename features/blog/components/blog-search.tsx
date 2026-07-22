@@ -26,7 +26,7 @@ export default function BlogSearch() {
       className="mx-auto w-full max-w-xl"
       role="search"
     >
-      <InputGroup className="h-14 rounded-full border-transparent bg-white shadow-none focus-within:border-primary/30 focus-within:ring-3 focus-within:ring-primary/15">
+      <InputGroup className="h-12 rounded-full border-transparent bg-primary/10 shadow-none focus-within:border-primary/30 focus-within:ring-3 focus-within:ring-primary/15 w-3/4 mx-auto">
         <InputGroupAddon
           align="inline-start"
           className="gap-0 border-e border-border pe-3 ps-5"
@@ -53,7 +53,7 @@ export default function BlogSearch() {
             className="size-10 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90"
             aria-label={t("search.submit")}
           >
-            <Search className="size-5" aria-hidden="true" />
+            <CustomIcon src="/icons/search.svg" size={20} className="size-5 text-background" />
           </Button>
         </InputGroupAddon>
       </InputGroup>
