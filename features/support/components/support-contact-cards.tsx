@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server"
 
-import SupportContactCard from "@/features/landing/components/support-contact-card"
+import SupportContactCard from "@/features/support/components/support-contact-card"
 
 const WHATSAPP_HREF = "https://wa.me/96670006741"
 const EMAIL_HREF = "mailto:info@halawasahla.com"

@@ -1,13 +1,7 @@
-
-import TermsContent from "@/features/landing/components/terms-content"
-import TermsHeader from "@/features/landing/components/terms-header"
-
-type Props = {
-  params: Promise<{ locale: string }>
-}
+import TermsContent from "@/features/terms/components/terms-content"
+import TermsHeader from "@/features/terms/components/terms-header"
 
 export default async function TermsPage() {
-
   return (
     <>
       <TermsHeader />

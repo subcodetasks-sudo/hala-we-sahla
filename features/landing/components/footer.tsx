@@ -27,7 +27,7 @@ const IMPORTANT_LINKS = [
 
 const QUICK_LINKS = [
     { key: "blog", href: "/blog" },
-    { key: "faq", href: "/faq" },
+    { key: "faq", href: "/#faq" },
 ] as const
 
 const LEGAL_LINKS = [

@@ -13,9 +13,10 @@ export default async function Hero() {
             <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-start">
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 ps-1.5 pe-4 py-1.5 text-sm font-medium">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                        <CircleCheck className="size-3.5" />
+                        <CustomIcon src="/icons/file-2.svg" size={16} className="size-4" />
                     </span>
                     {t("badge")}
+                    🚀
                 </span>
 
                 <h1 className="text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">

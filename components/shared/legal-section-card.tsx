@@ -3,7 +3,7 @@ import { Info } from "lucide-react"
 import CustomIcon from "@/components/custom-icon"
 import { cn } from "@/lib/utils"
 
-type TermsSectionCardProps = {
+type LegalSectionCardProps = {
   id: string
   number: string
   title: string
@@ -14,7 +14,7 @@ type TermsSectionCardProps = {
   className?: string
 }
 
-export default function TermsSectionCard({
+export default function LegalSectionCard({
   id,
   number,
   title,
@@ -23,7 +23,7 @@ export default function TermsSectionCard({
   items,
   note,
   className,
-}: TermsSectionCardProps) {
+}: LegalSectionCardProps) {
   return (
     <article
       id={id}

@@ -1,33 +1,33 @@
 import { getTranslations } from "next-intl/server"
 
-import TermsSectionCard from "@/features/landing/components/terms-section-card"
-import TermsSidebar from "@/features/landing/components/terms-sidebar"
+import LegalSectionCard from "@/components/shared/legal-section-card"
+import LegalSidebar from "@/components/shared/legal-sidebar"
 
 const SECTION_KEYS = [
-  "introduction",
-  "dataSharing",
-  "dataProtection",
-  "notifications",
-  "cookies",
-  "dataRetention",
-  "contact",
+  "acceptance",
+  "responsibilities",
+  "dataAccuracy",
+  "payment",
+  "cancellation",
+  "tracking",
+  "intellectualProperty",
 ] as const
 
-const DATA_PROTECTION_ITEM_KEYS = [
-  "encryption",
-  "accessControl",
-  "secureStorage",
-  "monitoring",
+const RESPONSIBILITY_ITEM_KEYS = [
+  "accurateInfo",
+  "lawfulUse",
+  "accountSecurity",
+  "compliance",
 ] as const
 
 const SECTIONS_WITH_NOTES = new Set([
-  "introduction",
-  "dataSharing",
-  "dataRetention",
+  "acceptance",
+  "dataAccuracy",
+  "cancellation",
 ])
 
-export default async function PrivacyContent() {
-  const t = await getTranslations("Privacy")
+export default async function TermsContent() {
+  const t = await getTranslations("Terms")
 
   const sidebarItems = SECTION_KEYS.map((key) => ({
     id: key,
@@ -41,14 +41,14 @@ export default async function PrivacyContent() {
           <div className="flex flex-col gap-4 md:gap-5">
             {SECTION_KEYS.map((key, index) => {
               const items =
-                key === "dataProtection"
-                  ? DATA_PROTECTION_ITEM_KEYS.map((itemKey) =>
-                      t(`sections.dataProtection.items.${itemKey}`),
+                key === "responsibilities"
+                  ? RESPONSIBILITY_ITEM_KEYS.map((itemKey) =>
+                      t(`sections.responsibilities.items.${itemKey}`),
                     )
                   : undefined
 
               return (
-                <TermsSectionCard
+                <LegalSectionCard
                   key={key}
                   id={key}
                   number={String(index + 1).padStart(2, "0")}
@@ -67,7 +67,7 @@ export default async function PrivacyContent() {
           </div>
 
           <aside className="order-first lg:sticky lg:top-28 lg:order-0 lg:self-start">
-            <TermsSidebar title={t("tocTitle")} items={sidebarItems} />
+            <LegalSidebar title={t("tocTitle")} items={sidebarItems} />
           </aside>
         </div>
       </section>

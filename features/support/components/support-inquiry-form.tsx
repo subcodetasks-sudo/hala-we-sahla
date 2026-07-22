@@ -4,7 +4,8 @@ import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useTranslations } from "next-intl"
-import { ArrowLeft, ChevronDown, X } from "lucide-react"
+import ReactCountryFlag from "react-country-flag"
+import { ArrowLeft, X } from "lucide-react"
 
 import CustomIcon from "@/components/custom-icon"
 import { Button } from "@/components/ui/button"
@@ -33,10 +34,16 @@ import {
   createSupportInquirySchema,
   INQUIRY_TYPE_KEYS,
   type SupportInquiryValues,
-} from "@/features/landing/schemas/support-inquiry"
+} from "@/features/support/schemas/support-inquiry"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
+
+const pillInputGroupClassName =
+  "h-12 rounded-full border-border/70 bg-white shadow-none focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20"
+
+const pillAddonStartClassName =
+  "gap-0 border-e border-border/70 pe-3 ps-4"
 
 export default function SupportInquiryForm() {
   const t = useTranslations("Support.form")
@@ -99,19 +106,24 @@ export default function SupportInquiryForm() {
                     {t("fields.fullName.label")}
                     <span className="text-accent">*</span>
                   </FieldLabel>
-                  <InputGroup className="h-12 rounded-xl border-border/80 bg-background">
-                    <InputGroupAddon align="inline-start">
+                  <InputGroup className={pillInputGroupClassName}>
+                    <InputGroupAddon
+                      align="inline-start"
+                      className={pillAddonStartClassName}
+                    >
                       <CustomIcon
                         src="/icons/user.svg"
                         size={16}
                         className="size-4 text-muted-foreground"
                       />
-                    </InputGroupAddon>
+                    </InputGroupAddon >
                     <InputGroupInput
                       {...field}
                       id="fullName"
+                      value={field.value ?? ""}
                       placeholder={t("fields.fullName.placeholder")}
                       aria-invalid={fieldState.invalid}
+                      className="pe-4"
                     />
                   </InputGroup>
                   {fieldState.error ? (
@@ -130,23 +142,29 @@ export default function SupportInquiryForm() {
                     {t("fields.phone.label")}
                     <span className="text-accent">*</span>
                   </FieldLabel>
-                  <InputGroup className="h-12 rounded-xl border-border/80 bg-background">
+                  <InputGroup
+                    className={pillInputGroupClassName}
+                    dir="ltr"
+                  >
                     <InputGroupAddon
                       align="inline-start"
-                      className="gap-1.5 border-e border-border/80 pe-2.5 ps-3"
+                      className={pillAddonStartClassName}
                     >
-                      <InputGroupText className="gap-1.5 font-medium text-foreground">
-                        <span
-                          aria-hidden="true"
-                          className="text-base leading-none"
-                        >
-                          🇸🇦
-                        </span>
-                        <span dir="ltr">{SAUDI_COUNTRY_CODE}</span>
-                        <ChevronDown
-                          className="size-3.5 text-muted-foreground"
+                      <InputGroupText className="gap-2 font-semibold text-foreground ">
+                      <div className="flex items-center gap-2 bg-footer rounded-full px-2 py-1 ">
+
+                        <ReactCountryFlag
+                          countryCode="SA"
+                          svg
+                          style={{
+                            width: "1rem",
+                            height: ".75rem",
+                            borderRadius: "2px",
+                          }}
                           aria-hidden="true"
                         />
+                        <span className="text-xs">{SAUDI_COUNTRY_CODE}</span>
+                      </div>
                       </InputGroupText>
                     </InputGroupAddon>
                     <InputGroupInput
@@ -154,9 +172,10 @@ export default function SupportInquiryForm() {
                       id="phone"
                       type="tel"
                       inputMode="numeric"
+                      value={field.value ?? ""}
                       placeholder={t("fields.phone.placeholder")}
                       aria-invalid={fieldState.invalid}
-                      className="text-start"
+                      className="pe-4"
                     />
                   </InputGroup>
                   {fieldState.error ? (
@@ -175,8 +194,11 @@ export default function SupportInquiryForm() {
                 <FieldLabel htmlFor="orderNumber" className="text-primary">
                   {t("fields.orderNumber.label")}
                 </FieldLabel>
-                <InputGroup className="h-12 rounded-xl border-border/80 bg-background">
-                  <InputGroupAddon align="inline-start">
+                <InputGroup className={pillInputGroupClassName} dir="ltr">
+                  <InputGroupAddon
+                    align="inline-start"
+                    className={pillAddonStartClassName}
+                  >
                     <CustomIcon
                       src="/icons/file.svg"
                       size={18}
@@ -186,16 +208,28 @@ export default function SupportInquiryForm() {
                   <InputGroupInput
                     {...field}
                     id="orderNumber"
+                    value={field.value ?? ""}
+                    autoComplete="off"
                     placeholder={t("fields.orderNumber.placeholder")}
                     aria-invalid={fieldState.invalid}
+                    className="pe-2 placeholder:text-muted-foreground"
                   />
-                  <InputGroupAddon align="inline-end">
+                  <InputGroupAddon align="inline-end" className="pe-4">
                     <InputGroupButton
+                      type="button"
                       size="icon-xs"
                       aria-label={t("fields.orderNumber.clear")}
                       disabled={!orderNumber}
-                      className={cn(!orderNumber && "opacity-40")}
-                      onClick={() => form.setValue("orderNumber", "")}
+                      className={cn(
+                        "text-muted-foreground",
+                        !orderNumber && "pointer-events-none opacity-40",
+                      )}
+                      onClick={() =>
+                        form.setValue("orderNumber", "", {
+                          shouldDirty: true,
+                          shouldTouch: true,
+                        })
+                      }
                     >
                       <X className="size-3.5" />
                     </InputGroupButton>
@@ -220,26 +254,31 @@ export default function SupportInquiryForm() {
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger
                     id="inquiryType"
-                    className="h-12 w-full rounded-xl border-border/80 bg-background"
+                    className="h-12! w-full rounded-full border-border/70 bg-white px-0 pe-3 shadow-none"
                     aria-invalid={fieldState.invalid}
                   >
-                    <span className="flex items-center gap-2">
-                      <CustomIcon
-                        src="/icons/flag.svg"
-                        size={14}
-                        className="size-3.5 text-muted-foreground"
-                      />
-                      <SelectValue
-                        placeholder={t("fields.inquiryType.placeholder")}
-                      />
+                    <span className="flex min-w-0 flex-1 items-center">
+                      <span className="flex h-full items-center border-e border-border/70 px-4">
+                        <CustomIcon
+                          src="/icons/flag.svg"
+                          size={14}
+                          className="size-3.5 text-muted-foreground"
+                        />
+                      </span>
+                      <span className="min-w-0 flex-1 px-3 text-start">
+                        <SelectValue
+                          placeholder={t("fields.inquiryType.placeholder")}
+                        />
+                      </span>
                     </span>
                   </SelectTrigger>
                   <SelectContent
                     align="start"
                     className="w-(--radix-select-trigger-width)"
+                    position="popper"
                   >
                     {INQUIRY_TYPE_KEYS.map((type) => (
-                      <SelectItem key={type} value={type}>
+                      <SelectItem key={type} value={type} >
                         {t(`fields.inquiryType.options.${type}`)}
                       </SelectItem>
                     ))}
@@ -265,9 +304,10 @@ export default function SupportInquiryForm() {
                   {...field}
                   id="message"
                   rows={5}
+                  value={field.value ?? ""}
                   placeholder={t("fields.message.placeholder")}
                   aria-invalid={fieldState.invalid}
-                  className="min-h-32 rounded-xl border-border/80 bg-background"
+                  className="min-h-32 rounded-xl border-border/70 bg-white px-4 py-3 shadow-none"
                 />
                 {fieldState.error ? (
                   <FieldError>{fieldState.error.message}</FieldError>

@@ -1,13 +1,25 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server"
 
-type Props = {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-};
+import FormsFooter from "@/features/forms/components/forms-footer"
+import FormsHeader from "@/features/forms/components/forms-header"
 
-export default async function FormsLayout({ children, params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+type FormsLayoutProps = {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}
 
-  return <div className="min-h-full">{children}</div>;
+export default async function FormsLayout({
+  children,
+  params,
+}: FormsLayoutProps) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
+  return (
+    <div className="flex min-h-screen flex-col bg-primary/10">
+      <FormsHeader />
+      <main className="flex-1">{children}</main>
+      <FormsFooter />
+    </div>
+  )
 }

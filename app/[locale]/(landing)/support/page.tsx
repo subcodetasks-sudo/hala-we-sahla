@@ -1,6 +1,6 @@
-import SupportContactCards from "@/features/landing/components/support-contact-cards"
-import SupportHeader from "@/features/landing/components/support-header"
-import SupportInquiryForm from "@/features/landing/components/support-inquiry-form"
+import SupportContactCards from "@/features/support/components/support-contact-cards"
+import SupportHeader from "@/features/support/components/support-header"
+import SupportInquiryForm from "@/features/support/components/support-inquiry-form"
 
 export default async function SupportPage() {
   return (

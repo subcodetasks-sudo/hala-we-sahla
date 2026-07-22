@@ -1,5 +1,5 @@
-import PrivacyContent from "@/features/landing/components/privacy-content"
-import PrivacyHeader from "@/features/landing/components/privacy-header"
+import PrivacyContent from "@/features/privacy/components/privacy-content"
+import PrivacyHeader from "@/features/privacy/components/privacy-header"
 
 export default async function PrivacyPage() {
   return (

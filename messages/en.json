@@ -151,6 +151,24 @@
           "body": "After payment and completion of the process, the final contract is issued and made available for collection based on the delivery method you chose, with an instant notification when it is ready."
         }
       }
+    },
+    "related": {
+      "eyebrow": "Blog",
+      "heading": "Related articles",
+      "description": "Discover more guides related to renewing domestic worker contracts",
+      "category": "Contract Renewal",
+      "readMore": "Read more",
+      "items": {
+        "steps": {
+          "title": "Steps to renew a domestic worker contract from start to finish .."
+        },
+        "documents": {
+          "title": "Steps to renew a domestic worker contract from start to finish .."
+        },
+        "tracking": {
+          "title": "Steps to renew a domestic worker contract from start to finish .."
+        }
+      }
     }
   },
   "Support": {
@@ -406,6 +424,30 @@
     "getStarted": "Get Started",
     "menu": "Menu",
     "language": "Language"
+  },
+  "Forms": {
+    "header": {
+      "back": "Back",
+      "home": "Home",
+      "logoAlt": "Hala Wa Sahla logo",
+      "pages": {
+        "renewal": "Contract Renewal",
+        "trackOrders": "Track Orders"
+      }
+    },
+    "breadcrumbs": {
+      "renewal": {
+        "section": "Renewal",
+        "current": "Create contract renewal request"
+      },
+      "trackOrders": {
+        "section": "Track Orders",
+        "current": "Inquire about an order"
+      }
+    },
+    "footer": {
+      "legalNav": "Legal links"
+    }
   },
   "Footer": {
     "logoAlt": "Hala Wa Sahla logo",

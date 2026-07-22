@@ -15,7 +15,7 @@ export default async function Faq() {
     await queryClient.prefetchQuery(faqQueryOptions(locale))
 
     return (
-        <section className="container py-10 lg:py-16">
+        <section id="faq" className="container py-10 lg:py-16">
             <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-24">
                 <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-start">
                     <p className="text-sm font-semibold text-accent">

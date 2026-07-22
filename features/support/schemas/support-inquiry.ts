@@ -27,7 +27,7 @@ export function createSupportInquirySchema(messages: SupportInquiryMessages) {
       .string()
       .trim()
       .regex(/^05\d{8}$/, { message: messages.phoneInvalid }),
-    orderNumber: z.string().trim().optional(),
+    orderNumber: z.string().trim(),
     inquiryType: z.enum(INQUIRY_TYPE_KEYS, {
       error: () => messages.inquiryTypeRequired,
     }),
