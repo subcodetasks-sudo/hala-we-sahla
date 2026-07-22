@@ -3,6 +3,16 @@
     "home": "Home",
     "breadcrumb": "Breadcrumb"
   },
+  "Blog": {
+    "eyebrow": "Domestic Worker Blog",
+    "heading": "Articles and guides<br></br>to renew <primary>your contracts</primary> with ease",
+    "description": "Learn about contract renewal procedures, order tracking, and preparing the required documents clearly.",
+    "search": {
+      "placeholder": "Search articles ..",
+      "ariaLabel": "Search articles",
+      "submit": "Search"
+    }
+  },
   "Support": {
     "eyebrow": "Help Center",
     "heading": "Couldn't find <primary>answers</primary> and solutions?",
@@ -37,7 +47,7 @@
         },
         "orderNumber": {
           "label": "Order number (optional)",
-          "placeholder": "example: REQ-25481",
+          "placeholder": "example : REQ-25481",
           "clear": "Clear order number"
         },
         "inquiryType": {

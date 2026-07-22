@@ -3,6 +3,16 @@
     "home": "الرئيسية",
     "breadcrumb": "مسار التنقل"
   },
+  "Blog": {
+    "eyebrow": "مدونة العمالة المنزلية",
+    "heading": "مقالات وإرشادات<br></br>لتجديد <primary>عقودك</primary> بكل سهولة",
+    "description": "تعرف على إجراءات تجديد العقود، متابعة الطلبات، وتجهيز المستندات المطلوبة بكل وضوح.",
+    "search": {
+      "placeholder": "ابحث في المقالات ..",
+      "ariaLabel": "البحث في المقالات",
+      "submit": "بحث"
+    }
+  },
   "Support": {
     "eyebrow": "مركز المساعدة",
     "heading": "ما لقيت <primary>أجوبة</primary> وحلول؟",
@@ -37,7 +47,7 @@
         },
         "orderNumber": {
           "label": "رقم الطلب (اختياري)",
-          "placeholder": "example: REQ-25481",
+          "placeholder": "example : REQ-25481",
           "clear": "مسح رقم الطلب"
         },
         "inquiryType": {
