@@ -1,4 +1,62 @@
 {
+  "Common": {
+    "home": "Home",
+    "breadcrumb": "Breadcrumb"
+  },
+  "Terms": {
+    "eyebrow": "Official Document",
+    "title": "Terms & Conditions",
+    "description": "Please read the terms and conditions carefully before using the platform's services, as this page explains the user's rights and obligations and how domestic worker contract renewal services are used.",
+    "lastUpdated": "Last updated: {date}",
+    "tocTitle": "Page Contents",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "subtitle": "Agreement to use",
+        "body": "By using the Hala Wa Sahla platform or submitting a domestic worker contract renewal request through it, you acknowledge that you have read, understood, and agree to be fully bound by these terms and conditions. If you do not agree to any part of these terms, please stop using the platform immediately.",
+        "note": "Continued use of the platform constitutes explicit acceptance of these terms and conditions."
+      },
+      "responsibilities": {
+        "title": "User Responsibilities",
+        "subtitle": "Employer obligations",
+        "body": "When using the platform's services, the user agrees to:",
+        "items": {
+          "accurateInfo": "Provide accurate and correct information when creating a request",
+          "lawfulUse": "Use the platform only for lawful purposes related to domestic worker contract renewal",
+          "accountSecurity": "Keep login credentials confidential and not share them with others",
+          "compliance": "Comply with the laws and regulations applicable in the Kingdom of Saudi Arabia"
+        }
+      },
+      "dataAccuracy": {
+        "title": "Data & Document Accuracy",
+        "subtitle": "Correctness of uploaded information",
+        "body": "The user is fully responsible for the accuracy of the data and documents uploaded through the platform, including the national ID, passport, previous contract, and any other required documents. The platform is not liable for any delay or rejection resulting from incorrect or incomplete data or documents.",
+        "note": "Please carefully review all data before submitting your request to ensure it is processed quickly."
+      },
+      "payment": {
+        "title": "Payment & Fees",
+        "subtitle": "Payment mechanism",
+        "body": "Service fees are clearly displayed before payment is completed. The amount is collected when the request is submitted through the payment methods available on the platform, including mada, Visa, Mastercard, and Apple Pay. Fees are considered final only after successful payment confirmation."
+      },
+      "cancellation": {
+        "title": "Cancellation & Refund",
+        "subtitle": "Cancellation policy",
+        "body": "Users may request cancellation before official renewal procedures begin. If processing with the competent authorities has already started, a full or partial refund may not be available depending on the request status and stage of completion.",
+        "note": "Fees cannot be refunded after renewal procedures are completed or the request is submitted to official authorities."
+      },
+      "tracking": {
+        "title": "Order Tracking & Notifications",
+        "subtitle": "Following request status",
+        "body": "The platform allows users to follow their request status through the order tracking page. Notifications may also be sent via SMS or email to update the user on progress and any required actions."
+      },
+      "intellectualProperty": {
+        "title": "Intellectual Property",
+        "subtitle": "Content and trademark rights",
+        "body": "All content, designs, logos, trademarks, text, and software belonging to the Hala Wa Sahla platform are the exclusive property of the platform and are protected under the intellectual property laws applicable in the Kingdom of Saudi Arabia. Copying or using them without prior permission is prohibited."
+      }
+    }
+  },
+
   "Hero": {
     "badge": "Get started easily",
     "heading": "The <primary>trusted</primary> and integrated platform for <primary>renewing</primary> domestic worker contracts",
