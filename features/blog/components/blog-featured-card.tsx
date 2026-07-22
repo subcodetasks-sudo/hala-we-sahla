@@ -4,9 +4,11 @@ import { ar, enUS } from "date-fns/locale"
 import { getLocale, getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import { Link } from "@/i18n/navigation"
 import { formatNumber } from "@/lib/format"
 
 const FEATURED = {
+  slug: "guide-contract-renewal",
   publishedAt: new Date(2026, 5, 12),
   readingMinutes: 5,
   views: 2140,
@@ -22,9 +24,16 @@ export default async function BlogFeaturedCard() {
     locale: dateLocale,
   })
   const viewsLabel = formatNumber(FEATURED.views, locale)
+  const href = `/blog/${FEATURED.slug}`
 
   return (
     <article className="relative h-full min-h-[480px] overflow-hidden rounded-3xl">
+      <Link
+        href={href}
+        className="absolute inset-0 z-10"
+        aria-label={t("title")}
+      />
+
       <Image
         src={FEATURED.image}
         alt={t("title")}
@@ -40,7 +49,7 @@ export default async function BlogFeaturedCard() {
         aria-hidden="true"
       />
 
-      <div className="absolute inset-0 flex flex-col p-6 sm:p-8">
+      <div className="pointer-events-none absolute inset-0 flex flex-col p-6 sm:p-8">
         <p className="text-sm text-white/95">
           {t("meta", {
             date: dateLabel,
@@ -48,10 +57,10 @@ export default async function BlogFeaturedCard() {
           })}
         </p>
 
-        <div className="mt-auto max-w-xl space-y-3 pb-12 sm:space-y-4 sm:pb-14">
+        <div className="mt-auto max-w-lg space-y-3 pb-12 sm:space-y-4 sm:pb-14">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm sm:text-sm">
             <CustomIcon
-              src="/icons/tag-2.svg"
+              src="/icons/receipt-3.svg"
               size={16}
               className="size-4 text-white"
             />

@@ -4,11 +4,13 @@ import { ChevronLeft, Clock, Eye, Timer } from "lucide-react"
 import { getLocale, getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import { Link } from "@/i18n/navigation"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 export type BlogMostReadItemData = {
   id: string
+  slug: string
   publishedAt: Date
   readingMinutes: number
   views: number
@@ -36,8 +38,8 @@ export default async function BlogMostReadItem({ item }: BlogMostReadItemProps) 
 
   return (
     <li>
-      <a
-        href="#"
+      <Link
+        href={`/blog/${item.slug}`}
         className="flex items-center gap-3 py-5 transition-opacity hover:opacity-80 sm:gap-4 sm:py-6"
       >
         <span
@@ -83,7 +85,7 @@ export default async function BlogMostReadItem({ item }: BlogMostReadItemProps) 
         >
           <ChevronLeft className="size-4 ltr:rotate-180" />
         </span>
-      </a>
+      </Link>
     </li>
   )
 }

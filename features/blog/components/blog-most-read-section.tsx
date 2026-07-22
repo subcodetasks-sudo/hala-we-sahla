@@ -7,6 +7,7 @@ import BlogMostReadItem, {
 const MOST_READ_ITEMS: BlogMostReadItemData[] = [
   {
     id: "documents",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     readingMinutes: 5,
     views: 1800,
@@ -14,6 +15,7 @@ const MOST_READ_ITEMS: BlogMostReadItemData[] = [
   },
   {
     id: "status",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     readingMinutes: 5,
     views: 1800,
@@ -21,6 +23,7 @@ const MOST_READ_ITEMS: BlogMostReadItemData[] = [
   },
   {
     id: "inquiry",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     readingMinutes: 5,
     views: 1800,
@@ -28,6 +31,7 @@ const MOST_READ_ITEMS: BlogMostReadItemData[] = [
   },
   {
     id: "forgot",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     readingMinutes: 5,
     views: 1800,

@@ -5,10 +5,12 @@ import { ArrowLeft, Clock } from "lucide-react"
 import { getLocale, getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import { Link } from "@/i18n/navigation"
 import { formatNumber } from "@/lib/format"
 
 export type BlogArticleCardData = {
   id: string
+  slug: string
   publishedAt: Date
   views: number
   image: string
@@ -36,6 +38,7 @@ export default async function BlogArticleCard({
     notation: "compact",
     maximumFractionDigits: 1,
   })
+  const href = `/blog/${article.slug}`
 
   return (
     <article className="flex h-full flex-col gap-4 rounded-3xl bg-background p-5 sm:p-6">
@@ -57,15 +60,18 @@ export default async function BlogArticleCard({
         </div>
       </div>
 
-      <div className="relative aspect-16/10 overflow-hidden rounded-2xl">
+      <Link
+        href={href}
+        className="relative aspect-16/10 overflow-hidden rounded-2xl"
+      >
         <Image
           src={article.image}
           alt={t(`items.${article.id}.title`)}
           fill
-          className="object-cover"
+          className="object-cover transition-transform hover:scale-[1.02]"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col gap-2.5">
         <div className="flex items-center gap-1.5 text-sm font-medium text-accent">
@@ -78,20 +84,22 @@ export default async function BlogArticleCard({
         </div>
 
         <h3 className="text-base font-bold leading-snug text-foreground sm:text-lg">
-          {t(`items.${article.id}.title`)}
+          <Link href={href} className="transition-colors hover:text-primary">
+            {t(`items.${article.id}.title`)}
+          </Link>
         </h3>
 
         <p className="text-sm leading-relaxed text-muted-foreground">
           {t(`items.${article.id}.excerpt`)}
         </p>
 
-        <a
-          href="#"
-          className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-foreground transition-opacity hover:opacity-70"
+        <Link
+          href={href}
+          className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-foreground transition-opacity hover:text-accent"
         >
           {t("readMore")}
           <ArrowLeft className="size-4" aria-hidden="true" />
-        </a>
+        </Link>
       </div>
     </article>
   )

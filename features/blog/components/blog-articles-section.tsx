@@ -8,36 +8,42 @@ import BlogArticlesPagination from "@/features/blog/components/blog-articles-pag
 const ARTICLES: BlogArticleCardData[] = [
   {
     id: "steps",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",
   },
   {
     id: "documents",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",
   },
   {
     id: "timeline",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",
   },
   {
     id: "tracking",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",
   },
   {
     id: "mistakes",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",
   },
   {
     id: "checklist",
+    slug: "guide-contract-renewal",
     publishedAt: new Date(2025, 1, 11),
     views: 1800,
     image: "/images/blog.png",

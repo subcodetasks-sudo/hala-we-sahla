@@ -94,6 +94,63 @@
           "title": "What to do if you forget your request number"
         }
       }
+    },
+    "post": {
+      "category": "Guide",
+      "title": "Your complete guide to renewing a domestic worker contract online",
+      "description": "Learn the application steps, required documents, and how to track renewal status until you receive the final contract—clearly and easily.",
+      "readingTime": "{minutes} min",
+      "tocTitle": "Article contents",
+      "share": {
+        "label": "Share article:",
+        "x": "Share on X",
+        "linkedin": "Share on LinkedIn",
+        "native": "Share link"
+      },
+      "cta": {
+        "titleLine1": "Start",
+        "titleLine2": "renewal now",
+        "description": "Create a contract renewal request online with clear, fast steps.",
+        "button": "Start renewal now"
+      },
+      "sections": {
+        "whatIs": {
+          "title": "What is the domestic worker contract renewal service?",
+          "body": "The domestic worker contract renewal service lets you renew the contract online through the platform easily, prepare the required documents, and track the request status until you receive the final copy—without repeated in-person visits."
+        },
+        "beforeStart": {
+          "title": "Before you start: what do you need?",
+          "body": "To help your request get approved quickly, make sure you have the following documents ready:",
+          "checklist": {
+            "id": "National ID / residency",
+            "passport": "Worker passport",
+            "contract": "Previous contract"
+          }
+        },
+        "steps": {
+          "title": "Steps to submit the request",
+          "body": "Follow these steps to submit your renewal request correctly:",
+          "items": {
+            "employer": "Enter employer details",
+            "worker": "Add worker details",
+            "documents": "Upload required documents",
+            "delivery": "Choose delivery method",
+            "submit": "Review details and submit the request"
+          }
+        },
+        "tracking": {
+          "title": "How do you track the request status?",
+          "body": "After submitting, you can track the status from the order tracking page using the request number or mobile number, with clear updates for every stage until renewal is complete."
+        },
+        "payment": {
+          "title": "When is payment made?",
+          "body": "Payment is made electronically after the details are reviewed and the request is approved. Fee details and payment methods appear in the platform before you confirm."
+        },
+        "receive": {
+          "title": "When do you receive the final contract?",
+          "body": "After payment and completion of the process, the final contract is issued and made available for collection based on the delivery method you chose, with an instant notification when it is ready."
+        }
+      }
     }
   },
   "Support": {
