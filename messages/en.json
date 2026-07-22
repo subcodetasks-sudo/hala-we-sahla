@@ -74,6 +74,26 @@
           "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
         }
       }
+    },
+    "mostRead": {
+      "eyebrow": "Blog",
+      "heading": "Most Read",
+      "description": "The most visited articles by employers",
+      "readingTime": "{minutes} min",
+      "items": {
+        "documents": {
+          "title": "Guide to the documents required for contract renewal"
+        },
+        "status": {
+          "title": "Renewal request statuses explained from receipt to completion"
+        },
+        "inquiry": {
+          "title": "How to check a request by mobile number without signing in"
+        },
+        "forgot": {
+          "title": "What to do if you forget your request number"
+        }
+      }
     }
   },
   "Support": {
