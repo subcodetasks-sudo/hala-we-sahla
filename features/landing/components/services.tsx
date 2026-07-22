@@ -18,7 +18,7 @@ const SERVICE_ITEMS = [
     {
         key: "whatsapp",
         href: "/support",
-        icon: "/icons/message.svg",
+        icon: "/icons/whatsapp.svg",
         image: "/landing/services-2.svg",
         tone: "primary",
         imageFirst: true,
@@ -38,8 +38,8 @@ export default async function Services() {
 
     return (
         <section className="w-full py-16 lg:py-24">
-            <div className="container">
-                <div className="mx-auto max-w-xl text-center">
+            <div className="">
+                <div className="mx-auto max-w-xl text-center container">
                     <p className="text-sm font-semibold text-accent">
                         {t("eyebrow")}
                     </p>
@@ -63,11 +63,11 @@ export default async function Services() {
                                     key="text"
                                     className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-start"
                                 >
-                                    <span className="flex size-12 items-center justify-center rounded-full bg-primary/20">
+                                    <span className={cn("flex size-12 items-center justify-center rounded-full bg-primary/20", key === "whatsapp" ? "bg-green-600/80" : "")}>
                                         <CustomIcon
                                             size={22}
                                             src={Icon as string}
-                                            className={cn("size-5 text-black")}
+                                            className={cn("size-5 text-black", key === "whatsapp" ? "text-white" : "")}
                                             aria-hidden="true"
                                         />
                                     </span>
@@ -91,6 +91,8 @@ export default async function Services() {
                                             "gap-1.5 h-12! text-base! rounded-full  text-white",
                                             tone === "accent" &&
                                                 "bg-accent  hover:bg-accent/80!",
+                                            key === "whatsapp" &&
+                                                "bg-green-600  hover:bg-green-600/80!",
                                         )}
                                         asChild
                                     >
@@ -124,13 +126,16 @@ export default async function Services() {
                             )
 
                             return (
+                                <div className={cn( key === "whatsapp" && "bg-footer py-10")}>
+
                                 <div
                                     key={key}
-                                    className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
+                                    className={cn("grid items-center gap-10 lg:grid-cols-2 lg:gap-16 container")}
                                 >
                                     {imageFirst
                                         ? [imageBlock, textBlock]
                                         : [textBlock, imageBlock]}
+                                </div>
                                 </div>
                             )
                         },

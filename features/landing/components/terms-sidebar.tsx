@@ -72,7 +72,7 @@ export default function TermsSidebar({
         className,
       )}
     >
-      <div className="mb-4 flex items-center gap-2 border-b border-border/70 pb-3">
+      <div className="mb-4 flex items-center gap-2  pb-3">
         <CustomIcon
           src="/icons/receipt-2.svg"
           size={20}
@@ -91,9 +91,9 @@ export default function TermsSidebar({
                 type="button"
                 onClick={() => handleNavigate(item.id)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-start text-sm transition-colors",
+                  "flex w-full items-center gap-2.5  px-3 py-2.5 text-start text-sm transition-colors",
                   isActive
-                    ? "bg-primary/10 font-semibold text-primary"
+                    ? "bg-primary/10 font-semibold text-primary border-s-4 border-primary"
                     : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                 )}
               >

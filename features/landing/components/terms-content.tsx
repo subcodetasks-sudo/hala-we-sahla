@@ -35,7 +35,8 @@ export default async function TermsContent() {
   }))
 
   return (
-    <section className="container pb-12 md:pb-16">
+    <div className="bg-primary/20 py-16">
+    <section className="container ">
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_17.5rem] lg:gap-8">
         <div className="flex flex-col gap-4 md:gap-5">
           {SECTION_KEYS.map((key, index) => {
@@ -70,5 +71,6 @@ export default async function TermsContent() {
         </aside>
       </div>
     </section>
+    </div>
   )
 }

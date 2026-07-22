@@ -1,4 +1,4 @@
-import { CircleCheck, Info } from "lucide-react"
+import { Info } from "lucide-react"
 
 import CustomIcon from "@/components/custom-icon"
 import { cn } from "@/lib/utils"
@@ -36,7 +36,7 @@ export default function TermsSectionCard({
         <div className="flex min-w-0 items-start gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <CustomIcon
-              src="/icons/receipt-item.svg"
+              src="/icons/receipt-3.svg"
               size={24}
               className="size-6 text-primary"
             />
@@ -61,11 +61,13 @@ export default function TermsSectionCard({
         {items && items.length > 0 ? (
           <ul className="flex flex-col gap-3">
             {items.map((item) => (
-              <li key={item} className="flex items-start gap-2.5">
-                <CircleCheck
-                  className="mt-0.5 size-5 shrink-0 text-primary"
-                  aria-hidden="true"
+              <li key={item} className="flex items-center gap-2.5">
+                <CustomIcon
+                  size={16}
+                  className="shrink-0 text-primary"
+                  src="/icons/check-green.svg"
                 />
+                <div className="size-1.5 rounded-full bg-black"></div>
                 <span>{item}</span>
               </li>
             ))}
@@ -74,7 +76,7 @@ export default function TermsSectionCard({
       </div>
 
       {note ? (
-        <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+        <div className="mt-6 flex items-start justify-center gap-2.5  bg-primary/5 px-4 py-3 text-sm text-muted-foreground ">
           <Info
             className="mt-0.5 size-4 shrink-0 text-primary"
             aria-hidden="true"

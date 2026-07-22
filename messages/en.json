@@ -3,6 +3,120 @@
     "home": "Home",
     "breadcrumb": "Breadcrumb"
   },
+  "Support": {
+    "eyebrow": "Help Center",
+    "heading": "Couldn't find <primary>answers</primary> and solutions?",
+    "description": "Choose your preferred contact method and let us provide the help you need!",
+    "cards": {
+      "availability": "24/7",
+      "cta": "Start conversation",
+      "email": {
+        "eyebrow": "Email chat",
+        "title": "Email us",
+        "description": "Don't hesitate to reach out to us by email.."
+      },
+      "whatsapp": {
+        "eyebrow": "Chatbot",
+        "title": "Chat with us on WhatsApp",
+        "description": "9 AM to 6 PM Saudi time"
+      }
+    },
+    "form": {
+      "title": "Send your inquiry",
+      "description": "Fill in the details below and our support team will contact you as soon as possible.",
+      "submit": "Send inquiry",
+      "note": "If your inquiry is related to a previous order, please enter the order number to speed up assistance.",
+      "fields": {
+        "fullName": {
+          "label": "First and last name",
+          "placeholder": "Enter your first and last name here..."
+        },
+        "phone": {
+          "label": "Mobile number",
+          "placeholder": "05XXXXXXXX"
+        },
+        "orderNumber": {
+          "label": "Order number (optional)",
+          "placeholder": "example: REQ-25481",
+          "clear": "Clear order number"
+        },
+        "inquiryType": {
+          "label": "Inquiry type",
+          "placeholder": "Choose inquiry type",
+          "options": {
+            "orderStatus": "Order status",
+            "payment": "Payment and fees",
+            "documents": "Documents and data",
+            "technical": "Technical issue",
+            "other": "Other inquiry"
+          }
+        },
+        "message": {
+          "label": "Inquiry text",
+          "placeholder": "Write your inquiry here..."
+        }
+      },
+      "errors": {
+        "fullNameRequired": "Please enter your first and last name",
+        "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
+        "inquiryTypeRequired": "Please select an inquiry type",
+        "messageRequired": "Please write your inquiry (at least 10 characters)"
+      }
+    }
+  },
+  "Privacy": {
+    "eyebrow": "Official Document",
+    "title": "Privacy Policy",
+    "description": "We are committed to protecting your personal data and documents that you provide through the platform, and we explain on this page how data is collected, used, and stored according to the highest privacy and security standards.",
+    "lastUpdated": "Last updated: {date}",
+    "tocTitle": "Page Contents",
+    "sections": {
+      "introduction": {
+        "title": "Introduction",
+        "subtitle": "Policy overview",
+        "body": "This privacy policy explains how the Hala Wa Sahla platform collects, uses, and protects your personal data when you use domestic worker contract renewal services. We handle your information transparently and responsibly in accordance with the regulations applicable in the Kingdom of Saudi Arabia.",
+        "note": "By using the platform, you agree to the collection and processing of your data in accordance with this policy."
+      },
+      "dataSharing": {
+        "title": "Data Sharing",
+        "subtitle": "When and with whom we share your data",
+        "body": "We do not sell your personal data to any third party. We may share the minimum data necessary with competent authorities or approved service providers only to complete the contract renewal request or to comply with legal requirements.",
+        "note": "Data is shared only to the extent necessary to deliver the service or comply with regulations."
+      },
+      "dataProtection": {
+        "title": "Data Protection",
+        "subtitle": "Security measures in place",
+        "body": "We apply appropriate technical and organizational measures to protect your data from unauthorized access, loss, or alteration, including for example:",
+        "items": {
+          "encryption": "Encrypting sensitive data in transit and at rest",
+          "accessControl": "Restricting access permissions to operational need only",
+          "secureStorage": "Storing documents in secure and approved storage environments",
+          "monitoring": "Continuously monitoring systems to detect unusual activity"
+        }
+      },
+      "notifications": {
+        "title": "Notifications & Communication",
+        "subtitle": "Channels we use to contact you",
+        "body": "We may use your mobile number or email to send notifications about your request status or any actions required from you. We may also send educational or marketing messages related to platform services when you consent, and you can request to stop them at any time."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "subtitle": "Cookies and similar technologies",
+        "body": "We use cookies and similar technologies to improve the user experience, analyze platform performance, and remember your preferences. You can manage cookie settings through your browser, noting that disabling some cookies may affect certain platform features."
+      },
+      "dataRetention": {
+        "title": "Data Retention",
+        "subtitle": "How long information is kept",
+        "body": "We retain your data and documents for as long as needed to deliver the service and meet legal and accounting obligations. After the retention purpose ends, data is securely deleted or anonymized according to approved policies.",
+        "note": "You may request deletion of your data when there is no legal need to retain it."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "subtitle": "Privacy inquiries",
+        "body": "If you have any questions about this privacy policy or how your data is processed, you can contact the support team through the communication channels available on the platform. We will aim to respond to your request as soon as possible."
+      }
+    }
+  },
   "Terms": {
     "eyebrow": "Official Document",
     "title": "Terms & Conditions",
