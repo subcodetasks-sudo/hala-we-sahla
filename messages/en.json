@@ -36,6 +36,44 @@
           "title": "Common mistakes that delay renewal approval"
         }
       }
+    },
+    "articles": {
+      "eyebrow": "Blog",
+      "heading": "All Articles",
+      "description": "Discover guides and tips for renewing domestic worker contracts",
+      "category": "Contract Renewal",
+      "readMore": "Read more",
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page",
+        "page": "Page {page}"
+      },
+      "items": {
+        "steps": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        },
+        "documents": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        },
+        "timeline": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        },
+        "tracking": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        },
+        "mistakes": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        },
+        "checklist": {
+          "title": "Steps to renew a domestic worker contract from start to finish ..",
+          "excerpt": "A complete guide that walks you through every step of contract renewal, from submitting the request to receiving the final copy."
+        }
+      }
     }
   },
   "Support": {
