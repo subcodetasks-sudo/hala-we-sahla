@@ -445,6 +445,29 @@
         "current": "Inquire about an order"
       }
     },
+    "renewal": {
+      "prerequisites": {
+        "title": "Requirements before we start",
+        "subtitle": "To serve you quickly, prepare the following:",
+        "priceSuffix": "per contract",
+        "documentsLabel": "Required documents:",
+        "cta": "Start renewal now",
+        "items": {
+          "employer": {
+            "title": "Employer details",
+            "description": "(National ID number, contact number, employer name, city, place of issue)"
+          },
+          "worker": {
+            "title": "Worker details",
+            "description": "(Worker name, contact number, passport number…)"
+          },
+          "documents": {
+            "title": "Documents",
+            "description": "(National ID photo, worker residence ID photo, passport first page + visa photo, exit and re-entry visa…)"
+          }
+        }
+      }
+    },
     "footer": {
       "legalNav": "Legal links"
     }
