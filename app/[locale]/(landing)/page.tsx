@@ -4,6 +4,7 @@ import Stats from "@/features/landing/components/stats";
 import Pricing from "@/features/landing/components/pricing";
 import Services from "@/features/landing/components/services";
 import Faq from "@/features/landing/components/faq";
+import Steps from "@/features/landing/components/steps";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -19,6 +20,7 @@ export default async function Home({ params }: Props) {
       <Stats />
       <Pricing />
       <Services />
+      <Steps />
       <Faq />
     </>
   );

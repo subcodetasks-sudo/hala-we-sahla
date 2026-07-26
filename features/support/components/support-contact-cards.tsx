@@ -25,16 +25,17 @@ export default async function SupportContactCards() {
     <section className="pb-12 md:pb-16">
       <div className="mx-auto grid max-w-4xl gap-4 sm:gap-6 md:grid-cols-2">
         {CONTACT_METHODS.map((method) => (
-          <SupportContactCard
-            key={method.key}
-            eyebrow={t(`cards.${method.key}.eyebrow`)}
-            title={t(`cards.${method.key}.title`)}
-            description={t(`cards.${method.key}.description`)}
-            availability={t("cards.availability")}
-            cta={t("cards.cta")}
-            href={method.href}
-            iconSrc={method.iconSrc}
-          />
+          <div key={method.key} className="bg-linear-to-b from-primary to-transparent p-px  rounded-4xl">            
+            <SupportContactCard
+              eyebrow={t(`cards.${method.key}.eyebrow`)}
+              title={t(`cards.${method.key}.title`)}
+              description={t(`cards.${method.key}.description`)}
+              availability={t("cards.availability")}
+              cta={t("cards.cta")}
+              href={method.href}
+              iconSrc={method.iconSrc}
+            />
+          </div>
         ))}
       </div>
     </section>

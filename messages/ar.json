@@ -398,6 +398,30 @@
       }
     }
   },
+  "Steps": {
+    "eyebrow": "خطوات",
+    "heading": "خطوات تجديد <primary>عقد العمالة المنزلية</primary>",
+    "description": "رحلة واضحة ومنظمة تبدأ من تقديم الطلب وتنتهي باستلام العقد النهائي بعد الاعتماد.",
+    "cta": "ابدأ التجديد الآن",
+    "items": {
+      "upload": {
+        "label": "الخطوة 1",
+        "imageAlt": "رفع المستندات المطلوبة لبدء مراجعة طلب التجديد"
+      },
+      "verification": {
+        "label": "الخطوة 2",
+        "imageAlt": "توثيق البيانات واعتماد الطلب رسميًا"
+      },
+      "payment": {
+        "label": "الخطوة 3",
+        "imageAlt": "إتمام الدفع الآمن لتجديد العقد"
+      },
+      "contract": {
+        "label": "الخطوة الأخيرة",
+        "imageAlt": "استلام وتحميل العقد النهائي بعد الاعتماد"
+      }
+    }
+  },
   "Faq": {
     "eyebrow": "أسئلة وأجوبة",
     "heading": "أسئلة <primary>ممكن تجي في بالك</primary>",
@@ -465,6 +489,210 @@
             "title": "المستندات",
             "description": "( صورة الهوية الوطنية، صورة هوية العامل الاقامة، صورة الجواز الصفحة الأولى + التأشيرة، تأشيرة الخروج والعودة .. )"
           }
+        }
+      },
+      "wizard": {
+        "steps": {
+          "employer": "بيانات صاحب العمل",
+          "worker": "بيانات العامل (المكفول)",
+          "documents": "رفع المستندات",
+          "review": "المراجعة والإرسال"
+        },
+        "stepNumber": "خطوة {number}",
+        "stepPlaceholder": "محتوى هذه الخطوة قريبًا",
+        "next": "التالي",
+        "previous": "السابق",
+        "submitRenewal": "إرسال الطلب للتجديد",
+        "hijri": {
+          "title": "اختر التاريخ الهجري",
+          "placeholder": "jj/mm/aaaa",
+          "day": "اليوم",
+          "month": "الشهر",
+          "year": "السنة",
+          "confirm": "تأكيد",
+          "months": {
+            "1": "محرم",
+            "2": "صفر",
+            "3": "ربيع الأول",
+            "4": "ربيع الآخر",
+            "5": "جمادى الأولى",
+            "6": "جمادى الآخرة",
+            "7": "رجب",
+            "8": "شعبان",
+            "9": "رمضان",
+            "10": "شوال",
+            "11": "ذو القعدة",
+            "12": "ذو الحجة"
+          }
+        },
+        "employer": {
+          "fields": {
+            "national_id": {
+              "label": "رقم الهوية الوطنية",
+              "placeholder": "مثال: 1234567890"
+            },
+            "phone": {
+              "label": "رقم التواصل (رقم الجوال للكفيل)",
+              "placeholder": "05XXXXXXXX"
+            },
+            "employer_name_ar": {
+              "label": "اسم صاحب العمل بالعربية (الكفيل)",
+              "placeholder": "أدخل الاسم الكامل بالعربية هنا ..."
+            },
+            "employer_name_en": {
+              "label": "اسم صاحب العمل بالانجليزية (الكفيل)",
+              "placeholder": "أدخل الاسم الكامل بالانجليزية هنا ..."
+            },
+            "city_id": {
+              "label": "المدينة",
+              "placeholder": "اختر المدينة هنا ..."
+            },
+            "passport_issue_place_id": {
+              "label": "مكان الإصدار",
+              "placeholder": "اختر مكان الإصدار هنا ..."
+            }
+          },
+          "options": {
+            "cities": {
+              "riyadh": "الرياض",
+              "jeddah": "جدة",
+              "dammam": "الدمام",
+              "makkah": "مكة المكرمة",
+              "madinah": "المدينة المنورة"
+            },
+            "issuePlaces": {
+              "riyadh": "الرياض",
+              "jeddah": "جدة",
+              "dammam": "الدمام",
+              "abroad": "خارج المملكة"
+            }
+          },
+          "errors": {
+            "employerNameArRequired": "يرجى إدخال اسم صاحب العمل بالعربية",
+            "employerNameArInvalid": "يرجى كتابة الاسم بالعربية فقط",
+            "employerNameEnRequired": "يرجى إدخال اسم صاحب العمل بالإنجليزية",
+            "employerNameEnInvalid": "يرجى كتابة الاسم بالإنجليزية فقط",
+            "nationalIdInvalid": "يرجى إدخال رقم هوية وطنية صحيح مكون من 10 أرقام",
+            "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05",
+            "cityRequired": "يرجى اختيار المدينة"
+          }
+        },
+        "worker": {
+          "fields": {
+            "worker_name_ar": {
+              "label": "اسم العامل بالعربية (المكفول)",
+              "placeholder": "أدخل الاسم الكامل بالعربية هنا ..."
+            },
+            "worker_name_en": {
+              "label": "اسم العامل بالانجليزية (المكفول)",
+              "placeholder": "أدخل الاسم الكامل بالانجليزية هنا ..."
+            },
+            "worker_phone": {
+              "label": "رقم التواصل (رقم الجوال للمكفول)",
+              "placeholder": "05XXXXXXXX"
+            },
+            "birth_date": {
+              "label": "تاريخ الميلاد",
+              "placeholder": "jj/mm/aaaa"
+            },
+            "philippines_address": {
+              "label": "العنوان في الفلبين",
+              "placeholder": "أدخل العنوان في الفلبين هنا ..."
+            },
+            "passport_issue_place_id": {
+              "label": "مكان اصدار الجواز بالانجليزية",
+              "placeholder": "اختر مكان الإصدار هنا ..."
+            },
+            "passport_number": {
+              "label": "رقم جواز السفر بالعربي",
+              "placeholder": "أدخل رقم جواز السفر هنا ..."
+            },
+            "passport_issue_date": {
+              "label": "تاريخ اصدار الجواز",
+              "placeholder": "jj/mm/aaaa"
+            },
+            "passport_expiry_date": {
+              "label": "تاريخ انتهاء الجواز",
+              "placeholder": "jj/mm/aaaa"
+            }
+          },
+          "options": {
+            "issuePlaces": {
+              "riyadh": "Riyadh",
+              "jeddah": "Jeddah",
+              "dammam": "Dammam",
+              "abroad": "Outside the Kingdom"
+            }
+          },
+          "errors": {
+            "workerNameArRequired": "يرجى إدخال اسم العامل بالعربية",
+            "workerNameArInvalid": "يرجى كتابة الاسم بالعربية فقط",
+            "workerNameEnRequired": "يرجى إدخال اسم العامل بالإنجليزية",
+            "workerNameEnInvalid": "يرجى كتابة الاسم بالإنجليزية فقط",
+            "workerPhoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05",
+            "birthDateRequired": "يرجى اختيار تاريخ الميلاد",
+            "birthDateInvalid": "يرجى اختيار تاريخ ميلاد هجري صحيح",
+            "philippinesAddressRequired": "يرجى إدخال العنوان في الفلبين",
+            "passportIssuePlaceRequired": "يرجى اختيار مكان إصدار الجواز",
+            "passportNumberRequired": "يرجى إدخال رقم جواز السفر",
+            "passportNumberInvalid": "يرجى كتابة رقم الجواز بالعربية فقط",
+            "passportIssueDateRequired": "يرجى اختيار تاريخ إصدار الجواز",
+            "passportIssueDateInvalid": "يرجى اختيار تاريخ إصدار هجري صحيح",
+            "passportExpiryDateRequired": "يرجى اختيار تاريخ انتهاء الجواز",
+            "passportExpiryDateInvalid": "يرجى اختيار تاريخ انتهاء هجري صحيح"
+          }
+        },
+        "documents": {
+          "chooseFileClick": "إضغط هنا",
+          "chooseFileRest": "لاختيار الملف",
+          "acceptedTypes": "\" png - pdf \"",
+          "preview": "معاينة الملف",
+          "close": "إغلاق",
+          "sampleTitle": "نموذج للجواز السفر المطلوب",
+          "sampleHint": "ارفع صورة واضحة للصفحة الأولى من الجواز مع التأشيرة.",
+          "fields": {
+            "national_id_image": {
+              "label": "صورة الهوية الوطنية"
+            },
+            "iqama_image": {
+              "label": "صورة هوية العامل (الاقامة)"
+            },
+            "passport_image": {
+              "label": "صورة الجواز (الصفحة الأولى + التأشيرة)"
+            },
+            "exit_reentry_visa": {
+              "label": "تأشيرة الخروج والعودة"
+            },
+            "salary": {
+              "label": "الراتب",
+              "placeholder": "0.00"
+            }
+          },
+          "signatures": {
+            "employer": "إضافة توقيع صاحب العمل",
+            "sponsor": "إضافة توقيع للكفيل"
+          },
+          "errors": {
+            "nationalIdImageRequired": "يرجى رفع صورة الهوية الوطنية",
+            "iqamaImageRequired": "يرجى رفع صورة هوية العامل",
+            "passportImageRequired": "يرجى رفع صورة الجواز",
+            "exitReentryVisaRequired": "يرجى رفع تأشيرة الخروج والعودة",
+            "fileTypeInvalid": "يرجى رفع ملف بصيغة png أو pdf فقط",
+            "salaryRequired": "يرجى إدخال الراتب",
+            "salaryInvalid": "يرجى إدخال راتب صحيح"
+          }
+        },
+        "summary": {
+          "title": "ملخص الطلب",
+          "serviceFee": "رسوم الخدمة",
+          "vat": "ضريبة القيمة المضافة (15%)",
+          "vatInfo": "تُحسب ضريبة القيمة المضافة بنسبة 15% من رسوم الخدمة",
+          "total": "الإجمالي الكلي"
+        },
+        "support": {
+          "team": "التواصل مع فريق هلا وسهلا",
+          "title": "لدعم وطلب المساعدة؟",
+          "cta": "ابدأ المحادثة"
         }
       }
     },

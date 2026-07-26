@@ -16,7 +16,7 @@ export default async function FormsLayout({
   setRequestLocale(locale)
 
   return (
-    <div className="flex min-h-screen flex-col bg-primary/10">
+    <div className="flex min-h-screen flex-col bg-background">
       <FormsHeader />
       <main className="flex-1">{children}</main>
       <FormsFooter />

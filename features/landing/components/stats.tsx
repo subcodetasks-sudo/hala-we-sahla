@@ -45,17 +45,18 @@ export default async function Stats() {
 
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
                 {STATS_ITEMS.map(({ key, icon: Icon, kind, value }) => (
+                    <div key={key} className="bg-linear-to-b from-primary to-transparent p-px   rounded-4xl">
                     <div
-                        key={key}
-                        className="flex flex-col items-center gap-6 rounded-4xl bg-background px-6 py-10 text-center border-t-2 border-primary/80"
+                        className="flex flex-col items-center gap-6 rounded-4xl bg-background px-6 py-10 text-center w-full"
                     >
                         <CustomIcon size={48} src={Icon as string} className="size-12 text-primary" aria-hidden="true" />
-                        <span className="text-3xl font-bold text-primary">
+                        <span className="font-clash text-3xl font-bold text-primary">
                             {formatStatValue(locale, kind, value)}
                         </span>
                         <p className="text-sm font-medium text-foreground/80">
                             {t(`items.${key}`)}
                         </p>
+                    </div>
                     </div>
                 ))}
             </div>

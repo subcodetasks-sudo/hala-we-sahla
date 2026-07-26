@@ -21,7 +21,7 @@ export default async function Faq() {
                     <p className="text-sm font-semibold text-accent">
                         {t("eyebrow")}
                     </p>
-                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">
+                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl ">
                         {t.rich("heading", {
                             primary: (chunks) => (
                                 <span className="mt-1 block text-primary">

@@ -15,13 +15,15 @@ const PAGE_TITLE_KEYS: Record<string, "renewal" | "trackOrders"> = {
 export default function FormsHeader() {
   const t = useTranslations("Forms.header")
   const pathname = usePathname()
-  const titleKey = PAGE_TITLE_KEYS[pathname]
+  const titleKey =
+    PAGE_TITLE_KEYS[pathname] ??
+    (pathname.startsWith("/renewal") ? "renewal" : undefined)
   const title = titleKey ? t(`pages.${titleKey}`) : t("pages.renewal")
 
   return (
-    <header className="sticky top-0 z-50 ">
+    <header className="sticky top-0 z-50 bg-background">
       <div className="container flex h-16 items-center justify-between gap-4 py-3 sm:h-20 sm:py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ">
           <Link
             href="/"
             className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-opacity hover:opacity-80 sm:size-11"
@@ -48,7 +50,7 @@ export default function FormsHeader() {
               alt={t("logoAlt")}
               width={120}
               height={40}
-              className="h-8 w-auto "
+              className="h-8 w-auto hidden md:block"
               priority
             />
           </Link>

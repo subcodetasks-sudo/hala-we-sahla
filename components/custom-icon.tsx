@@ -5,44 +5,87 @@ import { ReactSVG } from "react-svg";
 import { cn } from "@/lib/utils";
 
 type CustomIconProps = {
-    src: string;
-    size?: number;
-    className?: string;
+  src: string;
+  size?: number;
+  width?: number;
+  height?: number;
+  className?: string;
 };
 
-function injectSvgColors(svg: SVGSVGElement, size: number) {
-    svg.setAttribute("width", String(size));
-    svg.setAttribute("height", String(size));
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("focusable", "false");
+function uniquifySvgIds(svg: SVGSVGElement) {
+  const uid = `i${Math.random().toString(36).slice(2, 9)}`;
 
-    svg.querySelectorAll<SVGElement>("[fill]").forEach((el) => {
-        if (el.getAttribute("fill") !== "none") {
-            el.setAttribute("fill", "currentColor");
-        }
-    });
+  svg.querySelectorAll("[id]").forEach((el) => {
+    const oldId = el.getAttribute("id");
+    if (!oldId) return;
 
-    svg.querySelectorAll<SVGElement>("[stroke]").forEach((el) => {
-        if (el.getAttribute("stroke") !== "none") {
-            el.setAttribute("stroke", "currentColor");
-        }
+    const newId = `${oldId}-${uid}`;
+    el.setAttribute("id", newId);
+
+    svg.querySelectorAll(`[filter="url(#${oldId})"]`).forEach((node) => {
+      node.setAttribute("filter", `url(#${newId})`);
     });
+    svg.querySelectorAll(`[fill="url(#${oldId})"]`).forEach((node) => {
+      node.setAttribute("fill", `url(#${newId})`);
+    });
+    svg.querySelectorAll(`[stroke="url(#${oldId})"]`).forEach((node) => {
+      node.setAttribute("stroke", `url(#${newId})`);
+    });
+    svg.querySelectorAll(`[href="#${oldId}"]`).forEach((node) => {
+      node.setAttribute("href", `#${newId}`);
+    });
+    svg.querySelectorAll(`[xlink\\:href="#${oldId}"]`).forEach((node) => {
+      node.setAttribute("xlink:href", `#${newId}`);
+    });
+  });
+}
+
+function injectSvgColors(
+  svg: SVGSVGElement,
+  width: number,
+  height: number,
+) {
+  svg.setAttribute("width", String(width));
+  svg.setAttribute("height", String(height));
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+
+  uniquifySvgIds(svg);
+
+  svg.querySelectorAll<SVGElement>("[fill]").forEach((el) => {
+    if (el.getAttribute("fill") !== "none") {
+      el.setAttribute("fill", "currentColor");
+    }
+  });
+
+  svg.querySelectorAll<SVGElement>("[stroke]").forEach((el) => {
+    if (el.getAttribute("stroke") !== "none") {
+      el.setAttribute("stroke", "currentColor");
+    }
+  });
 }
 
 export default function CustomIcon({
-    src,
-    size = 24,
-    className,
+  src,
+  size = 24,
+  width,
+  height,
+  className,
 }: CustomIconProps) {
-    return (
-        <ReactSVG
-            src={src}
-            beforeInjection={(svg) => injectSvgColors(svg, size)}
-            wrapper="span"
-            className={cn(
-                "inline-flex shrink-0 items-center justify-center [&_svg]:block",
-                className
-            )}
-        />
-    );
+  const resolvedWidth = width ?? size;
+  const resolvedHeight = height ?? size;
+
+  return (
+    <ReactSVG
+      src={src}
+      beforeInjection={(svg) =>
+        injectSvgColors(svg, resolvedWidth, resolvedHeight)
+      }
+      wrapper="span"
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center [&_svg]:block",
+        className,
+      )}
+    />
+  );
 }

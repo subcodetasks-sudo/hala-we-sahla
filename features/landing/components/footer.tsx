@@ -39,7 +39,7 @@ function DotSeparator() {
     return (
         <span
             aria-hidden="true"
-            className="size-1 shrink-0 rounded-[1px] bg-foreground/25"
+            className="size-1 shrink-0 rounded-[1px] bg-white/10"
         />
     )
 }
@@ -57,9 +57,9 @@ function FooterLinkList({
                 <li key={key}>
                     <Link
                         href={href}
-                        className="flex items-center gap-1 text-sm transition-colors hover:text-foreground"
+                        className="flex items-center gap-1 text-sm transition-colors hover:text-white"
                     >
-                        <ChevronLeft className="size-3.5 shrink-0 text-accent ltr:rotate-180" />
+                        <ChevronLeft className="size-3.5 shrink-0 text-white ltr:rotate-180" />
                         {icon && (
                             <CustomIcon
                                 src={icon}
@@ -80,15 +80,15 @@ export default async function Footer() {
     const year = new Date().getFullYear()
 
     return (
-        <footer className="bg-footer">
-            <div className="border-b border-border/60 bg-white">
-                <div className="container flex flex-col items-center justify-between gap-4 py-4 text-sm text-foreground sm:flex-row sm:gap-6">
+        <footer className="bg-primary">
+            <div className="border-b border-border/10 container py-10 text-white">
+                <div className="container flex flex-col items-center justify-between gap-4 py-4 text-sm text-white sm:flex-row sm:gap-6">
                     <div className="flex items-center gap-3">
-                        <span className="font-bold text-foreground">
+                        <span className="font-bold text-white">
                             {t("social.follow")}
                         </span>
-                        <span aria-hidden="true" className="text-foreground/40">
-                            -
+                        <span aria-hidden="true" className=" w-6 h-px bg-white">
+                            
                         </span>
                         <div className="flex items-center gap-2">
                             {SOCIAL_LINKS.map(({ key, href, icon }) => (
@@ -96,7 +96,7 @@ export default async function Footer() {
                                     key={key}
                                     href={href}
                                     aria-label={t(`social.${key}`)}
-                                    className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90"
+                                    className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/30"
                                 >
                                     <CustomIcon src={icon} size={20} />
                                 </a>
@@ -106,11 +106,11 @@ export default async function Footer() {
 
                     <div
                         dir="ltr"
-                        className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:justify-start"
+                        className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:justify-start f"
                     >
                         <a
                             href={PHONE_HREF}
-                            className="flex items-center gap-1.5 transition-colors hover:text-primary"
+                            className="flex items-center gap-1.5 transition-colors hover:text-accent font-clash text-2xl"
                         >
                             {PHONE_NUMBER}
                             <Phone className="size-3.5 shrink-0" />
@@ -118,7 +118,7 @@ export default async function Footer() {
                         <DotSeparator />
                         <a
                             href={EMAIL_HREF}
-                            className="flex items-center gap-1.5 transition-colors hover:text-primary"
+                            className="flex items-center gap-1.5 transition-colors hover:text-accent font-clash text-2xl"
                         >
                             {EMAIL_DISPLAY}
                             <Mail className="size-3.5 shrink-0" />
@@ -129,21 +129,21 @@ export default async function Footer() {
                 </div>
             </div>
 
-            <div className="container md:py-20">
+            <div className="container md:py-20 text-white">
                 <div className="grid grid-cols-1 gap-10 px-4 py-10 sm:grid-cols-2 md:grid-cols-5">
-                    <div className="flex flex-col items-start gap-4 md:col-span-2">
+                    <div className="flex flex-col items-start gap-4 md:col-span-2 md:gap-6">
                         <Image
-                            src="/logo.svg"
+                            src="/images/logo-mono.png"
                             alt={t("logoAlt")}
                             width={141}
                             height={28}
-                            className="h-8 w-auto"
+                            className="h-16 w-auto"
                         />
-                        <p className="max-w-sm text-sm text-balance">
+                        <p className="max-w-sm  text-balance  leading-relaxed">
                             {t("description")}
                         </p>
                         <Button
-                            className="gap-1.5 h-12! text-base! rounded-full text-white"
+                            className="gap-1.5 h-12! text-base! rounded-full text-primary! bg-white!"
                             asChild
                         >
                             <Link href="/renewal">
@@ -159,7 +159,7 @@ export default async function Footer() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h3 className="text-sm font-semibold text-primary">
+                        <h3 className="text-sm font-semibold text-black">
                             {t("columns.importantLinks.title")}
                         </h3>
                         <FooterLinkList
@@ -169,7 +169,7 @@ export default async function Footer() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h3 className="text-sm font-semibold text-primary">
+                        <h3 className="text-sm font-semibold text-black">
                             {t("columns.quickLinks.title")}
                         </h3>
                         <FooterLinkList
@@ -179,7 +179,7 @@ export default async function Footer() {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h3 className="text-sm font-semibold text-primary">
+                        <h3 className="text-sm font-semibold text-black">
                             {t("columns.licenses.title")}
                         </h3>
                         <ul className="flex flex-col gap-3 text-sm">
@@ -191,12 +191,19 @@ export default async function Footer() {
                                 {t("columns.licenses.taxNumber")}: {TAX_NUMBER}
                             </li>
                         </ul>
+                        <Image
+                            src="/images/maroof.png"
+                            alt={t("logoAlt")}
+                            width={141}
+                            height={28}
+                            className=" w-1/2"
+                        />
                     </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/10" />
 
-                <div className="flex flex-col-reverse items-center justify-between gap-3 px-4 py-4 text-xs sm:flex-row">
+                <div className="flex flex-col-reverse items-center justify-between gap-3 px-4 py-4  sm:flex-row">
                     <p>{t("copyright", { year })}</p>
                     <div className="flex items-center gap-3">
                         {LEGAL_LINKS.map(({ key, href }, index) => (
@@ -204,7 +211,7 @@ export default async function Footer() {
                                 {index > 0 && <span aria-hidden="true">•</span>}
                                 <Link
                                     href={href}
-                                    className="transition-colors hover:text-foreground"
+                                    className="transition-colors hover:text-white"
                                 >
                                     {t(`legal.${key}`)}
                                 </Link>

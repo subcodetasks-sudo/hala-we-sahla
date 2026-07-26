@@ -398,6 +398,30 @@
       }
     }
   },
+  "Steps": {
+    "eyebrow": "Steps",
+    "heading": "Steps to renew your <primary>domestic worker contract</primary>",
+    "description": "A clear, organized journey from submitting your request to receiving the final approved contract.",
+    "cta": "Start renewal now",
+    "items": {
+      "upload": {
+        "label": "Step 1",
+        "imageAlt": "Upload the required documents to start reviewing the renewal request"
+      },
+      "verification": {
+        "label": "Step 2",
+        "imageAlt": "Verify data and officially approve the request"
+      },
+      "payment": {
+        "label": "Step 3",
+        "imageAlt": "Complete a secure payment to renew the contract"
+      },
+      "contract": {
+        "label": "Final step",
+        "imageAlt": "Receive and download the final approved contract"
+      }
+    }
+  },
   "Faq": {
     "eyebrow": "FAQs",
     "heading": "Questions <primary>that might come to mind</primary>",
@@ -465,6 +489,210 @@
             "title": "Documents",
             "description": "(National ID photo, worker residence ID photo, passport first page + visa photo, exit and re-entry visa…)"
           }
+        }
+      },
+      "wizard": {
+        "steps": {
+          "employer": "Employer details",
+          "worker": "Worker details (sponsored)",
+          "documents": "Upload documents",
+          "review": "Review and submit"
+        },
+        "stepNumber": "Step {number}",
+        "stepPlaceholder": "This step content is coming soon",
+        "next": "Next",
+        "previous": "Previous",
+        "submitRenewal": "Submit renewal request",
+        "hijri": {
+          "title": "Select Hijri date",
+          "placeholder": "jj/mm/aaaa",
+          "day": "Day",
+          "month": "Month",
+          "year": "Year",
+          "confirm": "Confirm",
+          "months": {
+            "1": "Muharram",
+            "2": "Safar",
+            "3": "Rabiʻ I",
+            "4": "Rabiʻ II",
+            "5": "Jumada I",
+            "6": "Jumada II",
+            "7": "Rajab",
+            "8": "Shaʻban",
+            "9": "Ramadan",
+            "10": "Shawwal",
+            "11": "Dhu al-Qaʻdah",
+            "12": "Dhu al-Hijjah"
+          }
+        },
+        "employer": {
+          "fields": {
+            "national_id": {
+              "label": "National ID number",
+              "placeholder": "Example: 1234567890"
+            },
+            "phone": {
+              "label": "Contact number (sponsor mobile)",
+              "placeholder": "05XXXXXXXX"
+            },
+            "employer_name_ar": {
+              "label": "Employer name in Arabic (sponsor)",
+              "placeholder": "Enter the full Arabic name here..."
+            },
+            "employer_name_en": {
+              "label": "Employer name in English (sponsor)",
+              "placeholder": "Enter the full English name here..."
+            },
+            "city_id": {
+              "label": "City",
+              "placeholder": "Select the city here..."
+            },
+            "passport_issue_place_id": {
+              "label": "Place of issue",
+              "placeholder": "Select the place of issue here..."
+            }
+          },
+          "options": {
+            "cities": {
+              "riyadh": "Riyadh",
+              "jeddah": "Jeddah",
+              "dammam": "Dammam",
+              "makkah": "Makkah",
+              "madinah": "Madinah"
+            },
+            "issuePlaces": {
+              "riyadh": "Riyadh",
+              "jeddah": "Jeddah",
+              "dammam": "Dammam",
+              "abroad": "Outside the Kingdom"
+            }
+          },
+          "errors": {
+            "employerNameArRequired": "Please enter the employer name in Arabic",
+            "employerNameArInvalid": "Please enter the name in Arabic only",
+            "employerNameEnRequired": "Please enter the employer name in English",
+            "employerNameEnInvalid": "Please enter the name in English only",
+            "nationalIdInvalid": "Please enter a valid 10-digit national ID",
+            "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
+            "cityRequired": "Please select a city"
+          }
+        },
+        "worker": {
+          "fields": {
+            "worker_name_ar": {
+              "label": "Worker name in Arabic (sponsored)",
+              "placeholder": "Enter the full Arabic name here..."
+            },
+            "worker_name_en": {
+              "label": "Worker name in English (sponsored)",
+              "placeholder": "Enter the full English name here..."
+            },
+            "worker_phone": {
+              "label": "Contact number (sponsored mobile)",
+              "placeholder": "05XXXXXXXX"
+            },
+            "birth_date": {
+              "label": "Date of birth",
+              "placeholder": "jj/mm/aaaa"
+            },
+            "philippines_address": {
+              "label": "Address in the Philippines",
+              "placeholder": "Enter the address in the Philippines here..."
+            },
+            "passport_issue_place_id": {
+              "label": "Passport place of issue in English",
+              "placeholder": "Select the place of issue here..."
+            },
+            "passport_number": {
+              "label": "Passport number in Arabic",
+              "placeholder": "Enter the passport number here..."
+            },
+            "passport_issue_date": {
+              "label": "Passport issue date",
+              "placeholder": "jj/mm/aaaa"
+            },
+            "passport_expiry_date": {
+              "label": "Passport expiry date",
+              "placeholder": "jj/mm/aaaa"
+            }
+          },
+          "options": {
+            "issuePlaces": {
+              "riyadh": "Riyadh",
+              "jeddah": "Jeddah",
+              "dammam": "Dammam",
+              "abroad": "Outside the Kingdom"
+            }
+          },
+          "errors": {
+            "workerNameArRequired": "Please enter the worker name in Arabic",
+            "workerNameArInvalid": "Please enter the name in Arabic only",
+            "workerNameEnRequired": "Please enter the worker name in English",
+            "workerNameEnInvalid": "Please enter the name in English only",
+            "workerPhoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
+            "birthDateRequired": "Please select the date of birth",
+            "birthDateInvalid": "Please select a valid Hijri date of birth",
+            "philippinesAddressRequired": "Please enter the address in the Philippines",
+            "passportIssuePlaceRequired": "Please select the passport place of issue",
+            "passportNumberRequired": "Please enter the passport number",
+            "passportNumberInvalid": "Please enter the passport number in Arabic only",
+            "passportIssueDateRequired": "Please select the passport issue date",
+            "passportIssueDateInvalid": "Please select a valid Hijri issue date",
+            "passportExpiryDateRequired": "Please select the passport expiry date",
+            "passportExpiryDateInvalid": "Please select a valid Hijri expiry date"
+          }
+        },
+        "documents": {
+          "chooseFileClick": "Click here",
+          "chooseFileRest": "to choose the file",
+          "acceptedTypes": "\" png - pdf \"",
+          "preview": "Preview file",
+          "close": "Close",
+          "sampleTitle": "Sample of the required passport",
+          "sampleHint": "Upload a clear photo of the passport first page with the visa.",
+          "fields": {
+            "national_id_image": {
+              "label": "National ID photo"
+            },
+            "iqama_image": {
+              "label": "Worker ID (Iqama) photo"
+            },
+            "passport_image": {
+              "label": "Passport photo (first page + visa)"
+            },
+            "exit_reentry_visa": {
+              "label": "Exit and re-entry visa"
+            },
+            "salary": {
+              "label": "Salary",
+              "placeholder": "0.00"
+            }
+          },
+          "signatures": {
+            "employer": "Add employer signature",
+            "sponsor": "Add sponsor signature"
+          },
+          "errors": {
+            "nationalIdImageRequired": "Please upload the national ID photo",
+            "iqamaImageRequired": "Please upload the worker ID photo",
+            "passportImageRequired": "Please upload the passport photo",
+            "exitReentryVisaRequired": "Please upload the exit and re-entry visa",
+            "fileTypeInvalid": "Please upload a png or pdf file only",
+            "salaryRequired": "Please enter the salary",
+            "salaryInvalid": "Please enter a valid salary"
+          }
+        },
+        "summary": {
+          "title": "Order summary",
+          "serviceFee": "Service fee",
+          "vat": "VAT (15%)",
+          "vatInfo": "VAT is calculated at 15% of the service fee",
+          "total": "Grand total"
+        },
+        "support": {
+          "team": "Contact Hala Wa Sahla team",
+          "title": "Need support or help?",
+          "cta": "Start conversation"
         }
       }
     },

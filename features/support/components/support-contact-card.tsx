@@ -28,7 +28,7 @@ export default function SupportContactCard({
   return (
     <article
       className={cn(
-        "flex h-full flex-col gap-4 items-center rounded-4xl border-t-primary/80 border-t-2 bg-primary/10 px-6 py-8 text-center sm:px-8 sm:py-10",
+        "flex h-full flex-col gap-4 items-center rounded-4xl  bg-background px-6 py-8 text-center sm:px-8 sm:py-10",
         className,
       )}
     >

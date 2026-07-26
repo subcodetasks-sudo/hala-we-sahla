@@ -33,7 +33,9 @@ export default async function Pricing() {
                 </p>
             </div>
 
-            <Card className="mx-auto mt-10 max-w-sm p-6 bg-background rounded-4xl border-t-primary/80 border-t-2">
+            <div className="bg-linear-to-b from-primary to-transparent p-px max-w-sm  mx-auto rounded-4xl mt-10 ">
+
+            <Card className="  p-6 bg-background  rounded-4xl">
                 <div className="flex flex-col items-center gap-6 px-6 pt-8 pb-6 text-center">
                     <div className=" rounded-full bg-white shadow-sm size-12 flex items-center justify-center">
                         <CustomIcon size={24} src="/icons/magicpen.svg" className="size-6 text-primary" aria-hidden="true" />
@@ -44,7 +46,7 @@ export default async function Pricing() {
                     <p className="text-sm text-muted-foreground">
                         {t("planDescription")}
                     </p>
-                    <p className="mt-4 text-4xl font-bold text-primary flex items-center gap-2">
+                    <p className="mt-4 flex items-center gap-2 font-clash text-4xl font-bold text-primary">
                         500 <SaudiRiyal className="size-6" />
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -84,6 +86,7 @@ export default async function Pricing() {
                 </Button>
                 {/* </CardFooter> */}
             </Card>
+            </div>
         </section>
     )
 }
