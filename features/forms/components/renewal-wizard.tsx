@@ -432,7 +432,7 @@ export default function RenewalWizard() {
           </p>
 
           <Button
-            className="mx-auto h-12 w-fit gap-2.5 rounded-full bg-green-600/80 text-base text-white hover:bg-green-600/90!"
+            className="mx-auto h-12 w-fit gap-2.5 rounded-full bg-[#0DB38B] text-base text-white hover:bg-[#0DB38B]/80!"
             asChild
           >
             <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer">

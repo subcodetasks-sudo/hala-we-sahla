@@ -51,7 +51,7 @@ useEffect(() => {
         <div className="sticky top-0 z-50 bg-white">
             <div
                 className={cn(
-                    "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+                    "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out",
                     scrolled ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100",
                 )}
             >
