@@ -1,7 +1,15 @@
+export type SignatureMode = "upload" | "draw"
+
 export type SignatureValue = {
-  type: "upload" | "draw"
+  type: SignatureMode
   file?: File
   image: string
 }
 
-export type SignatureMode = "upload" | "draw"
+export const SIGNATURE_ACCEPT = "image/png,image/jpeg,image/jpg"
+
+export const SIGNATURE_ACCEPT_MIME = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+] as const
