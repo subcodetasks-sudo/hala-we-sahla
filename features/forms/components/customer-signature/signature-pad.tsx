@@ -31,7 +31,7 @@ export default function SignaturePad({
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      <div className="relative h-48 overflow-hidden rounded-2xl border border-dashed border-border bg-[#f7fafb] sm:h-56">
+      <div className="relative h-40 overflow-hidden rounded-2xl border border-dashed border-border bg-[#f7fafb] sm:h-56">
         {mounted ? (
           <SignatureCanvas
             ref={pad.canvasRef}

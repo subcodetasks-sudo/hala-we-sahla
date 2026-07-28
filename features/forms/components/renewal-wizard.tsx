@@ -412,19 +412,19 @@ export default function RenewalWizard() {
                 ) : null}
               </div>
 
-              <div className="mt-6 flex items-center justify-between gap-3 border-t border-muted-foreground/10 pt-6">
+              <div className="mt-6 flex items-center gap-2 border-t border-muted-foreground/10 pt-6 sm:justify-between sm:gap-3">
                 <Button
                   type="button"
                   variant="outline"
                   className={cn(
-                    "h-11 gap-1.5 rounded-full border-border/70 bg-background/40 px-8 text-base text-muted-foreground shadow-none hover:bg-muted/60 hover:text-muted-foreground",
+                    "h-11 shrink-0 gap-1.5 rounded-full border-border/70 bg-background/40 px-3 text-sm text-muted-foreground shadow-none hover:bg-muted/60 hover:text-muted-foreground sm:px-8 sm:text-base",
                     step === 0 ? "hidden" : "",
                   )}
                   onClick={() => setStep((current) => Math.max(0, current - 1))}
                   disabled={step === 0}
                 >
                   <ChevronRight
-                    className="size-4 ltr:rotate-180"
+                    className="size-4 shrink-0 ltr:rotate-180"
                     aria-hidden="true"
                   />
                   {t("previous")}
@@ -432,13 +432,15 @@ export default function RenewalWizard() {
 
                 <Button
                   type="button"
-                  className="ms-auto h-11 gap-1.5 rounded-full px-8 text-base text-white"
+                  className="ms-auto h-11 min-w-0 flex-1 gap-1.5 rounded-full px-3 text-sm text-white sm:flex-none sm:px-8 sm:text-base"
                   onClick={handleNext}
                   disabled={!draftReady}
                 >
-                  {isReviewStep ? t("submitRenewal") : t("next")}
+                  <span className="min-w-0 truncate">
+                    {isReviewStep ? t("submitRenewal") : t("next")}
+                  </span>
                   <ArrowLeft
-                    className="size-4 ltr:rotate-180"
+                    className="size-4 shrink-0 ltr:rotate-180"
                     aria-hidden="true"
                   />
                 </Button>

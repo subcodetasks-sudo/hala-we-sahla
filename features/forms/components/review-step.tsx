@@ -144,11 +144,13 @@ function DocumentPreviewButton({
     <button
       type="button"
       onClick={onPreview}
-      className="inline-flex h-10 min-w-fit flex-1 items-center justify-between gap-2 rounded-full bg-[#e8f4f6] px-4 text-xs font-semibold text-black transition-colors hover:bg-[#dceef1] sm:text-sm"
+      className="inline-flex h-10 min-w-[min(100%,11.5rem)] flex-1 items-center justify-between gap-2 rounded-full bg-[#e8f4f6] px-3 text-xs font-semibold text-black transition-colors hover:bg-[#dceef1] sm:px-4 sm:text-sm"
     >
-      <span className="flex items-center gap-1.5 whitespace-nowrap text-start">
-        <span aria-hidden="true">&#10003;</span>
-        <span>
+      <span className="flex min-w-0 items-center gap-1.5 text-start">
+        <span aria-hidden="true" className="shrink-0">
+          &#10003;
+        </span>
+        <span className="truncate">
           {label}
           {showExtension ? extension : ""}
         </span>

@@ -79,7 +79,7 @@ export default function CustomerSignature({
   const title = label ?? t("title")
 
   const previewSrc = useMemo(() => value?.image ?? null, [value])
-  const buttonLabel = value?.file?.name || triggerLabel
+  const buttonLabel = triggerLabel
 
   useEffect(() => {
     if (!open) return
@@ -177,13 +177,13 @@ export default function CustomerSignature({
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {variant === "button" ? (
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-invalid={invalid || undefined}
             className={cn(
-              "group/button inline-flex h-12 min-w-0 flex-1 shrink-0 items-center justify-center gap-2 rounded-full border border-transparent bg-[#003143] px-2.5 text-base font-medium whitespace-nowrap text-white transition-all outline-none select-none hover:bg-[#003143]/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+              "group/button inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-transparent bg-[#003143] px-3 text-sm font-medium text-white transition-all outline-none select-none hover:bg-[#003143]/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 sm:h-12 sm:px-2.5 sm:text-base",
               invalid && "ring-3 ring-destructive/20",
               value && "bg-primary hover:bg-primary/90",
             )}
@@ -191,15 +191,15 @@ export default function CustomerSignature({
             <CustomIcon
               src="/forms/step-3/brush.svg"
               size={18}
-              className="size-4.5 shrink-0 text-white"
+              className="size-4 shrink-0 text-white sm:size-4.5"
             />
-            <span className="truncate">{buttonLabel}</span>
+            <span className="min-w-0 truncate">{buttonLabel}</span>
           </button>
 
           {value && previewSrc ? (
             <button
               type="button"
-              className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/15"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/15 sm:size-12"
               aria-label={tDocuments("preview")}
               onClick={() => setPreviewOpen(true)}
             >
@@ -254,10 +254,10 @@ export default function CustomerSignature({
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
           showCloseButton={false}
-          className="flex max-h-[90vh] w-full flex-col gap-4 overflow-hidden rounded-2xl p-5 sm:max-w-lg"
+          className="flex max-h-[min(90vh,720px)] w-[calc(100%-1.5rem)] flex-col gap-3 overflow-y-auto rounded-2xl p-4 sm:max-w-lg sm:gap-4 sm:p-5"
         >
           <DialogHeader className="gap-1 space-y-0 text-start">
-            <DialogTitle className="text-base font-bold text-foreground">
+            <DialogTitle className="text-base font-bold wrap-break-word text-foreground sm:text-lg">
               {title}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
@@ -271,32 +271,32 @@ export default function CustomerSignature({
               setMode(next as SignatureMode)
               setError(null)
             }}
-            className="min-h-0 flex-1 gap-4"
+            className="min-h-0 flex-1 gap-3 sm:gap-4"
           >
-            <TabsList className="grid h-12! w-full grid-cols-2 gap-1 rounded-full bg-[#e8f0f2] p-1.5 group-data-horizontal/tabs:h-12!">
+            <TabsList className="grid h-11! w-full grid-cols-2 gap-1 rounded-full bg-[#e8f0f2] p-1 sm:h-12! sm:p-1.5 group-data-horizontal/tabs:h-11! sm:group-data-horizontal/tabs:h-12!">
               <TabsTrigger
                 value="draw"
                 className={cn(
-                  "h-full gap-1.5 rounded-full px-3 text-sm font-semibold text-muted-foreground shadow-none after:hidden",
+                  "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
                   "hover:text-foreground",
                   "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
                   "data-active:bg-primary data-active:text-white data-active:shadow-sm",
                 )}
               >
-                <PenLine className="size-4" aria-hidden="true" />
-                {t("tabs.draw")}
+                <PenLine className="size-3.5 sm:size-4" aria-hidden="true" />
+                <span className="truncate">{t("tabs.draw")}</span>
               </TabsTrigger>
               <TabsTrigger
                 value="upload"
                 className={cn(
-                  "h-full gap-1.5 rounded-full px-3 text-sm font-semibold text-muted-foreground shadow-none after:hidden",
+                  "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
                   "hover:text-foreground",
                   "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
                   "data-active:bg-primary data-active:text-white data-active:shadow-sm",
                 )}
               >
-                <Upload className="size-4" aria-hidden="true" />
-                {t("tabs.upload")}
+                <Upload className="size-3.5 sm:size-4" aria-hidden="true" />
+                <span className="truncate">{t("tabs.upload")}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -380,11 +380,11 @@ export default function CustomerSignature({
             </p>
           ) : null}
 
-          <DialogFooter className="gap-2 sm:justify-between">
+          <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
             <Button
               type="button"
               variant="outline"
-              className="h-11 flex-1 rounded-full sm:flex-none sm:px-8"
+              className="h-11 w-full rounded-full sm:w-auto sm:px-8"
               onClick={() => handleOpenChange(false)}
               disabled={saving}
             >
@@ -392,7 +392,7 @@ export default function CustomerSignature({
             </Button>
             <Button
               type="button"
-              className="h-11 flex-1 rounded-full text-white sm:flex-none sm:px-8"
+              className="h-11 w-full rounded-full text-white sm:w-auto sm:px-8"
               onClick={() => void handleSave()}
               disabled={saving}
             >

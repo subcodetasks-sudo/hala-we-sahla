@@ -160,13 +160,17 @@ export default function DocumentsStepForm({
               name={item.name}
               control={control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid || undefined}>
+                <Field
+                  data-invalid={fieldState.invalid || undefined}
+                  className="min-w-0"
+                >
                   <SignatureUploadButton
                     id={item.name}
                     label={t(`signatures.${item.labelKey}`)}
                     value={field.value instanceof File ? field.value : null}
                     onChange={field.onChange}
                     invalid={fieldState.invalid}
+                    className="min-w-0"
                   />
                   {fieldState.error ? (
                     <FieldError>{fieldState.error.message}</FieldError>
