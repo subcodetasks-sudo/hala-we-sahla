@@ -1,14 +1,14 @@
 import { z } from "zod"
 
 import {
-  compareHijriDateValues,
-  isAtLeastHijriAge,
-} from "@/features/forms/lib/hijri-date"
+  compareGregorianDateValues,
+  isAtLeastGregorianAge,
+} from "@/features/forms/lib/gregorian-date"
 import {
   ARABIC_NAME_PATTERN,
-  ARABIC_PASSPORT_PATTERN,
+  GREGORIAN_DATE_PATTERN,
   ENGLISH_NAME_PATTERN,
-  HIJRI_DATE_PATTERN,
+  PASSPORT_NUMBER_PATTERN,
   SAUDI_PHONE_PATTERN,
 } from "@/features/forms/lib/input-filters"
 
@@ -55,7 +55,7 @@ export function createWorkerStepSchema(messages: WorkerStepMessages) {
       birth_date: z
         .string()
         .min(1, { message: messages.birthDateRequired })
-        .regex(HIJRI_DATE_PATTERN, { message: messages.birthDateInvalid }),
+        .regex(GREGORIAN_DATE_PATTERN, { message: messages.birthDateInvalid }),
       philippines_address: z
         .string()
         .trim()
@@ -67,26 +67,26 @@ export function createWorkerStepSchema(messages: WorkerStepMessages) {
         .string()
         .trim()
         .min(5, { message: messages.passportNumberRequired })
-        .regex(ARABIC_PASSPORT_PATTERN, {
+        .regex(PASSPORT_NUMBER_PATTERN, {
           message: messages.passportNumberInvalid,
         }),
       passport_issue_date: z
         .string()
         .min(1, { message: messages.passportIssueDateRequired })
-        .regex(HIJRI_DATE_PATTERN, {
+        .regex(GREGORIAN_DATE_PATTERN, {
           message: messages.passportIssueDateInvalid,
         }),
       passport_expiry_date: z
         .string()
         .min(1, { message: messages.passportExpiryDateRequired })
-        .regex(HIJRI_DATE_PATTERN, {
+        .regex(GREGORIAN_DATE_PATTERN, {
           message: messages.passportExpiryDateInvalid,
         }),
     })
     .superRefine((values, ctx) => {
       if (
-        HIJRI_DATE_PATTERN.test(values.birth_date) &&
-        !isAtLeastHijriAge(values.birth_date, MIN_WORKER_AGE)
+        GREGORIAN_DATE_PATTERN.test(values.birth_date) &&
+        !isAtLeastGregorianAge(values.birth_date, MIN_WORKER_AGE)
       ) {
         ctx.addIssue({
           code: "custom",
@@ -96,10 +96,10 @@ export function createWorkerStepSchema(messages: WorkerStepMessages) {
       }
 
       if (
-        HIJRI_DATE_PATTERN.test(values.birth_date) &&
-        HIJRI_DATE_PATTERN.test(values.passport_issue_date)
+        GREGORIAN_DATE_PATTERN.test(values.birth_date) &&
+        GREGORIAN_DATE_PATTERN.test(values.passport_issue_date)
       ) {
-        const issueVsBirth = compareHijriDateValues(
+        const issueVsBirth = compareGregorianDateValues(
           values.passport_issue_date,
           values.birth_date,
         )
@@ -113,10 +113,10 @@ export function createWorkerStepSchema(messages: WorkerStepMessages) {
       }
 
       if (
-        HIJRI_DATE_PATTERN.test(values.passport_issue_date) &&
-        HIJRI_DATE_PATTERN.test(values.passport_expiry_date)
+        GREGORIAN_DATE_PATTERN.test(values.passport_issue_date) &&
+        GREGORIAN_DATE_PATTERN.test(values.passport_expiry_date)
       ) {
-        const expiryVsIssue = compareHijriDateValues(
+        const expiryVsIssue = compareGregorianDateValues(
           values.passport_expiry_date,
           values.passport_issue_date,
         )

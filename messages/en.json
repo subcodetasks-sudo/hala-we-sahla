@@ -484,11 +484,11 @@
           },
           "worker": {
             "title": "Worker details",
-            "description": "(Worker name, contact number, passport number…)"
+            "description": "( Worker name, contact number, passport number, date of birth, Philippines address, passport place of issue, issue date, expiry date )"
           },
           "documents": {
             "title": "Documents",
-            "description": "(National ID photo, worker residence ID photo, passport first page + visa photo, exit and re-entry visa…)"
+            "description": "( National ID photo, worker residence ID photo, passport first page + visa photo, exit and re-entry visa, employer signature, worker signature, salary )"
           }
         }
       },
@@ -631,7 +631,7 @@
             },
             "birth_date": {
               "label": "Date of birth",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             },
             "philippines_address": {
               "label": "Address in the Philippines",
@@ -642,16 +642,16 @@
               "placeholder": "Select the place of issue here..."
             },
             "passport_number": {
-              "label": "Passport number in Arabic",
-              "placeholder": "Enter the passport number here..."
+              "label": "Passport number",
+              "placeholder": "Enter the passport number here"
             },
             "passport_issue_date": {
               "label": "Passport issue date",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             },
             "passport_expiry_date": {
               "label": "Passport expiry date",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             }
           },
           "options": {
@@ -669,17 +669,17 @@
             "workerNameEnInvalid": "Please enter the name in English only",
             "workerPhoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
             "birthDateRequired": "Please select the date of birth",
-            "birthDateInvalid": "Please select a valid Hijri date of birth",
+            "birthDateInvalid": "Please select a valid Gregorian date of birth",
             "birthDateMinAge": "The worker must be at least 18 years old",
             "philippinesAddressRequired": "Please enter the address in the Philippines",
             "passportIssuePlaceRequired": "Please select the passport place of issue",
             "passportNumberRequired": "Please enter the passport number",
-            "passportNumberInvalid": "Please enter the passport number in Arabic only",
+            "passportNumberInvalid": "Please enter a valid passport number using digits only",
             "passportIssueDateRequired": "Please select the passport issue date",
-            "passportIssueDateInvalid": "Please select a valid Hijri issue date",
+            "passportIssueDateInvalid": "Please select a valid Gregorian issue date",
             "passportIssueDateAfterBirth": "Passport issue date must be after the date of birth",
             "passportExpiryDateRequired": "Please select the passport expiry date",
-            "passportExpiryDateInvalid": "Please select a valid Hijri expiry date",
+            "passportExpiryDateInvalid": "Please select a valid Gregorian expiry date",
             "passportExpiryDateAfterIssue": "Passport expiry date must be after the issue date"
           }
         },
@@ -713,6 +713,34 @@
             "employer": "Add employer signature",
             "worker": "Add worker signature"
           },
+          "signature": {
+            "title": "Customer signature",
+            "emptyLabel": "Click to add customer signature",
+            "emptyHint": "Upload an image or draw your signature",
+            "description": "Choose to upload a signature image or draw it directly.",
+            "edit": "Edit",
+            "tabs": {
+              "draw": "Draw signature",
+              "upload": "Upload image"
+            },
+            "padHint": "Draw your signature here",
+            "clear": "Clear",
+            "undo": "Undo",
+            "chooseImage": "Choose signature image",
+            "acceptedTypes": "PNG, JPG, or JPEG",
+            "replace": "Replace",
+            "remove": "Remove",
+            "cancel": "Cancel",
+            "save": "Save signature",
+            "saving": "Saving...",
+            "errors": {
+              "invalidType": "Please upload a png or jpg image only",
+              "uploadFailed": "Could not read the image. Please try again",
+              "uploadRequired": "Please upload a signature image first",
+              "drawRequired": "Please draw a signature first",
+              "saveFailed": "Could not save the signature. Please try again"
+            }
+          },
           "errors": {
             "nationalIdImageRequired": "Please upload the national ID photo",
             "iqamaImageRequired": "Please upload the worker ID photo",
@@ -732,6 +760,7 @@
           "showDetails": "Show order details",
           "hideDetails": "Hide order details",
           "serviceFee": "Service fee",
+          "serviceFeeInfo": "The service fee is shown clearly before payment and is charged when you submit the request",
           "vat": "VAT (15%)",
           "vatInfo": "VAT is calculated at 15% of the service fee",
           "total": "Grand total"
@@ -740,6 +769,19 @@
           "team": "Contact Hala Wa Sahla team",
           "title": "Need support or help?",
           "cta": "Start conversation"
+        },
+        "success": {
+          "title": "Your request has been received successfully!",
+          "subtitle": "Your request has been received successfully. Your request number is",
+          "statusLabel": "Request status:",
+          "statusValue": "Request received",
+          "requestNumberLabel": "Request number",
+          "copyNumber": "Copy number",
+          "copied": "Copied",
+          "smsHint": "An SMS will be sent to the registered mobile number with the request number and confirmation of receipt.",
+          "followUp": "Your request has been received. We will contact you as soon as possible.",
+          "goHome": "Go to home page",
+          "trackOrder": "Track your request"
         }
       }
     },

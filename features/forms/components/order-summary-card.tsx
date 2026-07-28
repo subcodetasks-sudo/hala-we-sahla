@@ -62,7 +62,16 @@ export default function OrderSummaryCard({
           >
             <div className="pt-4">
               <div className="flex items-center justify-between gap-3 border-t border-border pt-4 font-semibold">
-                <span className="text-muted-foreground">{t("serviceFee")}</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  {t("serviceFee")}
+                  <span title={t("serviceFeeInfo")} className="inline-flex">
+                    <Info
+                      className="size-3.5 shrink-0 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                    <span className="sr-only">{t("serviceFeeInfo")}</span>
+                  </span>
+                </span>
                 <span className="flex items-center gap-1 font-clash text-lg text-muted-foreground">
                   {formatNumber(serviceFee, locale)}
                   <SaudiRiyal className="size-3.5" aria-hidden="true" />

@@ -25,12 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import HijriDateField from "@/features/forms/components/hijri-date-field"
+import GregorianDateField from "@/features/forms/components/gregorian-date-field"
 import { PASSPORT_ISSUE_PLACE_OPTIONS } from "@/features/forms/constants/employer-options"
 import {
   keepArabicNameInput,
-  keepArabicPassportInput,
   keepEnglishNameInput,
+  keepPassportNumberInput,
   keepSaudiPhoneInput,
 } from "@/features/forms/lib/input-filters"
 import type { WorkerStepValues } from "@/features/forms/schemas/worker-step"
@@ -211,7 +211,7 @@ export default function WorkerStepForm({
                 <MutedParensText text={t("fields.birth_date.label")} />
                 <span className="text-accent">*</span>
               </FieldLabel>
-              <HijriDateField
+              <GregorianDateField
                 id="birth_date"
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -343,14 +343,16 @@ export default function WorkerStepForm({
                 <InputGroupInput
                   {...field}
                   id="passport_number"
+                  type="text"
+                  inputMode="numeric"
                   value={field.value ?? ""}
                   onChange={(event) =>
-                    field.onChange(keepArabicPassportInput(event.target.value))
+                    field.onChange(keepPassportNumberInput(event.target.value))
                   }
                   placeholder={t("fields.passport_number.placeholder")}
                   aria-invalid={fieldState.invalid}
                   className="pe-4"
-                  lang="ar"
+                  lang="en"
                 />
               </InputGroup>
               {fieldState.error ? (
@@ -369,7 +371,7 @@ export default function WorkerStepForm({
                 <MutedParensText text={t("fields.passport_issue_date.label")} />
                 <span className="text-accent">*</span>
               </FieldLabel>
-              <HijriDateField
+              <GregorianDateField
                 id="passport_issue_date"
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -393,7 +395,7 @@ export default function WorkerStepForm({
                 />
                 <span className="text-accent">*</span>
               </FieldLabel>
-              <HijriDateField
+              <GregorianDateField
                 id="passport_expiry_date"
                 value={field.value ?? ""}
                 onChange={field.onChange}

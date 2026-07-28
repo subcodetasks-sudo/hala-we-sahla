@@ -16,7 +16,7 @@ export default async function RenewalPage() {
         ]}
       />
 
-      <div className="mt-8 pb-10 sm:mt-10 sm:pb-16">
+      <div className="mt-5 pb-8 sm:mt-8 sm:pb-12 md:mt-10 md:pb-16">
         <RenewalPrerequisitesCard />
       </div>
     </div>

@@ -484,11 +484,11 @@
           },
           "worker": {
             "title": "بيانات العامل",
-            "description": "( اسم العامل، رقم التواصل، رقم جواز السفر .. )"
+            "description": "( اسم العامل، رقم التواصل، رقم جواز السفر، تاريخ الميلاد، العنوان في الفلبين، مكان إصدار الجواز، تاريخ الإصدار، تاريخ الانتهاء )"
           },
           "documents": {
             "title": "المستندات",
-            "description": "( صورة الهوية الوطنية، صورة هوية العامل الاقامة، صورة الجواز الصفحة الأولى + التأشيرة، تأشيرة الخروج والعودة .. )"
+            "description": "( صورة الهوية الوطنية، صورة هوية العامل الاقامة، صورة الجواز الصفحة الأولى + التأشيرة، تأشيرة الخروج والعودة، توقيع صاحب العمل، توقيع العامل، الراتب )"
           }
         }
       },
@@ -631,7 +631,7 @@
             },
             "birth_date": {
               "label": "تاريخ الميلاد",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             },
             "philippines_address": {
               "label": "العنوان في الفلبين",
@@ -642,16 +642,16 @@
               "placeholder": "اختر مكان الإصدار هنا ..."
             },
             "passport_number": {
-              "label": "رقم جواز السفر بالعربي",
-              "placeholder": "أدخل رقم جواز السفر هنا ..."
+              "label": "رقم جواز السفر",
+              "placeholder": "أدخل رقم جواز السفر هنا"
             },
             "passport_issue_date": {
               "label": "تاريخ اصدار الجواز",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             },
             "passport_expiry_date": {
               "label": "تاريخ انتهاء الجواز",
-              "placeholder": "jj/mm/aaaa"
+              "placeholder": "yyyy-mm-dd"
             }
           },
           "options": {
@@ -669,17 +669,17 @@
             "workerNameEnInvalid": "يرجى كتابة الاسم بالإنجليزية فقط",
             "workerPhoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05",
             "birthDateRequired": "يرجى اختيار تاريخ الميلاد",
-            "birthDateInvalid": "يرجى اختيار تاريخ ميلاد هجري صحيح",
+            "birthDateInvalid": "يرجى اختيار تاريخ ميلاد ميلادي صحيح",
             "birthDateMinAge": "يجب أن يكون عمر العامل 18 سنة على الأقل",
             "philippinesAddressRequired": "يرجى إدخال العنوان في الفلبين",
             "passportIssuePlaceRequired": "يرجى اختيار مكان إصدار الجواز",
             "passportNumberRequired": "يرجى إدخال رقم جواز السفر",
-            "passportNumberInvalid": "يرجى كتابة رقم الجواز بالعربية فقط",
+            "passportNumberInvalid": "يرجى إدخال رقم جواز سفر صحيح بالأرقام فقط",
             "passportIssueDateRequired": "يرجى اختيار تاريخ إصدار الجواز",
-            "passportIssueDateInvalid": "يرجى اختيار تاريخ إصدار هجري صحيح",
+            "passportIssueDateInvalid": "يرجى اختيار تاريخ إصدار ميلادي صحيح",
             "passportIssueDateAfterBirth": "يجب أن يكون تاريخ إصدار الجواز بعد تاريخ الميلاد",
             "passportExpiryDateRequired": "يرجى اختيار تاريخ انتهاء الجواز",
-            "passportExpiryDateInvalid": "يرجى اختيار تاريخ انتهاء هجري صحيح",
+            "passportExpiryDateInvalid": "يرجى اختيار تاريخ انتهاء ميلادي صحيح",
             "passportExpiryDateAfterIssue": "يجب أن يكون تاريخ انتهاء الجواز بعد تاريخ الإصدار"
           }
         },
@@ -713,6 +713,34 @@
             "employer": "إضافة توقيع صاحب العمل",
             "worker": "إضــافة توقيع العامل"
           },
+          "signature": {
+            "title": "توقيع العميل",
+            "emptyLabel": "اضغط لإضافة التوقيع",
+            "emptyHint": "رفع صورة أو رسم التوقيع",
+            "description": "اختر رفع صورة التوقيع أو رسمه مباشرة.",
+            "edit": "تعديل",
+            "tabs": {
+              "draw": "رسم التوقيع",
+              "upload": "رفع صورة"
+            },
+            "padHint": "ارسم توقيعك هنا",
+            "clear": "مسح",
+            "undo": "تراجع",
+            "chooseImage": "اختر صورة التوقيع",
+            "acceptedTypes": "PNG أو JPG أو JPEG",
+            "replace": "استبدال",
+            "remove": "إزالة",
+            "cancel": "إلغاء",
+            "save": "حفظ التوقيع",
+            "saving": "جاري الحفظ...",
+            "errors": {
+              "invalidType": "يرجى رفع صورة بصيغة png أو jpg فقط",
+              "uploadFailed": "تعذر قراءة الصورة، حاول مرة أخرى",
+              "uploadRequired": "يرجى رفع صورة التوقيع أولاً",
+              "drawRequired": "يرجى رسم التوقيع أولاً",
+              "saveFailed": "تعذر حفظ التوقيع، حاول مرة أخرى"
+            }
+          },
           "errors": {
             "nationalIdImageRequired": "يرجى رفع صورة الهوية الوطنية",
             "iqamaImageRequired": "يرجى رفع صورة هوية العامل",
@@ -732,6 +760,7 @@
           "showDetails": "عرض تفاصيل الطلب",
           "hideDetails": "إخفاء تفاصيل الطلب",
           "serviceFee": "رسوم الخدمة",
+          "serviceFeeInfo": "تُعرض رسوم الخدمة بوضوح قبل إتمام الدفع، ويتم تحصيلها عند تقديم الطلب",
           "vat": "ضريبة القيمة المضافة (15%)",
           "vatInfo": "تُحسب ضريبة القيمة المضافة بنسبة 15% من رسوم الخدمة",
           "total": "الإجمالي الكلي"
@@ -740,6 +769,19 @@
           "team": "التواصل مع فريق هلا وسهلا",
           "title": "لدعم وطلب المساعدة؟",
           "cta": "ابدأ المحادثة"
+        },
+        "success": {
+          "title": "تم استلام طلبك بنجاح !",
+          "subtitle": "تم استلام طلبك بنجاح، رقم طلبك هو",
+          "statusLabel": "حالة الطلب :",
+          "statusValue": "تم استلام الطلب",
+          "requestNumberLabel": "رقم الطلب",
+          "copyNumber": "نسخ الرقم",
+          "copied": "تم النسخ",
+          "smsHint": "سيتم إرسال رسالة نصية إلى رقم الجوال المسجل تحتوي على رقم الطلب وتأكيد استلام الطلب.",
+          "followUp": "طلبكم تم استلامه، سيتم التواصل معكم في أقرب وقت.",
+          "goHome": "الذهاب للصفحة الرئيسية",
+          "trackOrder": "تتبع طلبك"
         }
       }
     },

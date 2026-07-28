@@ -28,9 +28,10 @@ export default function RenewalStepper({
     <nav aria-label="Progress" className="w-full">
       <ol className="flex w-full items-start">
         {RENEWAL_STEPS.map((key, index) => {
-          const isActive = index === currentStep
-          const isCompleted = index < currentStep
-          const canNavigate = index <= currentStep
+          const isSuccess = currentStep >= RENEWAL_STEPS.length
+          const isActive = !isSuccess && index === currentStep
+          const isCompleted = isSuccess || index < currentStep
+          const canNavigate = !isSuccess && index <= currentStep
           const isReached = isActive || isCompleted
           const isLast = index === RENEWAL_STEPS.length - 1
 

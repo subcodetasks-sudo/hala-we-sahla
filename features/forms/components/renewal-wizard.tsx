@@ -17,6 +17,7 @@ import RenewalStepper, {
   RENEWAL_STEPS,
 } from "@/features/forms/components/renewal-stepper"
 import ReviewStep from "@/features/forms/components/review-step"
+import SuccessStep from "@/features/forms/components/success-step"
 import WorkerStepForm from "@/features/forms/components/worker-step-form"
 import {
   buildRenewalDraft,
@@ -64,6 +65,9 @@ export default function RenewalWizard() {
   const [draftReady, setDraftReady] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
   const [confirmationError, setConfirmationError] = useState(false)
+  const [submittedRequestNumber, setSubmittedRequestNumber] = useState<
+    string | null
+  >(null)
   const fileCacheRef = useRef(new WeakMap<File, Promise<StoredFile>>())
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const saveGenerationRef = useRef(0)
@@ -208,7 +212,7 @@ export default function RenewalWizard() {
   }, [workerForm])
 
   useEffect(() => {
-    if (!draftReady) return
+    if (!draftReady || submittedRequestNumber) return
 
     function scheduleSave() {
       if (saveTimeoutRef.current) {
@@ -245,8 +249,16 @@ export default function RenewalWizard() {
       }
       unsubscribers.forEach((entry) => entry.unsubscribe())
     }
-  }, [documentsForm, draftReady, employerForm, step, workerForm])
+  }, [
+    documentsForm,
+    draftReady,
+    employerForm,
+    step,
+    submittedRequestNumber,
+    workerForm,
+  ])
 
+  const isSubmitted = Boolean(submittedRequestNumber)
   const stepKey = RENEWAL_STEPS[step]
   const isReviewStep = step === 3
   const employerValues = employerForm.watch()
@@ -316,7 +328,18 @@ export default function RenewalWizard() {
         worker: workerForm.getValues(),
         documents: documentsForm.getValues(),
       })
+
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+        saveTimeoutRef.current = null
+      }
+      saveGenerationRef.current += 1
       clearRenewalDraft()
+
+      const requestNumber = String(
+        Math.floor(10000 + Math.random() * 90000),
+      )
+      setSubmittedRequestNumber(requestNumber)
       return
     }
 
@@ -330,84 +353,98 @@ export default function RenewalWizard() {
       <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
         <div className="rounded-2xl p-px -bg-linear-90 ltr:bg-linear-90 from-primary to-transparent">
           <Card className="rounded-2xl border-none bg-card px-4 py-5 shadow-none ring-0 sm:px-6 sm:py-8">
-            <RenewalStepper currentStep={step} onStepChange={setStep} />
+            <RenewalStepper
+              currentStep={
+                isSubmitted ? RENEWAL_STEPS.length : step
+              }
+              onStepChange={setStep}
+            />
           </Card>
         </div>
 
         <Card className="gap-0 rounded-2xl border border-[#cfe5e8] bg-card px-5 py-6 shadow-none ring-0 sm:px-8 sm:py-8">
-          {!isReviewStep ? (
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-                <CustomIcon
-                  src={STEP_ICONS[stepKey]}
-                  size={22}
-                  className="size-5.5 shrink-0 text-primary"
+          {isSubmitted && submittedRequestNumber ? (
+            <SuccessStep requestNumber={submittedRequestNumber} />
+          ) : (
+            <>
+              {!isReviewStep ? (
+                <div className="flex items-center gap-2.5">
+                  <span className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                    <CustomIcon
+                      src={STEP_ICONS[stepKey]}
+                      size={22}
+                      className="size-5.5 shrink-0 text-primary"
+                    />
+                  </span>
+                  <h2 className="text-lg font-bold text-foreground sm:text-xl">
+                    <MutedParensText text={t(`steps.${stepKey}`)} />
+                  </h2>
+                </div>
+              ) : null}
+
+              <div className={step === 0 ? "mt-8" : "mt-8 hidden"}>
+                <EmployerStepForm control={employerForm.control} />
+              </div>
+
+              <div className={step === 1 ? "mt-8" : "mt-8 hidden"}>
+                <WorkerStepForm control={workerForm.control} />
+              </div>
+
+              <div className={step === 2 ? "mt-8" : "mt-8 hidden"}>
+                <DocumentsStepForm control={documentsForm.control} />
+              </div>
+
+              <div className={isReviewStep ? "mt-0" : "mt-8 hidden"}>
+                <ReviewStep
+                  employer={employerValues}
+                  worker={workerValues}
+                  documents={documentsValues}
+                  confirmed={confirmed}
+                  onConfirmedChange={(value) => {
+                    setConfirmed(value)
+                    if (value) setConfirmationError(false)
+                  }}
                 />
-              </span>
-              <h2 className="text-lg font-bold text-foreground sm:text-xl">
-                <MutedParensText text={t(`steps.${stepKey}`)} />
-              </h2>
-            </div>
-          ) : null}
+                {confirmationError ? (
+                  <p className="mt-2 text-sm text-destructive">
+                    {t("review.confirmationRequired")}
+                  </p>
+                ) : null}
+              </div>
 
-          <div className={step === 0 ? "mt-8" : "mt-8 hidden"}>
-            <EmployerStepForm control={employerForm.control} />
-          </div>
+              <div className="mt-6 flex items-center justify-between gap-3 border-t border-muted-foreground/10 pt-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(
+                    "h-11 gap-1.5 rounded-full border-border/70 bg-background/40 px-8 text-base text-muted-foreground shadow-none hover:bg-muted/60 hover:text-muted-foreground",
+                    step === 0 ? "hidden" : "",
+                  )}
+                  onClick={() => setStep((current) => Math.max(0, current - 1))}
+                  disabled={step === 0}
+                >
+                  <ChevronRight
+                    className="size-4 ltr:rotate-180"
+                    aria-hidden="true"
+                  />
+                  {t("previous")}
+                </Button>
 
-          <div className={step === 1 ? "mt-8" : "mt-8 hidden"}>
-            <WorkerStepForm control={workerForm.control} />
-          </div>
-
-          <div className={step === 2 ? "mt-8" : "mt-8 hidden"}>
-            <DocumentsStepForm control={documentsForm.control} />
-          </div>
-
-          <div className={isReviewStep ? "mt-0" : "mt-8 hidden"}>
-            <ReviewStep
-              employer={employerValues}
-              worker={workerValues}
-              documents={documentsValues}
-              confirmed={confirmed}
-              onConfirmedChange={(value) => {
-                setConfirmed(value)
-                if (value) setConfirmationError(false)
-              }}
-            />
-            {confirmationError ? (
-              <p className="mt-2 text-sm text-destructive">
-                {t("review.confirmationRequired")}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="mt-6 flex items-center justify-between gap-3 border-t border-muted-foreground/10 pt-6">
-            <Button
-              type="button"
-              variant="outline"
-              className={cn(
-                "h-11 gap-1.5 rounded-full border-border/70 bg-background/40 px-8 text-base text-muted-foreground shadow-none hover:bg-muted/60 hover:text-muted-foreground",
-                step === 0 ? "hidden" : "",
-              )}
-              onClick={() => setStep((current) => Math.max(0, current - 1))}
-              disabled={step === 0}
-            >
-              <ChevronRight
-                className="size-4 ltr:rotate-180"
-                aria-hidden="true"
-              />
-              {t("previous")}
-            </Button>
-
-            <Button
-              type="button"
-              className="ms-auto h-11 gap-1.5 rounded-full px-8 text-base text-white"
-              onClick={handleNext}
-              disabled={!draftReady}
-            >
-              {isReviewStep ? t("submitRenewal") : t("next")}
-              <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
-            </Button>
-          </div>
+                <Button
+                  type="button"
+                  className="ms-auto h-11 gap-1.5 rounded-full px-8 text-base text-white"
+                  onClick={handleNext}
+                  disabled={!draftReady}
+                >
+                  {isReviewStep ? t("submitRenewal") : t("next")}
+                  <ArrowLeft
+                    className="size-4 ltr:rotate-180"
+                    aria-hidden="true"
+                  />
+                </Button>
+              </div>
+            </>
+          )}
         </Card>
       </div>
 

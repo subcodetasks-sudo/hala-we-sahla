@@ -1,0 +1,147 @@
+"use client"
+
+import { useState } from "react"
+import { ArrowLeft, ArrowUpLeft, Copy } from "lucide-react"
+import { useTranslations } from "next-intl"
+
+import CustomIcon from "@/components/custom-icon"
+import { Button } from "@/components/ui/button"
+import { Link } from "@/i18n/navigation"
+import { cn } from "@/lib/utils"
+
+type SuccessStepProps = {
+  requestNumber: string
+  className?: string
+}
+
+export default function SuccessStep({
+  requestNumber,
+  className,
+}: SuccessStepProps) {
+  const t = useTranslations("Forms.renewal.wizard.success")
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(requestNumber)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  return (
+    <div
+      className={cn(
+        "mx-auto flex w-full max-w-3xl flex-col items-center px-1 py-4 text-center sm:py-6",
+        className,
+      )}
+    >
+      <div className="relative mb-6">
+        <div
+          aria-hidden="true"
+          className="success-check-glow absolute inset-0 rounded-full bg-emerald-400/35 blur-2xl"
+        />
+        <div className="success-check-pop relative flex size-20 items-center justify-center rounded-lg rounded-tl-[50px] rounded-br-[50px] bg-[#1B8354] shadow-[0_12px_40px_rgba(34,197,94,0.45)] sm:size-24">
+          <svg
+            viewBox="0 0 52 52"
+            className="size-10 sm:size-12"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M14 27.5 L22.5 36 L38 18"
+              className="success-check-draw"
+              stroke="white"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <h1 className="text-2xl font-bold text-[#1a6b63] sm:text-3xl">
+        {t("title")}
+      </h1>
+      <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
+        {t("subtitle")}
+      </p>
+
+      <div className="mt-8 w-full rounded-[1.75rem] bg-[#e8f4f6] px-5 py-6 text-start sm:rounded-[2rem] sm:px-8 sm:py-8">
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            {t("statusLabel")}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white sm:text-sm">
+            <span
+              className="size-1.5 rounded-full bg-white"
+              aria-hidden="true"
+            />
+            {t("statusValue")}
+          </span>
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm text-muted-foreground">
+              {t("requestNumberLabel")}
+            </p>
+            <p className="mt-1 font-clash text-2xl  tracking-wide text-primary sm:text-2xl">
+              {requestNumber}
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleCopy}
+            className="h-10 gap-2 rounded-full bg-white px-4 text-sm font-semibold text-foreground shadow-none hover:bg-white/90"
+          >
+            <Copy className="size-4" aria-hidden="true" />
+            {copied ? t("copied") : t("copyNumber")}
+          </Button>
+        </div>
+
+        <p className="mt-6 text-center text-sm leading-6 text-muted-foreground">
+          {t("smsHint")}
+        </p>
+      </div>
+
+      <p className="mt-6 text-sm text-muted-foreground sm:text-base">
+        {t("followUp")}
+      </p>
+
+      <div className="mt-8 flex w-full flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+        <Button
+          type="button"
+          asChild
+          className="h-12 min-w-56 gap-2 rounded-full px-8 text-base text-white"
+        >
+          <Link href="/">
+            {t("goHome")}
+            <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
+          </Link>
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          asChild
+          className="h-11 gap-2 rounded-full px-4 text-base font-semibold text-foreground hover:bg-transparent hover:text-primary"
+        >
+          <Link href="/track-orders">
+            <CustomIcon
+              src="/icons/box-time.svg"
+              size={18}
+              className="size-4.5 shrink-0"
+            />
+            {t("trackOrder")}
+            <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
+          </Link>
+        </Button>
+      </div>
+    </div>
+  )
+}

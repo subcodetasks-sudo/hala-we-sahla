@@ -46,10 +46,15 @@ export default function DocumentUploadField({
   const [previewOpen, setPreviewOpen] = useState(false)
   const [sampleOpen, setSampleOpen] = useState(false)
 
+  const isImage = Boolean(value?.type.startsWith("image/"))
+  const isPdf =
+    value?.type === "application/pdf" ||
+    Boolean(value?.name.toLowerCase().endsWith(".pdf"))
+
   const previewUrl = useMemo(() => {
-    if (!value || !value.type.startsWith("image/")) return null
+    if (!value || (!isImage && !isPdf)) return null
     return URL.createObjectURL(value)
-  }, [value])
+  }, [value, isImage, isPdf])
 
   useEffect(() => {
     return () => {
@@ -161,9 +166,9 @@ export default function DocumentUploadField({
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent
           showCloseButton={false}
-          className="gap-5 rounded-2xl p-5 sm:max-w-md"
+          className="flex max-h-[85vh] w-full flex-col gap-5 overflow-hidden rounded-2xl p-5 sm:max-w-2xl"
         >
-          <DialogHeader className="flex-row items-center justify-between gap-3 space-y-0 pe-0">
+          <DialogHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 pe-0">
             <DialogTitle className="text-base font-bold text-foreground">
               {label}
             </DialogTitle>
@@ -180,13 +185,19 @@ export default function DocumentUploadField({
             </DialogClose>
           </DialogHeader>
 
-          <div className="overflow-hidden rounded-xl border border-border/70 bg-muted/20">
-            {previewUrl ? (
+          <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-border/70 bg-muted/20">
+            {previewUrl && isImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={previewUrl}
                 alt={label}
-                className="max-h-105 w-full object-contain"
+                className="mx-auto h-auto max-h-[calc(85vh-10rem)] w-full object-contain"
+              />
+            ) : previewUrl && isPdf ? (
+              <iframe
+                src={previewUrl}
+                title={label}
+                className="h-[min(70vh,36rem)] w-full border-0 bg-white"
               />
             ) : value ? (
               <div className="flex min-h-48 flex-col items-center justify-center gap-2 px-4 py-10 text-center">
@@ -202,7 +213,7 @@ export default function DocumentUploadField({
             <Button
               type="button"
               variant="secondary"
-              className="h-11 w-full rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
+              className="h-11 w-full shrink-0 rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
             >
               {t("close")}
             </Button>
@@ -214,9 +225,9 @@ export default function DocumentUploadField({
         <Dialog open={sampleOpen} onOpenChange={setSampleOpen}>
           <DialogContent
             showCloseButton={false}
-            className="gap-5 rounded-2xl p-5 sm:max-w-md"
+            className="flex max-h-[85vh] w-full flex-col gap-5 overflow-hidden rounded-2xl p-5 sm:max-w-md"
           >
-            <DialogHeader className="flex-row items-center justify-between gap-3 space-y-0 pe-0">
+            <DialogHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 pe-0">
               <DialogTitle className="text-base font-bold text-foreground">
                 {infoTitle ?? t("sampleTitle")}
               </DialogTitle>
@@ -233,13 +244,13 @@ export default function DocumentUploadField({
               </DialogClose>
             </DialogHeader>
 
-            <div className="overflow-hidden">
+            <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto">
               {sampleSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={sampleSrc}
                   alt={infoTitle ?? t("sampleTitle")}
-                  className="h-auto w-full object-contain"
+                  className="h-auto max-h-[calc(85vh-10rem)] w-auto max-w-full object-contain"
                 />
               ) : (
                 <div className="flex min-h-48 items-center justify-center px-4 py-10 text-center text-sm text-muted-foreground">
@@ -252,7 +263,7 @@ export default function DocumentUploadField({
               <Button
                 type="button"
                 variant="secondary"
-                className="h-11 w-full rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
+                className="h-11 w-full shrink-0 rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
               >
                 {t("close")}
               </Button>

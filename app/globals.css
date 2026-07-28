@@ -123,7 +123,7 @@
 
 
 @theme {
-
+--color-black:#003143;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
@@ -162,6 +162,52 @@
 
   .corner-squircle {
     border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
+  }
+
+  .success-check-pop {
+    animation: success-check-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .success-check-glow {
+    animation: success-check-glow 0.7s ease-out both;
+  }
+
+  .success-check-draw {
+    stroke-dasharray: 36;
+    stroke-dashoffset: 36;
+    animation: success-check-draw 0.55s ease-out 0.28s forwards;
+  }
+}
+
+@keyframes success-check-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes success-check-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes success-check-draw {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 

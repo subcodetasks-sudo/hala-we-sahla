@@ -37,7 +37,7 @@ type ReviewFieldItem = {
   label: string
   value: string
   icon: ReactNode
-  className?: string
+  valueSuffix?: ReactNode
 }
 
 type DocumentItem = {
@@ -58,7 +58,7 @@ function FieldIcon({ src }: { src: string }) {
   return (
     <CustomIcon
       src={src}
-      size={14}
+      size={16}
       className="size-3.5 text-muted-foreground"
     />
   )
@@ -74,47 +74,47 @@ function ReviewSectionTitle({
   return (
     <div className="mb-5 flex items-center gap-2 text-accent">
       {icon}
-      <h3 className="text-base font-bold">{children}</h3>
+      <h3 className="text-base font-bold shrink-0">{children}</h3>
+      <div className="border-t border-border/60 grow" />
     </div>
   )
 }
 
-function ReviewFieldsGrid({
+function ReviewFieldCell({ field }: { field: ReviewFieldItem }) {
+  return (
+    <div className="flex min-w-0 flex-col  gap-1.5 px-2  sm:px-3">
+      <span className="flex size-5 items-center justify-center">{field.icon}</span>
+      <p className="text-xs font-medium text-muted-foreground sm:text-sm">
+        {field.label}
+      </p>
+      <p className="inline-flex max-w-full  gap-1 text-sm font-bold wrap-break-word text-[#1a3d4d] sm:text-base">
+        <span className="min-w-0">{field.value}</span>
+        {field.valueSuffix}
+      </p>
+    </div>
+  )
+}
+
+function ReviewFieldsRow({
   fields,
-  columns = 3,
+  columnsClassName,
 }: {
   fields: ReviewFieldItem[]
-  columns?: 2 | 3
+  columnsClassName: string
 }) {
   return (
-    <div
-      className={cn(
-        "grid gap-x-0 gap-y-6",
-        columns === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2",
-      )}
-    >
-      {fields.map((field, index) => {
-        const isRowStart = index % columns === 0
-        return (
-          <div
-            key={field.key}
-            className={cn(
-              "min-w-0 px-0 sm:px-4",
-              !isRowStart && "sm:border-s sm:border-border/70",
-              index < columns && "sm:pt-0",
-              field.className,
-            )}
-          >
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              {field.icon}
-              <span className="text-xs font-medium">{field.label}</span>
-            </div>
-            <p className="mt-1.5 text-sm font-bold wrap-break-word text-foreground">
-              {field.value}
-            </p>
-          </div>
-        )
-      })}
+    <div className={cn("grid gap-y-6", columnsClassName)}>
+      {fields.map((field, index) => (
+        <div key={field.key} className="relative min-w-0">
+          {index > 0 ? (
+            <span
+              aria-hidden="true"
+              className="absolute inset-s-0 top-1/2 hidden h-8 w-px -translate-x-1/2 -translate-y-1/2 bg-[#d7d7d7] sm:block rtl:translate-x-1/2"
+            />
+          ) : null}
+          <ReviewFieldCell field={field} />
+        </div>
+      ))}
     </div>
   )
 }
@@ -144,13 +144,16 @@ function DocumentPreviewButton({
     <button
       type="button"
       onClick={onPreview}
-      className="inline-flex h-11 max-w-full items-center gap-2 rounded-full bg-[#e8f4f6] px-4 text-sm font-semibold text-foreground transition-colors hover:bg-[#dceef1]"
+      className="inline-flex h-10 min-w-fit flex-1 items-center justify-between gap-2 rounded-full bg-[#e8f4f6] px-4 text-xs font-semibold text-black transition-colors hover:bg-[#dceef1] sm:text-sm"
     >
-      <Eye className="size-4 shrink-0 text-primary" aria-hidden="true" />
-      <span className="truncate">
-        {label}
-        {showExtension ? extension : ""}
+      <span className="flex items-center gap-1.5 whitespace-nowrap text-start">
+        <span aria-hidden="true">&#10003;</span>
+        <span>
+          {label}
+          {showExtension ? extension : ""}
+        </span>
       </span>
+      <Eye className="size-4 shrink-0 text-primary" aria-hidden="true" />
     </button>
   )
 }
@@ -183,7 +186,7 @@ export default function ReviewStep({
       (option) => option.id === worker.passport_issue_place_id,
     )?.labelKey ?? null
 
-  const employerFields: ReviewFieldItem[] = [
+  const employerTopFields: ReviewFieldItem[] = [
     {
       key: "employerName",
       label: t("fields.employerName"),
@@ -202,6 +205,17 @@ export default function ReviewStep({
       value: employer.phone ? formatSaudiPhone(employer.phone) : empty,
       icon: <Phone className="size-3.5 text-muted-foreground" />,
     },
+  ]
+
+  const employerBottomFields: ReviewFieldItem[] = [
+    {
+      key: "employerIssuePlace",
+      label: t("fields.employerIssuePlace"),
+      value: employerIssueLabel
+        ? tEmployer(`options.issuePlaces.${employerIssueLabel}`)
+        : empty,
+      icon: <FieldIcon src="/icons/global.svg" />,
+    },
     {
       key: "city",
       label: t("fields.city"),
@@ -210,16 +224,14 @@ export default function ReviewStep({
         : empty,
       icon: <FieldIcon src="/forms/step-1/location.svg" />,
     },
-    {
-      key: "employerIssuePlace",
-      label: t("fields.employerIssuePlace"),
-      value: employerIssueLabel
-        ? tEmployer(`options.issuePlaces.${employerIssueLabel}`)
-        : empty,
-      icon: <FieldIcon src="/icons/global.svg" />,
-      className: "sm:col-span-2",
-    },
   ]
+
+  const salaryValue = documents.salary
+    ? formatNumber(Number(documents.salary), locale, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })
+    : empty
 
   const workerFieldsTop: ReviewFieldItem[] = [
     {
@@ -242,9 +254,6 @@ export default function ReviewStep({
       value: worker.passport_number || empty,
       icon: <FieldIcon src="/forms/step-1/id.svg" />,
     },
-  ]
-
-  const workerFieldsDates: ReviewFieldItem[] = [
     {
       key: "passportIssueDate",
       label: t("fields.passportIssueDate"),
@@ -256,7 +265,6 @@ export default function ReviewStep({
       label: t("fields.passportExpiryDate"),
       value: worker.passport_expiry_date || empty,
       icon: <FieldIcon src="/forms/step-2/calendar.svg" />,
-      className: "sm:col-span-1",
     },
   ]
 
@@ -281,14 +289,17 @@ export default function ReviewStep({
         : empty,
       icon: <FieldIcon src="/forms/step-2/location.svg" />,
     },
+    {
+      key: "salary",
+      label: t("fields.salary"),
+      value: salaryValue,
+      icon: <FieldIcon src="/forms/step-3/money-recive.svg" />,
+      valueSuffix:
+        salaryValue !== empty ? (
+          <SaudiRiyal className="size-3.5 shrink-0" aria-hidden="true" />
+        ) : null,
+    },
   ]
-
-  const salaryValue = documents.salary
-    ? `${formatNumber(Number(documents.salary), locale, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      })}`
-    : empty
 
   const documentItems: DocumentItem[] = [
     {
@@ -323,10 +334,15 @@ export default function ReviewStep({
     },
   ]
 
+  const previewIsImage = Boolean(preview?.file?.type.startsWith("image/"))
+  const previewIsPdf =
+    preview?.file?.type === "application/pdf" ||
+    Boolean(preview?.file?.name.toLowerCase().endsWith(".pdf"))
+
   const previewUrl = useMemo(() => {
-    if (!preview?.file || !preview.file.type.startsWith("image/")) return null
+    if (!preview?.file || (!previewIsImage && !previewIsPdf)) return null
     return URL.createObjectURL(preview.file)
-  }, [preview])
+  }, [preview, previewIsImage, previewIsPdf])
 
   useEffect(() => {
     return () => {
@@ -335,70 +351,70 @@ export default function ReviewStep({
   }, [previewUrl])
 
   return (
-    <div className={cn("flex flex-col gap-8", className)}>
+    <div className={cn("flex flex-col gap-6", className)}>
       <div>
-        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+        <h2 className="text-xl font-bold text-black sm:text-2xl">
           {t("title")}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <section>
+      <section >
         <ReviewSectionTitle
           icon={
             <CustomIcon
               src="/forms/step-1/user.svg"
-              size={18}
+              size={16}
               className="size-4.5 text-accent"
             />
           }
         >
           {t("sections.employer")}
         </ReviewSectionTitle>
-        <ReviewFieldsGrid fields={employerFields} />
+        <div className="flex flex-col gap-6">
+          <ReviewFieldsRow
+            fields={employerTopFields}
+            columnsClassName="sm:grid-cols-3"
+          />
+          <ReviewFieldsRow
+            fields={employerBottomFields}
+            columnsClassName="sm:grid-cols-2"
+          />
+        </div>
       </section>
 
-      <div className="border-t border-border/60" />
 
-      <section>
+      <section >
         <ReviewSectionTitle
           icon={
             <CustomIcon
-              src="/forms/step-2/user-tick.svg"
-              size={18}
+              src="/icons/worker.svg"
+              size={16}
               className="size-4.5 text-accent"
             />
           }
         >
           {t("sections.worker")}
         </ReviewSectionTitle>
-        <div className="flex flex-col gap-6">
-          <ReviewFieldsGrid fields={workerFieldsTop} />
-          <ReviewFieldsGrid fields={workerFieldsDates} columns={2} />
-          <ReviewFieldsGrid fields={workerFieldsBottom} />
-          <div className="sm:max-w-1/3">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <FieldIcon src="/forms/step-3/money-recive.svg" />
-              <span className="text-xs font-medium">{t("fields.salary")}</span>
-            </div>
-            <p className="mt-1.5 flex items-center gap-1 text-sm font-bold text-foreground">
-              {salaryValue}
-              {documents.salary ? (
-                <SaudiRiyal className="size-3.5" aria-hidden="true" />
-              ) : null}
-            </p>
-          </div>
+        <div className="flex flex-col gap-8">
+          <ReviewFieldsRow
+            fields={workerFieldsTop}
+            columnsClassName="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5"
+          />
+          <ReviewFieldsRow
+            fields={workerFieldsBottom}
+            columnsClassName="grid-cols-2 sm:grid-cols-2 xl:grid-cols-4"
+          />
         </div>
       </section>
 
-      <div className="border-t border-border/60" />
 
-      <section>
+      <section >
         <ReviewSectionTitle
           icon={
             <CustomIcon
               src="/forms/step-3/shield-tick.svg"
-              size={18}
+              size={16}
               className="size-4.5 text-accent"
             />
           }
@@ -426,7 +442,7 @@ export default function ReviewStep({
         onClick={() => onConfirmedChange(!confirmed)}
         aria-pressed={confirmed}
         className={cn(
-          "flex w-full items-center gap-3 rounded-2xl bg-[#e8f4f6] px-4 py-3.5 text-start transition-colors hover:bg-[#dceef1]",
+          "flex w-full  items-center  gap-3 rounded-none bg-[#e8f4f6] px-4 py-3 text-start transition-colors hover:bg-[#dceef1]",
           !confirmed && "ring-1 ring-border/60",
         )}
       >
@@ -435,12 +451,10 @@ export default function ReviewStep({
           size={20}
           className={cn(
             "size-5 shrink-0",
-            confirmed ? "opacity-100" : "opacity-35 grayscale",
+            confirmed ? "opacity-100 text-green-600/80   " : "opacity-35 grayscale",
           )}
         />
-        <span className="text-sm font-semibold text-foreground">
-          {t("confirmation")}
-        </span>
+        <span className="text-sm font-semibold text-black">{t("confirmation")}</span>
       </button>
 
       <Dialog
@@ -451,10 +465,10 @@ export default function ReviewStep({
       >
         <DialogContent
           showCloseButton={false}
-          className="gap-5 rounded-2xl p-5 sm:max-w-md"
+          className="flex max-h-[85vh] w-full flex-col gap-5 overflow-hidden rounded-2xl p-5 sm:max-w-2xl"
         >
-          <DialogHeader className="flex-row items-center justify-between gap-3 space-y-0 pe-0">
-            <DialogTitle className="text-base font-bold text-foreground">
+          <DialogHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 pe-0">
+            <DialogTitle className="text-base font-bold text-black">
               {preview?.label ?? t("preview")}
             </DialogTitle>
             <DialogClose asChild>
@@ -470,17 +484,23 @@ export default function ReviewStep({
             </DialogClose>
           </DialogHeader>
 
-          <div className="overflow-hidden">
-            {previewUrl ? (
+          <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-border/70 bg-muted/20">
+            {previewUrl && previewIsImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={previewUrl}
                 alt={preview?.label ?? t("preview")}
-                className="h-auto w-full object-contain"
+                className="mx-auto h-auto max-h-[calc(85vh-10rem)] w-full object-contain"
+              />
+            ) : previewUrl && previewIsPdf ? (
+              <iframe
+                src={previewUrl}
+                title={preview?.label ?? t("preview")}
+                className="h-[min(70vh,36rem)] w-full border-0 bg-white"
               />
             ) : preview?.file ? (
-              <div className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-xl border border-border/70 bg-muted/20 px-4 py-10 text-center">
-                <p className="text-sm font-medium text-foreground">
+              <div className="flex min-h-48 flex-col items-center justify-center gap-2 px-4 py-10 text-center">
+                <p className="text-sm font-medium text-black">
                   {preview.file.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -494,7 +514,7 @@ export default function ReviewStep({
             <Button
               type="button"
               variant="secondary"
-              className="h-11 w-full rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
+              className="h-11 w-full shrink-0 rounded-full bg-muted text-base text-muted-foreground hover:bg-muted/80"
             >
               {t("close")}
             </Button>
