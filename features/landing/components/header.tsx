@@ -78,7 +78,7 @@ useEffect(() => {
                 <div className="flex h-16 items-center gap-6 ">
                     <Link
                         href="/"
-                        className="flex shrink-0 items-center text-xl font-bold tracking-tight"
+                        className="flex shrink-0 items-center text-xl font-bold tracking-tight me-8"
                     >
                         <div>
                             <Image

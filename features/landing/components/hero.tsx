@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server"
 import Image from "next/image"
-import { ArrowLeft, ArrowUpRight, CircleCheck } from "lucide-react"
+import { ArrowLeft, ArrowUpLeft, ArrowUpRight, CircleCheck } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import CustomIcon from "@/components/custom-icon";
@@ -19,7 +19,7 @@ export default async function Hero() {
                     🚀
                 </span>
 
-                <h1 className="text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">
+                <h1 className="lg:max-w-lg text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">
                     {t.rich("heading", {
                         primary: (chunks) => (
                             <span className="text-primary">{chunks}</span>
@@ -32,9 +32,9 @@ export default async function Hero() {
                 </p>
 
                 <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                    <Button  className="gap-1.5 rounded-full text-base! h-fit! p-3 bg-black hover:bg-accent! shadow-primary/20! shadow-xl" asChild>
+                    <Button  className="gap-1.5 rounded-full text-base! h-fit! p-3 bg-[#003143] hover:bg-accent! s shadow-[0_0_70px_rgba(0,0,0,0.6)]" asChild>
                         <Link href="/renewal">
-                            <CustomIcon src="/icons/receipt-edit.svg" className="size-4" />
+                            <CustomIcon size={22} src="/icons/receipt-edit.svg" className="size-4" />
                             {t("primaryCta")}
                             <div className="flex items-center gap-2 size-8 shrink-0  justify-center rounded-full bg-white text-black ">
                                 <ArrowUpRight className="rtl:-rotate-90" />
@@ -43,13 +43,13 @@ export default async function Hero() {
                     </Button>
                     <Button
                     
-                        className="gap-1.5 h-12! text-lg! bg-transparent! text-black"
+                        className="gap-1.5 h-12! text-lg! bg-transparent! text-[#003143]"
                         asChild
                     >
                         <Link href="/about">
                             <CustomIcon src="/icons/box-time.svg" className="size-4" />
                             {t("secondaryCta")}
-                            <ArrowLeft className="ltr:rotate-180" />
+                            <ArrowUpLeft className="ltr:rotate-180 " />
                         </Link>
                     </Button>
                 </div>

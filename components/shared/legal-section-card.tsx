@@ -50,7 +50,7 @@ export default function LegalSectionCard({
           </div>
         </div>
 
-        <span className="shrink-0 text-3xl font-bold tabular-nums text-accent sm:text-4xl">
+        <span className="shrink-0 text-3xl font-bold tabular-nums text-accent sm:text-4xl font-clash">
           {number}
         </span>
       </div>

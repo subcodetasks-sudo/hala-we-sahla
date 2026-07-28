@@ -363,7 +363,7 @@
     "description": "تعرف على المتطلبات الأساسية ورسوم الخدمة قبل بدء طلب تجديد عقد العمالة المنزلية",
     "planTitle": "باقة التجديد الشاملة",
     "planDescription": "تجديد عقود العمالة بسهولة وموثوقية",
-    "priceSuffix": "الحد الأدنى",
+    "priceSuffix": "للعقد الواحد",
     "requirements": {
       "nationalId": "الهوية الوطنية / الإقامة",
       "passport": "جواز سفر العامل/ة",
@@ -373,7 +373,8 @@
   },
   "Services": {
     "eyebrow": "خدمات أساسية",
-    "heading": "كل ما تحتاجه لتجديد <accent>عقدك</accent> في منصة واحدة",
+    "heading": "كل ما تحتاجه<br></br><primary>لتجديد عقدك</primary> في منصة واحدة",
+    "description": "اختر الخدمة المناسبة وابدأ رحلتك الرقمية بسهولة",
     "items": {
       "request": {
         "titleLine1": "ابدأ",
@@ -503,6 +504,43 @@
         "next": "التالي",
         "previous": "السابق",
         "submitRenewal": "إرسال الطلب للتجديد",
+        "review": {
+          "title": "مراجعة الطلب",
+          "subtitle": "تأكد من صحة جميع البيانات قبل إرسال الطلب.",
+          "sections": {
+            "employer": "بيانات صاحب العمل",
+            "worker": "بيانات العامل",
+            "documents": "المستندات المرفوعة"
+          },
+          "fields": {
+            "employerName": "اسم صاحب العمل",
+            "nationalId": "رقم الهوية الوطنية",
+            "phone": "رقم التواصل",
+            "city": "المدينة",
+            "employerIssuePlace": "مكان الإصدار",
+            "workerName": "اسم العامل",
+            "passportNumber": "رقم جواز السفر",
+            "passportIssueDate": "تاريخ الإصدار",
+            "passportExpiryDate": "تاريخ الانتهاء للجواز",
+            "birthDate": "تاريخ الميلاد",
+            "philippinesAddress": "العنوان في الفلبين",
+            "passportIssuePlace": "مكان إصدار الجواز",
+            "salary": "الراتب"
+          },
+          "documents": {
+            "national_id_image": "الهوية الوطنية",
+            "iqama_image": "هوية العامل (الاقامة)",
+            "passport_image": "صورة الجواز (الصفحة الأولى + التأشيرة)",
+            "exit_reentry_visa": "تأشيرة الخروج والعودة",
+            "employer_signature": "توقيع صاحب العمل",
+            "worker_signature": "توقيع العامل"
+          },
+          "preview": "معاينة الملف",
+          "close": "إغلاق",
+          "confirmation": "أقر بأن جميع البيانات المدخلة صحيحة، وأوافق على إرسال الطلب للتجديد.",
+          "confirmationRequired": "يرجى تأكيد صحة البيانات قبل الإرسال",
+          "empty": "—"
+        },
         "hijri": {
           "title": "اختر التاريخ الهجري",
           "placeholder": "jj/mm/aaaa",
@@ -632,14 +670,17 @@
             "workerPhoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05",
             "birthDateRequired": "يرجى اختيار تاريخ الميلاد",
             "birthDateInvalid": "يرجى اختيار تاريخ ميلاد هجري صحيح",
+            "birthDateMinAge": "يجب أن يكون عمر العامل 18 سنة على الأقل",
             "philippinesAddressRequired": "يرجى إدخال العنوان في الفلبين",
             "passportIssuePlaceRequired": "يرجى اختيار مكان إصدار الجواز",
             "passportNumberRequired": "يرجى إدخال رقم جواز السفر",
             "passportNumberInvalid": "يرجى كتابة رقم الجواز بالعربية فقط",
             "passportIssueDateRequired": "يرجى اختيار تاريخ إصدار الجواز",
             "passportIssueDateInvalid": "يرجى اختيار تاريخ إصدار هجري صحيح",
+            "passportIssueDateAfterBirth": "يجب أن يكون تاريخ إصدار الجواز بعد تاريخ الميلاد",
             "passportExpiryDateRequired": "يرجى اختيار تاريخ انتهاء الجواز",
-            "passportExpiryDateInvalid": "يرجى اختيار تاريخ انتهاء هجري صحيح"
+            "passportExpiryDateInvalid": "يرجى اختيار تاريخ انتهاء هجري صحيح",
+            "passportExpiryDateAfterIssue": "يجب أن يكون تاريخ انتهاء الجواز بعد تاريخ الإصدار"
           }
         },
         "documents": {
@@ -670,7 +711,7 @@
           },
           "signatures": {
             "employer": "إضافة توقيع صاحب العمل",
-            "sponsor": "إضافة توقيع للكفيل"
+            "worker": "إضــافة توقيع العامل"
           },
           "errors": {
             "nationalIdImageRequired": "يرجى رفع صورة الهوية الوطنية",
@@ -678,12 +719,18 @@
             "passportImageRequired": "يرجى رفع صورة الجواز",
             "exitReentryVisaRequired": "يرجى رفع تأشيرة الخروج والعودة",
             "fileTypeInvalid": "يرجى رفع ملف بصيغة png أو pdf فقط",
+            "imageTypeInvalid": "يرجى رفع صورة بصيغة png أو jpg فقط",
+            "employerSignatureRequired": "يرجى رفع توقيع صاحب العمل",
+            "workerSignatureRequired": "يرجى رفع توقيع العامل",
             "salaryRequired": "يرجى إدخال الراتب",
             "salaryInvalid": "يرجى إدخال راتب صحيح"
           }
         },
         "summary": {
           "title": "ملخص الطلب",
+          "details": "تفاصيل الطلب",
+          "showDetails": "عرض تفاصيل الطلب",
+          "hideDetails": "إخفاء تفاصيل الطلب",
           "serviceFee": "رسوم الخدمة",
           "vat": "ضريبة القيمة المضافة (15%)",
           "vatInfo": "تُحسب ضريبة القيمة المضافة بنسبة 15% من رسوم الخدمة",

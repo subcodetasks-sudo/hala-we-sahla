@@ -233,13 +233,13 @@ export default function DocumentUploadField({
               </DialogClose>
             </DialogHeader>
 
-            <div className="overflow-hidden rounded-xl border border-border/70 bg-muted/20">
+            <div className="overflow-hidden">
               {sampleSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={sampleSrc}
                   alt={infoTitle ?? t("sampleTitle")}
-                  className="max-h-105 w-full object-contain"
+                  className="h-auto w-full object-contain"
                 />
               ) : (
                 <div className="flex min-h-48 items-center justify-center px-4 py-10 text-center text-sm text-muted-foreground">

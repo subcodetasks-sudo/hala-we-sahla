@@ -33,6 +33,7 @@ import type { EmployerStepValues } from "@/features/forms/schemas/employer-step"
 import {
   keepArabicNameInput,
   keepEnglishNameInput,
+  keepNationalIdInput,
 } from "@/features/forms/lib/input-filters"
 import { cn } from "@/lib/utils"
 
@@ -81,6 +82,7 @@ export default function EmployerStepForm({
               </FieldLabel>
               <InputGroup className={inputGroupClassName}>
                 <InputGroupAddon
+                
                   align="inline-start"
                   className={addonStartClassName}
                 >
@@ -93,12 +95,17 @@ export default function EmployerStepForm({
                 <InputGroupInput
                   {...field}
                   id="national_id"
+                  type="text"
                   inputMode="numeric"
+                  autoComplete="off"
                   maxLength={10}
                   value={field.value ?? ""}
                   placeholder={t("fields.national_id.placeholder")}
                   aria-invalid={fieldState.invalid}
                   className="pe-4"
+                  onChange={(event) =>
+                    field.onChange(keepNationalIdInput(event.target.value))
+                  }
                 />
               </InputGroup>
               {fieldState.error ? (

@@ -16,12 +16,12 @@ export default async function Faq() {
 
     return (
         <section id="faq" className="container py-10 lg:py-16">
-            <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-24">
-                <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-start">
+            <div className="flex md:flex-row flex-col items-center  lg:gap-24 ">
+                <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-start max-w-lg">
                     <p className="text-sm font-semibold text-accent">
                         {t("eyebrow")}
                     </p>
-                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl ">
+                    <h2 className="text-3xl font-bold leading-tight tracking-tight text-balance md:text-5xl ">
                         {t.rich("heading", {
                             primary: (chunks) => (
                                 <span className="mt-1 block text-primary">

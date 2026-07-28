@@ -1,10 +1,10 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { ArrowLeft, ChevronRight, Info, SaudiRiyal } from "lucide-react"
-import { useLocale, useTranslations } from "next-intl"
+import { ArrowLeft, ChevronRight } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
 import MutedParensText from "@/components/shared/muted-parens-text"
@@ -12,10 +12,19 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import DocumentsStepForm from "@/features/forms/components/documents-step-form"
 import EmployerStepForm from "@/features/forms/components/employer-step-form"
+import OrderSummaryCard from "@/features/forms/components/order-summary-card"
 import RenewalStepper, {
   RENEWAL_STEPS,
 } from "@/features/forms/components/renewal-stepper"
+import ReviewStep from "@/features/forms/components/review-step"
 import WorkerStepForm from "@/features/forms/components/worker-step-form"
+import {
+  buildRenewalDraft,
+  clearRenewalDraft,
+  loadRenewalDraftForms,
+  writeRenewalDraft,
+  type StoredFile,
+} from "@/features/forms/lib/renewal-draft-storage"
 import {
   createDocumentsStepSchema,
   DOCUMENTS_DEFAULT_VALUES,
@@ -31,13 +40,13 @@ import {
   WORKER_DEFAULT_VALUES,
   type WorkerStepValues,
 } from "@/features/forms/schemas/worker-step"
-import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 const SERVICE_FEE = 199
 const VAT_AMOUNT = 29
 const TOTAL = 228
 const WHATSAPP_HREF = "https://wa.me/96670006741"
+const DRAFT_SAVE_DEBOUNCE_MS = 400
 
 const STEP_ICONS = {
   employer: "/forms/step-1/personalcard.svg",
@@ -51,8 +60,13 @@ export default function RenewalWizard() {
   const tEmployer = useTranslations("Forms.renewal.wizard.employer")
   const tWorker = useTranslations("Forms.renewal.wizard.worker")
   const tDocuments = useTranslations("Forms.renewal.wizard.documents")
-  const locale = useLocale()
   const [step, setStep] = useState(0)
+  const [draftReady, setDraftReady] = useState(false)
+  const [confirmed, setConfirmed] = useState(false)
+  const [confirmationError, setConfirmationError] = useState(false)
+  const fileCacheRef = useRef(new WeakMap<File, Promise<StoredFile>>())
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saveGenerationRef = useRef(0)
 
   const employerSchema = useMemo(
     () =>
@@ -78,6 +92,7 @@ export default function RenewalWizard() {
         workerPhoneInvalid: tWorker("errors.workerPhoneInvalid"),
         birthDateRequired: tWorker("errors.birthDateRequired"),
         birthDateInvalid: tWorker("errors.birthDateInvalid"),
+        birthDateMinAge: tWorker("errors.birthDateMinAge"),
         philippinesAddressRequired: tWorker(
           "errors.philippinesAddressRequired",
         ),
@@ -88,10 +103,16 @@ export default function RenewalWizard() {
         passportNumberInvalid: tWorker("errors.passportNumberInvalid"),
         passportIssueDateRequired: tWorker("errors.passportIssueDateRequired"),
         passportIssueDateInvalid: tWorker("errors.passportIssueDateInvalid"),
+        passportIssueDateAfterBirth: tWorker(
+          "errors.passportIssueDateAfterBirth",
+        ),
         passportExpiryDateRequired: tWorker(
           "errors.passportExpiryDateRequired",
         ),
         passportExpiryDateInvalid: tWorker("errors.passportExpiryDateInvalid"),
+        passportExpiryDateAfterIssue: tWorker(
+          "errors.passportExpiryDateAfterIssue",
+        ),
       }),
     [tWorker],
   )
@@ -106,6 +127,13 @@ export default function RenewalWizard() {
         passportImageRequired: tDocuments("errors.passportImageRequired"),
         exitReentryVisaRequired: tDocuments("errors.exitReentryVisaRequired"),
         fileTypeInvalid: tDocuments("errors.fileTypeInvalid"),
+        imageTypeInvalid: tDocuments("errors.imageTypeInvalid"),
+        employerSignatureRequired: tDocuments(
+          "errors.employerSignatureRequired",
+        ),
+        workerSignatureRequired: tDocuments(
+          "errors.workerSignatureRequired",
+        ),
         salaryRequired: tDocuments("errors.salaryRequired"),
         salaryInvalid: tDocuments("errors.salaryInvalid"),
       }),
@@ -136,8 +164,94 @@ export default function RenewalWizard() {
     mode: "onChange",
   })
 
+  useEffect(() => {
+    let cancelled = false
+
+    async function hydrateDraft() {
+      const draft = await loadRenewalDraftForms()
+      if (cancelled) return
+
+      if (draft) {
+        employerForm.reset(draft.employer)
+        workerForm.reset(draft.worker)
+        documentsForm.reset(draft.documents)
+        setStep(draft.step)
+      }
+
+      setDraftReady(true)
+    }
+
+    void hydrateDraft()
+
+    return () => {
+      cancelled = true
+    }
+  }, [documentsForm, employerForm, workerForm])
+
+  useEffect(() => {
+    const { unsubscribe } = workerForm.watch((values, { name }) => {
+      if (name === "birth_date") {
+        if (values.passport_issue_date) {
+          void workerForm.trigger("passport_issue_date")
+        }
+        if (values.passport_expiry_date) {
+          void workerForm.trigger("passport_expiry_date")
+        }
+      }
+
+      if (name === "passport_issue_date" && values.passport_expiry_date) {
+        void workerForm.trigger("passport_expiry_date")
+      }
+    })
+
+    return unsubscribe
+  }, [workerForm])
+
+  useEffect(() => {
+    if (!draftReady) return
+
+    function scheduleSave() {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+
+      saveTimeoutRef.current = setTimeout(() => {
+        const generation = ++saveGenerationRef.current
+
+        void buildRenewalDraft({
+          step,
+          employer: employerForm.getValues(),
+          worker: workerForm.getValues(),
+          documents: documentsForm.getValues(),
+          fileCache: fileCacheRef.current,
+        }).then((draft) => {
+          if (generation !== saveGenerationRef.current) return
+          writeRenewalDraft(draft)
+        })
+      }, DRAFT_SAVE_DEBOUNCE_MS)
+    }
+
+    scheduleSave()
+
+    const unsubscribers = [
+      employerForm.watch(scheduleSave),
+      workerForm.watch(scheduleSave),
+      documentsForm.watch(scheduleSave),
+    ]
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      unsubscribers.forEach((entry) => entry.unsubscribe())
+    }
+  }, [documentsForm, draftReady, employerForm, step, workerForm])
+
   const stepKey = RENEWAL_STEPS[step]
-  const isDocumentsStep = step === 2
+  const isReviewStep = step === 3
+  const employerValues = employerForm.watch()
+  const workerValues = workerForm.watch()
+  const documentsValues = documentsForm.watch()
 
   async function handleNext() {
     if (step === 0) {
@@ -185,8 +299,25 @@ export default function RenewalWizard() {
         iqama_image: values.iqama_image,
         passport_image: values.passport_image,
         exit_reentry_visa: values.exit_reentry_visa,
+        employer_signature: values.employer_signature,
+        worker_signature: values.worker_signature,
         salary: Number(values.salary),
       })
+    }
+
+    if (step === 3) {
+      if (!confirmed) {
+        setConfirmationError(true)
+        return
+      }
+
+      console.log("renewal submit payload", {
+        employer: employerForm.getValues(),
+        worker: workerForm.getValues(),
+        documents: documentsForm.getValues(),
+      })
+      clearRenewalDraft()
+      return
     }
 
     if (step < RENEWAL_STEPS.length - 1) {
@@ -204,18 +335,20 @@ export default function RenewalWizard() {
         </div>
 
         <Card className="gap-0 rounded-2xl border border-[#cfe5e8] bg-card px-5 py-6 shadow-none ring-0 sm:px-8 sm:py-8">
-          <div className="flex items-center gap-2.5">
-            <span className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-              <CustomIcon
-                src={STEP_ICONS[stepKey]}
-                size={22}
-                className="size-5.5 shrink-0 text-primary"
-              />
-            </span>
-            <h2 className="text-lg font-bold text-foreground sm:text-xl">
-              <MutedParensText text={t(`steps.${stepKey}`)} />
-            </h2>
-          </div>
+          {!isReviewStep ? (
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                <CustomIcon
+                  src={STEP_ICONS[stepKey]}
+                  size={22}
+                  className="size-5.5 shrink-0 text-primary"
+                />
+              </span>
+              <h2 className="text-lg font-bold text-foreground sm:text-xl">
+                <MutedParensText text={t(`steps.${stepKey}`)} />
+              </h2>
+            </div>
+          ) : null}
 
           <div className={step === 0 ? "mt-8" : "mt-8 hidden"}>
             <EmployerStepForm control={employerForm.control} />
@@ -229,11 +362,23 @@ export default function RenewalWizard() {
             <DocumentsStepForm control={documentsForm.control} />
           </div>
 
-          {step > 2 ? (
-            <div className="mt-8 flex min-h-48 items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-4 py-10 text-center text-sm text-muted-foreground">
-              {t("stepPlaceholder")}
-            </div>
-          ) : null}
+          <div className={isReviewStep ? "mt-0" : "mt-8 hidden"}>
+            <ReviewStep
+              employer={employerValues}
+              worker={workerValues}
+              documents={documentsValues}
+              confirmed={confirmed}
+              onConfirmedChange={(value) => {
+                setConfirmed(value)
+                if (value) setConfirmationError(false)
+              }}
+            />
+            {confirmationError ? (
+              <p className="mt-2 text-sm text-destructive">
+                {t("review.confirmationRequired")}
+              </p>
+            ) : null}
+          </div>
 
           <div className="mt-6 flex items-center justify-between gap-3 border-t border-muted-foreground/10 pt-6">
             <Button
@@ -257,9 +402,9 @@ export default function RenewalWizard() {
               type="button"
               className="ms-auto h-11 gap-1.5 rounded-full px-8 text-base text-white"
               onClick={handleNext}
-              disabled={step >= RENEWAL_STEPS.length - 1}
+              disabled={!draftReady}
             >
-              {isDocumentsStep ? t("submitRenewal") : t("next")}
+              {isReviewStep ? t("submitRenewal") : t("next")}
               <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
             </Button>
           </div>
@@ -267,52 +412,11 @@ export default function RenewalWizard() {
       </div>
 
       <aside className="flex flex-col gap-4 lg:sticky lg:top-24">
-        <Card className="gap-0 rounded-4xl border-none bg-card px-6 py-6 shadow-none ring-1 ring-border/60">
-          <h3 className="text-base font-bold text-foreground">
-            {t("summary.title")}
-          </h3>
-
-          <div className="mt-6 flex items-center justify-between gap-3 font-semibold">
-            <span className="text-muted-foreground">
-              {t("summary.serviceFee")}
-            </span>
-            <span className="flex items-center gap-1 font-clash text-lg text-muted-foreground">
-              {formatNumber(SERVICE_FEE, locale)}
-              <SaudiRiyal className="size-3.5" aria-hidden="true" />
-            </span>
-          </div>
-
-          <div className="my-3.5 h-px w-full bg-border" />
-
-          <div className="flex items-center justify-between gap-3 font-semibold">
-            <span className="flex items-center gap-1.5 text-muted-foreground">
-              {t("summary.vat")}
-              <span title={t("summary.vatInfo")} className="inline-flex">
-                <Info
-                  className="size-3.5 shrink-0 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <span className="sr-only">{t("summary.vatInfo")}</span>
-              </span>
-            </span>
-            <span className="flex items-center gap-1 font-clash text-lg text-muted-foreground">
-              {formatNumber(VAT_AMOUNT, locale)}
-              <SaudiRiyal className="size-3.5" aria-hidden="true" />
-            </span>
-          </div>
-
-          <div className="my-4 w-full border-t border-dashed border-border" />
-
-          <div className="flex items-center justify-between gap-3">
-            <span className="font-semibold text-foreground/70">
-              {t("summary.total")}
-            </span>
-            <span className="flex items-center gap-1 font-clash text-xl font-bold text-primary">
-              {formatNumber(TOTAL, locale)}
-              <SaudiRiyal className="size-5" aria-hidden="true" />
-            </span>
-          </div>
-        </Card>
+        <OrderSummaryCard
+          serviceFee={SERVICE_FEE}
+          vatAmount={VAT_AMOUNT}
+          total={TOTAL}
+        />
 
         <Card className="gap-5 rounded-4xl border-none bg-card p-10 shadow-none ring-1 ring-border/60">
           <div className="relative flex items-center justify-center gap-2 text-center">

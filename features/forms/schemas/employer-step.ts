@@ -3,6 +3,7 @@ import { z } from "zod"
 import {
   ARABIC_NAME_PATTERN,
   ENGLISH_NAME_PATTERN,
+  NATIONAL_ID_PATTERN,
   SAUDI_PHONE_PATTERN,
   keepArabicNameInput,
   keepEnglishNameInput,
@@ -39,7 +40,7 @@ export function createEmployerStepSchema(messages: EmployerStepMessages) {
     national_id: z
       .string()
       .trim()
-      .regex(/^[12]\d{9}$/, { message: messages.nationalIdInvalid }),
+      .regex(NATIONAL_ID_PATTERN, { message: messages.nationalIdInvalid }),
     phone: z
       .string()
       .trim()

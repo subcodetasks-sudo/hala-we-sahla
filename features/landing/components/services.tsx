@@ -45,14 +45,18 @@ export default async function Services() {
                     </p>
                     <h2 className="mt-2 text-2xl font-bold tracking-tight text-balance sm:text-3xl">
                         {t.rich("heading", {
-                            accent: (chunks) => (
-                                <span className="text-accent">{chunks}</span>
+                            br: () => <br />,
+                            primary: (chunks) => (
+                                <span className="text-primary">{chunks}</span>
                             ),
                         })}
                     </h2>
+                    <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+                        {t("description")}
+                    </p>
                 </div>
 
-                <div className="mt-16 flex flex-col gap-16 lg:mt-20 lg:gap-24">
+                <div className="mt-16 flex flex-col gap-8 lg:mt-20 ">
                     {SERVICE_ITEMS.map(
                         ({ key, href, icon: Icon, image, tone, imageFirst }) => {
                             const toneText =
@@ -63,13 +67,22 @@ export default async function Services() {
                                     key="text"
                                     className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-start"
                                 >
-                                    <span className={cn("flex size-12 items-center justify-center rounded-full bg-primary/20", key === "whatsapp" ? "bg-green-600/80" : "")}>
+                                    <span className={cn("flex size-12 items-center justify-center rounded-full bg-primary/20", key === "whatsapp" ? "bg-primary/40" : "")}>
+                                    {key === "whatsapp" ? (
+                                        <CustomIcon
+                                            size={22}
+                                            src="/icons/message.svg"
+                                            className="size-5 text-white"
+                                            aria-hidden="true"
+                                        />
+                                    ) : (
                                         <CustomIcon
                                             size={22}
                                             src={Icon as string}
-                                            className={cn("size-5 text-black", key === "whatsapp" ? "text-white" : "")}
+                                            className={cn("size-5 text-black",)}
                                             aria-hidden="true"
                                         />
+                                    )}
                                     </span>
 
                                     <h3 className="text-2xl font-bold sm:text-3xl">
@@ -92,7 +105,7 @@ export default async function Services() {
                                             tone === "accent" &&
                                                 "bg-accent  hover:bg-accent/80!",
                                             key === "whatsapp" &&
-                                                "bg-green-600  hover:bg-green-600/80!",
+                                                "bg-[#0DB38B] hover:bg-[#0DB38B]/80!",
                                         )}
                                         asChild
                                     >
@@ -113,7 +126,7 @@ export default async function Services() {
                             const imageBlock = (
                                 <div
                                     key="image"
-                                    className="mx-auto w-full max-w-md lg:max-w-none"
+                                    className="mx-auto w-full grow"
                                 >
                                     <Image
                                         src={image}

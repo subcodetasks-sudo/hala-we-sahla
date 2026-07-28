@@ -16,8 +16,9 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
-import { Button } from "@/components/ui/button"
 import DocumentUploadField from "@/features/forms/components/document-upload-field"
+import SignatureUploadButton from "@/features/forms/components/signature-upload-button"
+import { keepDecimalInput } from "@/features/forms/lib/input-filters"
 import type { DocumentsStepValues } from "@/features/forms/schemas/documents-step"
 import { cn } from "@/lib/utils"
 
@@ -49,10 +50,22 @@ const UPLOAD_FIELDS = [
     name: "passport_image",
     labelKey: "passport_image",
     showInfo: true,
+    sampleSrc: "/forms/passport.png",
   },
   {
     name: "exit_reentry_visa",
     labelKey: "exit_reentry_visa",
+  },
+] as const
+
+const SIGNATURE_FIELDS = [
+  {
+    name: "employer_signature",
+    labelKey: "employer",
+  },
+  {
+    name: "worker_signature",
+    labelKey: "worker",
   },
 ] as const
 
@@ -80,6 +93,9 @@ export default function DocumentsStepForm({
                   invalid={fieldState.invalid}
                   showInfo={"showInfo" in item ? item.showInfo : false}
                   infoTitle={t("sampleTitle")}
+                  sampleSrc={
+                    "sampleSrc" in item ? item.sampleSrc : undefined
+                  }
                 />
                 {fieldState.error ? (
                   <FieldError>{fieldState.error.message}</FieldError>
@@ -112,15 +128,16 @@ export default function DocumentsStepForm({
                 <InputGroupInput
                   {...field}
                   id="salary"
-                  type="number"
+                  type="text"
                   inputMode="decimal"
-                  step="0.01"
-                  min="0"
+                  autoComplete="off"
                   value={field.value ?? ""}
                   placeholder={t("fields.salary.placeholder")}
                   aria-invalid={fieldState.invalid}
                   className="pe-4"
-                  dir="ltr"
+                  onChange={(event) =>
+                    field.onChange(keepDecimalInput(event.target.value))
+                  }
                 />
                 <InputGroupAddon align="inline-end" className="pe-4">
                   <SaudiRiyal
@@ -137,30 +154,27 @@ export default function DocumentsStepForm({
         />
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <Button
-            type="button"
-            className="h-12 gap-2 rounded-full text-base text-white bg-[#003143] hover:bg-[#003143]/80"
-            onClick={() => console.log("employer signature stub")}
-          >
-            <CustomIcon
-              src="/forms/step-3/brush.svg"
-              size={18}
-              className="size-4.5 text-white"
+          {SIGNATURE_FIELDS.map((item) => (
+            <Controller
+              key={item.name}
+              name={item.name}
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid || undefined}>
+                  <SignatureUploadButton
+                    id={item.name}
+                    label={t(`signatures.${item.labelKey}`)}
+                    value={field.value instanceof File ? field.value : null}
+                    onChange={field.onChange}
+                    invalid={fieldState.invalid}
+                  />
+                  {fieldState.error ? (
+                    <FieldError>{fieldState.error.message}</FieldError>
+                  ) : null}
+                </Field>
+              )}
             />
-            {t("signatures.employer")}
-          </Button>
-          <Button
-            type="button"
-            className="h-12 gap-2 rounded-full text-base text-white bg-[#003143] hover:bg-[#003143]/80"
-            onClick={() => console.log("sponsor signature stub")}
-          >
-            <CustomIcon
-              src="/forms/step-3/brush.svg"
-              size={18}
-              className="size-4.5 text-white"
-            />
-            {t("signatures.sponsor")}
-          </Button>
+          ))}
         </div>
       </div>
     </FieldGroup>

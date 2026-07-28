@@ -94,13 +94,13 @@ export default function LegalSidebar({
                   "flex w-full items-center gap-2.5  px-3 py-2.5 text-start text-sm transition-colors",
                   isActive
                     ? "bg-primary/10 font-semibold text-primary border-s-4 border-primary"
-                    : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                    : "font-medium text-black hover:bg-muted/60 hover:text-black",
                 )}
               >
                 <span
                   className={cn(
                     "size-1.5 shrink-0 rounded-full",
-                    isActive ? "bg-primary" : "bg-muted-foreground/50",
+                    isActive ? "bg-primary" : "bg-black",
                   )}
                   aria-hidden="true"
                 />

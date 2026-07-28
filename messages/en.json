@@ -363,7 +363,7 @@
     "description": "Learn about the basic requirements and service fees before starting a domestic worker contract renewal request",
     "planTitle": "Comprehensive Renewal Package",
     "planDescription": "Renew labor contracts easily and reliably",
-    "priceSuffix": "minimum",
+    "priceSuffix": "per contract",
     "requirements": {
       "nationalId": "National ID / Iqama",
       "passport": "Worker's passport",
@@ -373,7 +373,8 @@
   },
   "Services": {
     "eyebrow": "Essential Services",
-    "heading": "Everything you need to renew <accent>your contract</accent> in one platform",
+    "heading": "Everything you need<br></br>to <primary>renew your contract</primary> in one platform",
+    "description": "Choose the right service and start your digital journey with ease",
     "items": {
       "request": {
         "titleLine1": "Start",
@@ -503,6 +504,43 @@
         "next": "Next",
         "previous": "Previous",
         "submitRenewal": "Submit renewal request",
+        "review": {
+          "title": "Review application",
+          "subtitle": "Make sure all details are correct before submitting.",
+          "sections": {
+            "employer": "Employer details",
+            "worker": "Worker details",
+            "documents": "Uploaded documents"
+          },
+          "fields": {
+            "employerName": "Employer name",
+            "nationalId": "National ID number",
+            "phone": "Contact number",
+            "city": "City",
+            "employerIssuePlace": "Place of issue",
+            "workerName": "Worker name",
+            "passportNumber": "Passport number",
+            "passportIssueDate": "Issue date",
+            "passportExpiryDate": "Passport expiry date",
+            "birthDate": "Date of birth",
+            "philippinesAddress": "Address in the Philippines",
+            "passportIssuePlace": "Passport place of issue",
+            "salary": "Salary"
+          },
+          "documents": {
+            "national_id_image": "National ID",
+            "iqama_image": "Worker ID (Iqama)",
+            "passport_image": "Passport photo (first page + visa)",
+            "exit_reentry_visa": "Exit and re-entry visa",
+            "employer_signature": "Employer signature",
+            "worker_signature": "Worker signature"
+          },
+          "preview": "Preview file",
+          "close": "Close",
+          "confirmation": "I confirm that all entered data is correct, and I agree to submit the renewal request.",
+          "confirmationRequired": "Please confirm the data is correct before submitting",
+          "empty": "—"
+        },
         "hijri": {
           "title": "Select Hijri date",
           "placeholder": "jj/mm/aaaa",
@@ -632,14 +670,17 @@
             "workerPhoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
             "birthDateRequired": "Please select the date of birth",
             "birthDateInvalid": "Please select a valid Hijri date of birth",
+            "birthDateMinAge": "The worker must be at least 18 years old",
             "philippinesAddressRequired": "Please enter the address in the Philippines",
             "passportIssuePlaceRequired": "Please select the passport place of issue",
             "passportNumberRequired": "Please enter the passport number",
             "passportNumberInvalid": "Please enter the passport number in Arabic only",
             "passportIssueDateRequired": "Please select the passport issue date",
             "passportIssueDateInvalid": "Please select a valid Hijri issue date",
+            "passportIssueDateAfterBirth": "Passport issue date must be after the date of birth",
             "passportExpiryDateRequired": "Please select the passport expiry date",
-            "passportExpiryDateInvalid": "Please select a valid Hijri expiry date"
+            "passportExpiryDateInvalid": "Please select a valid Hijri expiry date",
+            "passportExpiryDateAfterIssue": "Passport expiry date must be after the issue date"
           }
         },
         "documents": {
@@ -670,7 +711,7 @@
           },
           "signatures": {
             "employer": "Add employer signature",
-            "sponsor": "Add sponsor signature"
+            "worker": "Add worker signature"
           },
           "errors": {
             "nationalIdImageRequired": "Please upload the national ID photo",
@@ -678,12 +719,18 @@
             "passportImageRequired": "Please upload the passport photo",
             "exitReentryVisaRequired": "Please upload the exit and re-entry visa",
             "fileTypeInvalid": "Please upload a png or pdf file only",
+            "imageTypeInvalid": "Please upload a png or jpg image only",
+            "employerSignatureRequired": "Please upload the employer signature",
+            "workerSignatureRequired": "Please upload the worker signature",
             "salaryRequired": "Please enter the salary",
             "salaryInvalid": "Please enter a valid salary"
           }
         },
         "summary": {
           "title": "Order summary",
+          "details": "Order details",
+          "showDetails": "Show order details",
+          "hideDetails": "Hide order details",
           "serviceFee": "Service fee",
           "vat": "VAT (15%)",
           "vatInfo": "VAT is calculated at 15% of the service fee",
