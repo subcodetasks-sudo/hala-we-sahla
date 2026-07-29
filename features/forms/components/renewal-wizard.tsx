@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { useQueryClient } from "@tanstack/react-query"
 import { ArrowLeft, ChevronRight } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
 import MutedParensText from "@/components/shared/muted-parens-text"
@@ -19,13 +20,19 @@ import RenewalStepper, {
 import ReviewStep from "@/features/forms/components/review-step"
 import SuccessStep from "@/features/forms/components/success-step"
 import WorkerStepForm from "@/features/forms/components/worker-step-form"
+import { useSubmitDocumentsStep } from "@/features/forms/hooks/use-submit-documents-step"
+import { useSubmitEmployerStep } from "@/features/forms/hooks/use-submit-employer-step"
+import { useSubmitRenewalRequest } from "@/features/forms/hooks/use-submit-renewal-request"
+import { useSubmitWorkerStep } from "@/features/forms/hooks/use-submit-worker-step"
 import {
   buildRenewalDraft,
   clearRenewalDraft,
   loadRenewalDraftForms,
   writeRenewalDraft,
+  RENEWAL_DRAFT_KEEP_KEY,
   type StoredFile,
 } from "@/features/forms/lib/renewal-draft-storage"
+import { renewalReviewQueryOptions } from "@/features/forms/services/renewal-review"
 import {
   createDocumentsStepSchema,
   DOCUMENTS_DEFAULT_VALUES,
@@ -61,8 +68,11 @@ export default function RenewalWizard() {
   const tEmployer = useTranslations("Forms.renewal.wizard.employer")
   const tWorker = useTranslations("Forms.renewal.wizard.worker")
   const tDocuments = useTranslations("Forms.renewal.wizard.documents")
+  const locale = useLocale()
+  const queryClient = useQueryClient()
   const [step, setStep] = useState(0)
   const [draftReady, setDraftReady] = useState(false)
+  const [requestId, setRequestId] = useState<number | null>(null)
   const [confirmed, setConfirmed] = useState(false)
   const [confirmationError, setConfirmationError] = useState(false)
   const [submittedRequestNumber, setSubmittedRequestNumber] = useState<
@@ -71,6 +81,10 @@ export default function RenewalWizard() {
   const fileCacheRef = useRef(new WeakMap<File, Promise<StoredFile>>())
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const saveGenerationRef = useRef(0)
+  const submitEmployerStep = useSubmitEmployerStep()
+  const submitWorkerStep = useSubmitWorkerStep()
+  const submitDocumentsStep = useSubmitDocumentsStep()
+  const submitRenewalRequest = useSubmitRenewalRequest()
 
   const employerSchema = useMemo(
     () =>
@@ -82,6 +96,9 @@ export default function RenewalWizard() {
         nationalIdInvalid: tEmployer("errors.nationalIdInvalid"),
         phoneInvalid: tEmployer("errors.phoneInvalid"),
         cityRequired: tEmployer("errors.cityRequired"),
+        passportIssuePlaceRequired: tEmployer(
+          "errors.passportIssuePlaceRequired",
+        ),
       }),
     [tEmployer],
   )
@@ -171,24 +188,46 @@ export default function RenewalWizard() {
   useEffect(() => {
     let cancelled = false
 
-    async function hydrateDraft() {
-      const draft = await loadRenewalDraftForms()
-      if (cancelled) return
+    function markRefreshKeep() {
+      sessionStorage.setItem(RENEWAL_DRAFT_KEEP_KEY, "1")
+    }
 
-      if (draft) {
-        employerForm.reset(draft.employer)
-        workerForm.reset(draft.worker)
-        documentsForm.reset(draft.documents)
-        setStep(draft.step)
+    window.addEventListener("beforeunload", markRefreshKeep)
+
+    async function hydrateDraft() {
+      const shouldRestore =
+        sessionStorage.getItem(RENEWAL_DRAFT_KEEP_KEY) === "1"
+      sessionStorage.removeItem(RENEWAL_DRAFT_KEEP_KEY)
+
+      if (shouldRestore) {
+        const draft = await loadRenewalDraftForms()
+        if (cancelled) return
+
+        if (draft) {
+          employerForm.reset(draft.employer)
+          workerForm.reset(draft.worker)
+          documentsForm.reset(draft.documents)
+          setStep(draft.step)
+          setRequestId(draft.requestId)
+        }
+      } else {
+        clearRenewalDraft()
       }
 
-      setDraftReady(true)
+      if (!cancelled) setDraftReady(true)
     }
 
     void hydrateDraft()
 
     return () => {
       cancelled = true
+      window.removeEventListener("beforeunload", markRefreshKeep)
+
+      // Soft navigation away: clear draft so the next visit starts fresh.
+      // Refresh sets RENEWAL_DRAFT_KEEP_KEY in beforeunload, so we keep it.
+      if (sessionStorage.getItem(RENEWAL_DRAFT_KEEP_KEY) !== "1") {
+        clearRenewalDraft()
+      }
     }
   }, [documentsForm, employerForm, workerForm])
 
@@ -224,6 +263,7 @@ export default function RenewalWizard() {
 
         void buildRenewalDraft({
           step,
+          requestId,
           employer: employerForm.getValues(),
           worker: workerForm.getValues(),
           documents: documentsForm.getValues(),
@@ -253,6 +293,7 @@ export default function RenewalWizard() {
     documentsForm,
     draftReady,
     employerForm,
+    requestId,
     step,
     submittedRequestNumber,
     workerForm,
@@ -261,60 +302,76 @@ export default function RenewalWizard() {
   const isSubmitted = Boolean(submittedRequestNumber)
   const stepKey = RENEWAL_STEPS[step]
   const isReviewStep = step === 3
-  const employerValues = employerForm.watch()
-  const workerValues = workerForm.watch()
-  const documentsValues = documentsForm.watch()
 
   async function handleNext() {
     if (step === 0) {
       const isValid = await employerForm.trigger()
       if (!isValid) return
 
-      const values = employerForm.getValues()
-      console.log("employer step payload", {
-        employer_name_ar: values.employer_name_ar,
-        employer_name_en: values.employer_name_en,
-        national_id: values.national_id,
-        phone: values.phone,
-        city_id: Number(values.city_id),
-        passport_issue_place_id: values.passport_issue_place_id
-          ? Number(values.passport_issue_place_id)
-          : null,
-      })
+      if (!requestId) {
+        const values = employerForm.getValues()
+
+        try {
+          const result = await submitEmployerStep.mutateAsync({
+            employer_name_ar: values.employer_name_ar,
+            employer_name_en: values.employer_name_en,
+            national_id: values.national_id,
+            phone: values.phone,
+            city_id: Number(values.city_id),
+            passport_issue_place_id: Number(values.passport_issue_place_id),
+          })
+          setRequestId(result.id)
+        } catch {
+          return
+        }
+      }
     }
 
     if (step === 1) {
       const isValid = await workerForm.trigger()
       if (!isValid) return
+      if (!requestId) return
 
       const values = workerForm.getValues()
-      console.log("worker step payload", {
-        worker_name_ar: values.worker_name_ar,
-        worker_name_en: values.worker_name_en,
-        worker_phone: values.worker_phone,
-        birth_date: values.birth_date,
-        philippines_address: values.philippines_address,
-        passport_issue_place_id: Number(values.passport_issue_place_id),
-        passport_number: values.passport_number,
-        passport_issue_date: values.passport_issue_date,
-        passport_expiry_date: values.passport_expiry_date,
-      })
+
+      try {
+        await submitWorkerStep.mutateAsync({
+          requestId,
+          payload: {
+            worker_name_ar: values.worker_name_ar,
+            worker_name_en: values.worker_name_en,
+            worker_phone: values.worker_phone,
+            birth_date: values.birth_date,
+            philippines_address: values.philippines_address,
+            worker_passport_issue_place_id: Number(
+              values.passport_issue_place_id,
+            ),
+            passport_number: values.passport_number,
+            passport_issue_date: values.passport_issue_date,
+            passport_expiry_date: values.passport_expiry_date,
+          },
+        })
+      } catch {
+        return
+      }
     }
 
     if (step === 2) {
       const isValid = await documentsForm.trigger()
       if (!isValid) return
+      if (!requestId) return
 
-      const values = documentsForm.getValues()
-      console.log("documents step payload", {
-        national_id_image: values.national_id_image,
-        iqama_image: values.iqama_image,
-        passport_image: values.passport_image,
-        exit_reentry_visa: values.exit_reentry_visa,
-        employer_signature: values.employer_signature,
-        worker_signature: values.worker_signature,
-        salary: Number(values.salary),
-      })
+      try {
+        await submitDocumentsStep.mutateAsync({
+          requestId,
+          values: documentsForm.getValues(),
+        })
+        await queryClient.prefetchQuery(
+          renewalReviewQueryOptions(locale, requestId),
+        )
+      } catch {
+        return
+      }
     }
 
     if (step === 3) {
@@ -322,24 +379,23 @@ export default function RenewalWizard() {
         setConfirmationError(true)
         return
       }
+      if (!requestId) return
 
-      console.log("renewal submit payload", {
-        employer: employerForm.getValues(),
-        worker: workerForm.getValues(),
-        documents: documentsForm.getValues(),
-      })
+      try {
+        const result = await submitRenewalRequest.mutateAsync(requestId)
 
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-        saveTimeoutRef.current = null
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current)
+          saveTimeoutRef.current = null
+        }
+        saveGenerationRef.current += 1
+        clearRenewalDraft()
+        sessionStorage.removeItem(RENEWAL_DRAFT_KEEP_KEY)
+
+        setSubmittedRequestNumber(result.request_number)
+      } catch {
+        return
       }
-      saveGenerationRef.current += 1
-      clearRenewalDraft()
-
-      const requestNumber = String(
-        Math.floor(10000 + Math.random() * 90000),
-      )
-      setSubmittedRequestNumber(requestNumber)
       return
     }
 
@@ -396,9 +452,8 @@ export default function RenewalWizard() {
 
               <div className={isReviewStep ? "mt-0" : "mt-8 hidden"}>
                 <ReviewStep
-                  employer={employerValues}
-                  worker={workerValues}
-                  documents={documentsValues}
+                  requestId={requestId}
+                  enabled={isReviewStep}
                   confirmed={confirmed}
                   onConfirmedChange={(value) => {
                     setConfirmed(value)
@@ -434,7 +489,13 @@ export default function RenewalWizard() {
                   type="button"
                   className="ms-auto h-11 min-w-0 flex-1 gap-1.5 rounded-full px-3 text-sm text-white sm:flex-none sm:px-8 sm:text-base"
                   onClick={handleNext}
-                  disabled={!draftReady}
+                  disabled={
+                    !draftReady ||
+                    submitEmployerStep.isPending ||
+                    submitWorkerStep.isPending ||
+                    submitDocumentsStep.isPending ||
+                    submitRenewalRequest.isPending
+                  }
                 >
                   <span className="min-w-0 truncate">
                     {isReviewStep ? t("submitRenewal") : t("next")}

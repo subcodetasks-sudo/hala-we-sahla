@@ -56,3 +56,15 @@ export function isAtLeastGregorianAge(
 
   return age >= minAge
 }
+
+/** Latest calendar date that still meets `years` of age (same month/day as today). */
+export function getDateYearsBeforeToday(
+  years: number,
+  today: Date = new Date(),
+) {
+  return new Date(
+    today.getFullYear() - years,
+    today.getMonth(),
+    today.getDate(),
+  )
+}

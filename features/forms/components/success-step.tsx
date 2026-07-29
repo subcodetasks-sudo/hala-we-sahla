@@ -43,10 +43,13 @@ export default function SuccessStep({
           aria-hidden="true"
           className="success-check-glow absolute inset-0 rounded-full bg-emerald-400/35 blur-2xl"
         />
-        <div className="success-check-pop relative flex size-20 items-center justify-center rounded-lg rounded-tl-[50px] rounded-br-[50px] bg-[#1B8354] shadow-[0_12px_40px_rgba(34,197,94,0.45)] sm:size-24">
+        <div className="success-check-pop relative flex size-24 items-center justify-center rounded-tl-[30px]
+rounded-tr-[13px]
+rounded-br-[30px]
+rounded-bl-[13px] bg-[#1B8354] shadow-[0_12px_40px_rgba(34,197,94,0.45)] sm:size-24">
           <svg
             viewBox="0 0 52 52"
-            className="size-10 sm:size-12"
+            className="size-16"
             fill="none"
             aria-hidden="true"
           >

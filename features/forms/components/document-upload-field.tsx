@@ -79,7 +79,7 @@ export default function DocumentUploadField({
         {showInfo ? (
           <button
             type="button"
-            className="inline-flex size-4 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-muted-foreground"
+            className="inline-flex size-4 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary"
             aria-label={infoTitle ?? t("sampleTitle")}
             onClick={() => setSampleOpen(true)}
           >

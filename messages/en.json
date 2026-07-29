@@ -1,7 +1,12 @@
 {
   "Common": {
     "home": "Home",
-    "breadcrumb": "Breadcrumb"
+    "breadcrumb": "Breadcrumb",
+    "errors": {
+      "network": "No internet connection. Please try again.",
+      "timeout": "The request took too long. Please try again.",
+      "unknown": "Something went wrong. Please try again."
+    }
   },
   "Blog": {
     "eyebrow": "Domestic Worker Blog",
@@ -539,7 +544,12 @@
           "close": "Close",
           "confirmation": "I confirm that all entered data is correct, and I agree to submit the renewal request.",
           "confirmationRequired": "Please confirm the data is correct before submitting",
-          "empty": "—"
+          "empty": "—",
+          "loading": "Loading review details...",
+          "loadError": "Could not load review details",
+          "fileLoading": "Loading file...",
+          "fileLoadError": "Could not load the file preview",
+          "openFile": "Open file"
         },
         "hijri": {
           "title": "Select Hijri date",
@@ -583,26 +593,15 @@
             },
             "city_id": {
               "label": "City",
-              "placeholder": "Select the city here..."
+              "placeholder": "Select the city here...",
+              "loading": "Loading cities...",
+              "loadError": "Could not load cities"
             },
             "passport_issue_place_id": {
               "label": "Place of issue",
-              "placeholder": "Select the place of issue here..."
-            }
-          },
-          "options": {
-            "cities": {
-              "riyadh": "Riyadh",
-              "jeddah": "Jeddah",
-              "dammam": "Dammam",
-              "makkah": "Makkah",
-              "madinah": "Madinah"
-            },
-            "issuePlaces": {
-              "riyadh": "Riyadh",
-              "jeddah": "Jeddah",
-              "dammam": "Dammam",
-              "abroad": "Outside the Kingdom"
+              "placeholder": "Select the place of issue here...",
+              "loading": "Loading places of issue...",
+              "loadError": "Could not load places of issue"
             }
           },
           "errors": {
@@ -612,7 +611,8 @@
             "employerNameEnInvalid": "Please enter the name in English only",
             "nationalIdInvalid": "Please enter a valid 10-digit national ID",
             "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
-            "cityRequired": "Please select a city"
+            "cityRequired": "Please select a city",
+            "passportIssuePlaceRequired": "Please select the place of issue"
           }
         },
         "worker": {
@@ -639,7 +639,9 @@
             },
             "passport_issue_place_id": {
               "label": "Passport place of issue in English",
-              "placeholder": "Select the place of issue here..."
+              "placeholder": "Select the place of issue here...",
+              "loading": "Loading places of issue...",
+              "loadError": "Could not load places of issue"
             },
             "passport_number": {
               "label": "Passport number",

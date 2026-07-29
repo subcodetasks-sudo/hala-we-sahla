@@ -56,13 +56,13 @@ export default async function LocaleLayout({
       className={`${notoSansArabic.className} ${clashDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers>
-          <DirectionProvider dir={direction} direction={direction}>
-            <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <DirectionProvider dir={direction} direction={direction}>
               {children}
-            </NextIntlClientProvider>
-          </DirectionProvider>
-        </Providers>
+            </DirectionProvider>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

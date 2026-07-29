@@ -26,7 +26,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import GregorianDateField from "@/features/forms/components/gregorian-date-field"
-import { PASSPORT_ISSUE_PLACE_OPTIONS } from "@/features/forms/constants/employer-options"
+import { usePassportIssuePlaces } from "@/features/forms/hooks/use-passport-issue-places"
+import { getDateYearsBeforeToday } from "@/features/forms/lib/gregorian-date"
+import { MIN_WORKER_AGE } from "@/features/forms/schemas/worker-step"
+import { WORKER_PASSPORT_ISSUE_COUNTRY } from "@/features/forms/services/passport-issue-places"
 import {
   keepArabicNameInput,
   keepEnglishNameInput,
@@ -66,6 +69,12 @@ export default function WorkerStepForm({
   className,
 }: WorkerStepFormProps) {
   const t = useTranslations("Forms.renewal.wizard.worker")
+  const maxBirthDate = getDateYearsBeforeToday(MIN_WORKER_AGE)
+  const {
+    data: passportIssuePlaces = [],
+    isPending: isPassportPlacesPending,
+    isError: isPassportPlacesError,
+  } = usePassportIssuePlaces(WORKER_PASSPORT_ISSUE_COUNTRY)
 
   return (
     <FieldGroup className={cn("gap-5", className)}>
@@ -216,6 +225,7 @@ export default function WorkerStepForm({
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 invalid={fieldState.invalid}
+                maxDate={maxBirthDate}
               />
               {fieldState.error ? (
                 <FieldError>{fieldState.error.message}</FieldError>
@@ -274,6 +284,7 @@ export default function WorkerStepForm({
               <Select
                 value={field.value || undefined}
                 onValueChange={field.onChange}
+                disabled={isPassportPlacesPending || isPassportPlacesError}
               >
                 <SelectTrigger
                   id="passport_issue_place_id"
@@ -292,23 +303,27 @@ export default function WorkerStepForm({
                     </span>
                     <span className="min-w-0 flex-1 px-3 text-start" dir="ltr">
                       <SelectValue
-                        placeholder={t(
-                          "fields.passport_issue_place_id.placeholder",
-                        )}
+                        placeholder={
+                          isPassportPlacesPending
+                            ? t("fields.passport_issue_place_id.loading")
+                            : isPassportPlacesError
+                              ? t("fields.passport_issue_place_id.loadError")
+                              : t("fields.passport_issue_place_id.placeholder")
+                        }
                       />
                     </span>
                   </span>
                 </SelectTrigger>
                 <SelectContent
                   align="start"
-                  className="w-(--radix-select-trigger-width)"
+                  className="w-(--radix-select-trigger-width) max-h-72"
                   position="popper"
                   dir="ltr"
                   lang="en"
                 >
-                  {PASSPORT_ISSUE_PLACE_OPTIONS.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {t(`options.issuePlaces.${option.labelKey}`)}
+                  {passportIssuePlaces.map((place) => (
+                    <SelectItem key={place.id} value={String(place.id)}>
+                      {place.name_en}
                     </SelectItem>
                   ))}
                 </SelectContent>

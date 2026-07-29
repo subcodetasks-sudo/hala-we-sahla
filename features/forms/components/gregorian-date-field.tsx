@@ -25,6 +25,10 @@ type GregorianDateFieldProps = {
   onChange: (value: string) => void
   invalid?: boolean
   className?: string
+  /** Inclusive earliest selectable date. */
+  minDate?: Date
+  /** Inclusive latest selectable date. Also used as the default month when empty. */
+  maxDate?: Date
 }
 
 function formatGregorianDateValue(date: Date) {
@@ -34,12 +38,18 @@ function formatGregorianDateValue(date: Date) {
   return `${year}-${month}-${day}`
 }
 
+function startOfLocalDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
 export default function GregorianDateField({
   id,
   value,
   onChange,
   invalid,
   className,
+  minDate,
+  maxDate,
 }: GregorianDateFieldProps) {
   const locale = useLocale()
   const [open, setOpen] = useState(false)
@@ -48,6 +58,33 @@ export default function GregorianDateField({
     () => (value ? parseGregorianDateValue(value) : undefined),
     [value],
   )
+
+  const minDay = useMemo(
+    () => (minDate ? startOfLocalDay(minDate) : undefined),
+    [minDate],
+  )
+  const maxDay = useMemo(
+    () => (maxDate ? startOfLocalDay(maxDate) : undefined),
+    [maxDate],
+  )
+
+  const defaultMonth = selectedDate ?? maxDay ?? minDay
+
+  const startMonth = useMemo(() => {
+    if (minDay) return minDay
+    if (maxDay) {
+      return new Date(maxDay.getFullYear() - 100, 0, 1)
+    }
+    return undefined
+  }, [minDay, maxDay])
+
+  const endMonth = useMemo(() => {
+    if (maxDay) return maxDay
+    if (minDay) {
+      return new Date(minDay.getFullYear() + 100, 11, 31)
+    }
+    return undefined
+  }, [minDay, maxDay])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -88,7 +125,17 @@ export default function GregorianDateField({
         <Calendar
           mode="single"
           selected={selectedDate}
-          defaultMonth={selectedDate}
+          defaultMonth={defaultMonth}
+          startMonth={startMonth}
+          endMonth={endMonth}
+          disabled={
+            minDay || maxDay
+              ? [
+                  ...(minDay ? [{ before: minDay }] : []),
+                  ...(maxDay ? [{ after: maxDay }] : []),
+                ]
+              : undefined
+          }
           locale={locale === "ar" ? arSA : enUS}
           dir={locale === "ar" ? "rtl" : "ltr"}
           captionLayout="dropdown"

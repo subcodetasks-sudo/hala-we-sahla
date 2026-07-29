@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { Eye, Phone, SaudiRiyal } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
@@ -13,20 +13,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useRenewalReview } from "@/features/forms/hooks/use-renewal-review"
 import {
-  CITY_OPTIONS,
-  PASSPORT_ISSUE_PLACE_OPTIONS,
-} from "@/features/forms/constants/employer-options"
-import type { DocumentsStepValues } from "@/features/forms/schemas/documents-step"
-import type { EmployerStepValues } from "@/features/forms/schemas/employer-step"
-import type { WorkerStepValues } from "@/features/forms/schemas/worker-step"
+  formatBilingualLabel,
+  formatNamedEntityLabel,
+  type RenewalReviewDocuments,
+} from "@/features/forms/services/renewal-review"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 type ReviewStepProps = {
-  employer: EmployerStepValues
-  worker: WorkerStepValues
-  documents: DocumentsStepValues
+  requestId: number | null
+  enabled?: boolean
   confirmed: boolean
   onConfirmedChange: (value: boolean) => void
   className?: string
@@ -38,12 +36,13 @@ type ReviewFieldItem = {
   value: string
   icon: ReactNode
   valueSuffix?: ReactNode
+  valueDir?: "ltr" | "rtl"
 }
 
 type DocumentItem = {
-  key: keyof DocumentsStepValues
+  key: keyof RenewalReviewDocuments
   label: string
-  file: File | null
+  url: string | null
 }
 
 function formatSaudiPhone(phone: string) {
@@ -52,6 +51,73 @@ function formatSaudiPhone(phone: string) {
     return `+966 ${digits.slice(1, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`
   }
   return phone
+}
+
+function getUrlExtension(url: string) {
+  const path = url.split("?")[0] ?? url
+  const fileName = path.slice(path.lastIndexOf("/") + 1)
+  const dotIndex = fileName.lastIndexOf(".")
+  if (dotIndex === -1) return ""
+  return fileName.slice(dotIndex)
+}
+
+function getDocumentKind(url: string) {
+  const extension = getUrlExtension(url).toLowerCase()
+  if (extension === ".pdf") return "pdf"
+  if ([".png", ".jpg", ".jpeg", ".webp", ".gif"].includes(extension)) {
+    return "image"
+  }
+  return "other"
+}
+
+// Chrome refuses to render cross-origin PDFs inside an iframe, so the file is
+// downloaded and framed through a same-origin blob URL instead.
+function useBlobPreviewUrl(url: string | null) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
+    "idle",
+  )
+
+  useEffect(() => {
+    if (!url) {
+      setBlobUrl(null)
+      setStatus("idle")
+      return
+    }
+
+    let cancelled = false
+    let createdUrl: string | null = null
+
+    setBlobUrl(null)
+    setStatus("loading")
+
+    async function load() {
+      try {
+        const response = await fetch(url as string, { credentials: "omit" })
+        if (!response.ok) throw new Error("Failed to load file")
+
+        const blob = await response.blob()
+        if (cancelled) return
+
+        createdUrl = URL.createObjectURL(
+          new Blob([blob], { type: "application/pdf" }),
+        )
+        setBlobUrl(createdUrl)
+        setStatus("ready")
+      } catch {
+        if (!cancelled) setStatus("error")
+      }
+    }
+
+    void load()
+
+    return () => {
+      cancelled = true
+      if (createdUrl) URL.revokeObjectURL(createdUrl)
+    }
+  }, [url])
+
+  return { blobUrl, status }
 }
 
 function FieldIcon({ src }: { src: string }) {
@@ -74,21 +140,23 @@ function ReviewSectionTitle({
   return (
     <div className="mb-5 flex items-center gap-2 text-accent">
       {icon}
-      <h3 className="text-base font-bold shrink-0">{children}</h3>
-      <div className="border-t border-border/60 grow" />
+      <h3 className="shrink-0 text-base font-bold">{children}</h3>
+      <div className="grow border-t border-border/60" />
     </div>
   )
 }
 
 function ReviewFieldCell({ field }: { field: ReviewFieldItem }) {
   return (
-    <div className="flex min-w-0 flex-col  gap-1.5 px-2  sm:px-3">
+    <div className="flex min-w-0 flex-col gap-1.5 px-2 sm:px-3">
       <span className="flex size-5 items-center justify-center">{field.icon}</span>
       <p className="text-xs font-medium text-muted-foreground sm:text-sm">
         {field.label}
       </p>
-      <p className="inline-flex max-w-full  gap-1 text-sm font-bold wrap-break-word text-[#1a3d4d] sm:text-base">
-        <span className="min-w-0">{field.value}</span>
+      <p className="inline-flex max-w-full gap-1 text-sm font-bold wrap-break-word text-[#1a3d4d] sm:text-base">
+        <span className="min-w-0" dir={field.valueDir}>
+          {field.value}
+        </span>
         {field.valueSuffix}
       </p>
     </div>
@@ -121,24 +189,18 @@ function ReviewFieldsRow({
 
 function DocumentPreviewButton({
   label,
-  file,
+  url,
   showExtension = true,
   onPreview,
 }: {
   label: string
-  file: File | null
+  url: string | null
   showExtension?: boolean
   onPreview: () => void
 }) {
-  if (!file) return null
+  if (!url) return null
 
-  const extension = file.name.includes(".")
-    ? file.name.slice(file.name.lastIndexOf("."))
-    : file.type === "application/pdf"
-      ? ".pdf"
-      : file.type.startsWith("image/")
-        ? ".png"
-        : ""
+  const extension = getUrlExtension(url)
 
   return (
     <button
@@ -161,38 +223,69 @@ function DocumentPreviewButton({
 }
 
 export default function ReviewStep({
-  employer,
-  worker,
-  documents,
+  requestId,
+  enabled = true,
   confirmed,
   onConfirmedChange,
   className,
 }: ReviewStepProps) {
   const t = useTranslations("Forms.renewal.wizard.review")
-  const tEmployer = useTranslations("Forms.renewal.wizard.employer")
-  const tWorker = useTranslations("Forms.renewal.wizard.worker")
   const locale = useLocale()
+  const { data, isPending, isError } = useRenewalReview(requestId, { enabled })
   const [preview, setPreview] = useState<DocumentItem | null>(null)
+
+  const previewUrl = preview?.url ?? null
+  const previewKind = previewUrl ? getDocumentKind(previewUrl) : null
+  const { blobUrl: pdfBlobUrl, status: pdfStatus } = useBlobPreviewUrl(
+    previewKind === "pdf" ? previewUrl : null,
+  )
 
   const empty = t("empty")
 
-  const cityLabel =
-    CITY_OPTIONS.find((option) => option.id === employer.city_id)?.labelKey ??
-    null
-  const employerIssueLabel =
-    PASSPORT_ISSUE_PLACE_OPTIONS.find(
-      (option) => option.id === employer.passport_issue_place_id,
-    )?.labelKey ?? null
-  const workerIssueLabel =
-    PASSPORT_ISSUE_PLACE_OPTIONS.find(
-      (option) => option.id === worker.passport_issue_place_id,
-    )?.labelKey ?? null
+  if (!requestId) {
+    return (
+      <div className={cn("flex flex-col gap-3", className)}>
+        <h2 className="text-xl font-bold text-black sm:text-2xl">
+          {t("title")}
+        </h2>
+        <p className="text-sm text-destructive">{t("loadError")}</p>
+      </div>
+    )
+  }
+
+  if (isPending) {
+    return (
+      <div className={cn("flex flex-col gap-3", className)}>
+        <h2 className="text-xl font-bold text-black sm:text-2xl">
+          {t("title")}
+        </h2>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
+      </div>
+    )
+  }
+
+  if (isError || !data) {
+    return (
+      <div className={cn("flex flex-col gap-3", className)}>
+        <h2 className="text-xl font-bold text-black sm:text-2xl">
+          {t("title")}
+        </h2>
+        <p className="text-sm text-destructive">{t("loadError")}</p>
+      </div>
+    )
+  }
+
+  const { employer, worker, documents } = data
 
   const employerTopFields: ReviewFieldItem[] = [
     {
       key: "employerName",
       label: t("fields.employerName"),
-      value: employer.employer_name_ar || empty,
+      value: formatBilingualLabel(
+        employer.employer_name_ar,
+        employer.employer_name_en,
+        empty,
+      ),
       icon: <FieldIcon src="/forms/step-1/user.svg" />,
     },
     {
@@ -200,12 +293,14 @@ export default function ReviewStep({
       label: t("fields.nationalId"),
       value: employer.national_id || empty,
       icon: <FieldIcon src="/forms/step-1/personalcard.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "phone",
       label: t("fields.phone"),
       value: employer.phone ? formatSaudiPhone(employer.phone) : empty,
       icon: <Phone className="size-3.5 text-muted-foreground" />,
+      valueDir: "ltr",
     },
   ]
 
@@ -213,17 +308,13 @@ export default function ReviewStep({
     {
       key: "employerIssuePlace",
       label: t("fields.employerIssuePlace"),
-      value: employerIssueLabel
-        ? tEmployer(`options.issuePlaces.${employerIssueLabel}`)
-        : empty,
+      value: formatNamedEntityLabel(employer.passport_issue_place, empty),
       icon: <FieldIcon src="/icons/global.svg" />,
     },
     {
       key: "city",
       label: t("fields.city"),
-      value: cityLabel
-        ? tEmployer(`options.cities.${cityLabel}`)
-        : empty,
+      value: formatNamedEntityLabel(employer.city, empty),
       icon: <FieldIcon src="/forms/step-1/location.svg" />,
     },
   ]
@@ -239,7 +330,11 @@ export default function ReviewStep({
     {
       key: "workerName",
       label: t("fields.workerName"),
-      value: worker.worker_name_ar || empty,
+      value: formatBilingualLabel(
+        worker.worker_name_ar,
+        worker.worker_name_en,
+        empty,
+      ),
       icon: <FieldIcon src="/forms/step-2/user.svg" />,
     },
     {
@@ -249,24 +344,28 @@ export default function ReviewStep({
         ? formatSaudiPhone(worker.worker_phone)
         : empty,
       icon: <Phone className="size-3.5 text-muted-foreground" />,
+      valueDir: "ltr",
     },
     {
       key: "passportNumber",
       label: t("fields.passportNumber"),
       value: worker.passport_number || empty,
       icon: <FieldIcon src="/forms/step-1/id.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "passportIssueDate",
       label: t("fields.passportIssueDate"),
       value: worker.passport_issue_date || empty,
       icon: <FieldIcon src="/forms/step-2/calendar.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "passportExpiryDate",
       label: t("fields.passportExpiryDate"),
       value: worker.passport_expiry_date || empty,
       icon: <FieldIcon src="/forms/step-2/calendar.svg" />,
+      valueDir: "ltr",
     },
   ]
 
@@ -276,6 +375,7 @@ export default function ReviewStep({
       label: t("fields.birthDate"),
       value: worker.birth_date || empty,
       icon: <FieldIcon src="/forms/step-2/calendar.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "philippinesAddress",
@@ -286,9 +386,10 @@ export default function ReviewStep({
     {
       key: "passportIssuePlace",
       label: t("fields.passportIssuePlace"),
-      value: workerIssueLabel
-        ? tWorker(`options.issuePlaces.${workerIssueLabel}`)
-        : empty,
+      value: formatNamedEntityLabel(
+        worker.worker_passport_issue_place ?? worker.passport_issue_place,
+        empty,
+      ),
       icon: <FieldIcon src="/forms/step-2/location.svg" />,
     },
     {
@@ -296,6 +397,7 @@ export default function ReviewStep({
       label: t("fields.salary"),
       value: salaryValue,
       icon: <FieldIcon src="/forms/step-3/money-recive.svg" />,
+      valueDir: "ltr",
       valueSuffix:
         salaryValue !== empty ? (
           <SaudiRiyal className="size-3.5 shrink-0" aria-hidden="true" />
@@ -307,50 +409,34 @@ export default function ReviewStep({
     {
       key: "national_id_image",
       label: t("documents.national_id_image"),
-      file: documents.national_id_image,
+      url: documents.national_id_image,
     },
     {
       key: "iqama_image",
       label: t("documents.iqama_image"),
-      file: documents.iqama_image,
+      url: documents.iqama_image,
     },
     {
       key: "passport_image",
       label: t("documents.passport_image"),
-      file: documents.passport_image,
+      url: documents.passport_image,
     },
     {
       key: "exit_reentry_visa",
       label: t("documents.exit_reentry_visa"),
-      file: documents.exit_reentry_visa,
+      url: documents.exit_reentry_visa,
     },
     {
       key: "employer_signature",
       label: t("documents.employer_signature"),
-      file: documents.employer_signature,
+      url: documents.employer_signature,
     },
     {
       key: "worker_signature",
       label: t("documents.worker_signature"),
-      file: documents.worker_signature,
+      url: documents.worker_signature,
     },
   ]
-
-  const previewIsImage = Boolean(preview?.file?.type.startsWith("image/"))
-  const previewIsPdf =
-    preview?.file?.type === "application/pdf" ||
-    Boolean(preview?.file?.name.toLowerCase().endsWith(".pdf"))
-
-  const previewUrl = useMemo(() => {
-    if (!preview?.file || (!previewIsImage && !previewIsPdf)) return null
-    return URL.createObjectURL(preview.file)
-  }, [preview, previewIsImage, previewIsPdf])
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
-    }
-  }, [previewUrl])
 
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -361,7 +447,7 @@ export default function ReviewStep({
         <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <section >
+      <section>
         <ReviewSectionTitle
           icon={
             <CustomIcon
@@ -385,8 +471,7 @@ export default function ReviewStep({
         </div>
       </section>
 
-
-      <section >
+      <section>
         <ReviewSectionTitle
           icon={
             <CustomIcon
@@ -410,8 +495,7 @@ export default function ReviewStep({
         </div>
       </section>
 
-
-      <section >
+      <section>
         <ReviewSectionTitle
           icon={
             <CustomIcon
@@ -428,7 +512,7 @@ export default function ReviewStep({
             <DocumentPreviewButton
               key={item.key}
               label={item.label}
-              file={item.file}
+              url={item.url}
               showExtension={
                 item.key !== "employer_signature" &&
                 item.key !== "worker_signature"
@@ -444,7 +528,7 @@ export default function ReviewStep({
         onClick={() => onConfirmedChange(!confirmed)}
         aria-pressed={confirmed}
         className={cn(
-          "flex w-full  items-center  gap-3 rounded-none bg-[#e8f4f6] px-4 py-3 text-start transition-colors hover:bg-[#dceef1]",
+          "flex w-full items-center gap-3 rounded-none bg-[#e8f4f6] px-4 py-3 text-start transition-colors hover:bg-[#dceef1]",
           !confirmed && "ring-1 ring-border/60",
         )}
       >
@@ -453,10 +537,14 @@ export default function ReviewStep({
           size={20}
           className={cn(
             "size-5 shrink-0",
-            confirmed ? "opacity-100 text-green-600/80   " : "opacity-35 grayscale",
+            confirmed
+              ? "text-green-600/80 opacity-100"
+              : "opacity-35 grayscale",
           )}
         />
-        <span className="text-sm font-semibold text-black">{t("confirmation")}</span>
+        <span className="text-sm font-semibold text-black">
+          {t("confirmation")}
+        </span>
       </button>
 
       <Dialog
@@ -487,27 +575,53 @@ export default function ReviewStep({
           </DialogHeader>
 
           <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-border/70 bg-muted/20">
-            {previewUrl && previewIsImage ? (
+            {previewUrl && previewKind === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={previewUrl}
                 alt={preview?.label ?? t("preview")}
                 className="mx-auto h-auto max-h-[calc(85vh-10rem)] w-full object-contain"
               />
-            ) : previewUrl && previewIsPdf ? (
-              <iframe
-                src={previewUrl}
-                title={preview?.label ?? t("preview")}
-                className="h-[min(70vh,36rem)] w-full border-0 bg-white"
-              />
-            ) : preview?.file ? (
-              <div className="flex min-h-48 flex-col items-center justify-center gap-2 px-4 py-10 text-center">
+            ) : previewUrl && previewKind === "pdf" ? (
+              pdfStatus === "ready" && pdfBlobUrl ? (
+                <iframe
+                  src={pdfBlobUrl}
+                  title={preview?.label ?? t("preview")}
+                  className="h-[min(70vh,36rem)] w-full border-0 bg-white"
+                />
+              ) : (
+                <div className="flex min-h-48 flex-col items-center justify-center gap-3 px-4 py-10 text-center">
+                  <p
+                    className={cn(
+                      "text-sm",
+                      pdfStatus === "error"
+                        ? "text-destructive"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {pdfStatus === "error"
+                      ? t("fileLoadError")
+                      : t("fileLoading")}
+                  </p>
+                  {pdfStatus === "error" ? (
+                    <Button asChild variant="secondary" className="rounded-full">
+                      <a href={previewUrl} target="_blank" rel="noreferrer">
+                        {t("openFile")}
+                      </a>
+                    </Button>
+                  ) : null}
+                </div>
+              )
+            ) : previewUrl ? (
+              <div className="flex min-h-48 flex-col items-center justify-center gap-3 px-4 py-10 text-center">
                 <p className="text-sm font-medium text-black">
-                  {preview.file.name}
+                  {preview?.label ?? t("preview")}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {preview.file.type || t("preview")}
-                </p>
+                <Button asChild variant="secondary" className="rounded-full">
+                  <a href={previewUrl} target="_blank" rel="noreferrer">
+                    {t("openFile")}
+                  </a>
+                </Button>
               </div>
             ) : null}
           </div>

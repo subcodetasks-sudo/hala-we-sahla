@@ -175,7 +175,44 @@
   .success-check-draw {
     stroke-dasharray: 36;
     stroke-dashoffset: 36;
-    animation: success-check-draw 0.55s ease-out 0.28s forwards;
+    animation: success-check-draw 1s ease-out 0.28s forwards;
+  }
+
+  /* Arrow stays hidden until its card enters the viewport, then it is
+     revealed from tail to head. The clip runs in the icon's own axes, so the
+     RTL/LTR flip and the 180deg rotation keep the reveal following the
+     arrow direction. */
+  .step-arrow svg {
+    opacity: 0;
+    clip-path: inset(0 0 0 100%);
+  }
+
+  .step-arrow-in svg {
+    animation: step-arrow-reveal 1.5s cubic-bezier(0.33, 1, 0.68, 1) 0.12s
+      forwards;
+  }
+}
+
+@keyframes step-arrow-reveal {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 0 0 100%);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-arrow svg,
+  .step-arrow-in svg {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
   }
 }
 
@@ -257,4 +294,81 @@
   body {
     @apply bg-white text-foreground;
   }
+}
+
+/* App toast — pill shape, solid type colors, soft glow */
+[data-sonner-toaster][data-y-position="top"] {
+  top: 1.25rem;
+}
+
+[data-sonner-toast].cn-toast {
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+  min-height: unset !important;
+  gap: 0.625rem !important;
+  padding: 0.75rem 1.5rem !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+[data-sonner-toast].cn-toast [data-content] {
+  gap: 0;
+}
+
+[data-sonner-toast].cn-toast .cn-toast-title,
+[data-sonner-toast].cn-toast [data-title] {
+  color: inherit;
+  font-weight: 500;
+  overflow-wrap: break-word;
+}
+
+[data-sonner-toast].cn-toast .cn-toast-icon,
+[data-sonner-toast].cn-toast [data-icon] {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  color: inherit;
+}
+
+[data-sonner-toast].cn-toast .cn-toast-icon svg,
+[data-sonner-toast].cn-toast [data-icon] svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: inherit;
+}
+
+[data-sonner-toast].cn-toast-success {
+  background: #1b8354 !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 8px 28px rgb(27 131 84 / 0.35),
+    0 2px 8px rgb(27 131 84 / 0.2);
+}
+
+[data-sonner-toast].cn-toast-pending {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 8px 28px rgb(217 119 6 / 0.35),
+    0 2px 8px rgb(217 119 6 / 0.2);
+}
+
+[data-sonner-toast].cn-toast-error {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 8px 28px color-mix(in srgb, var(--accent) 35%, transparent),
+    0 2px 8px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+[data-rich-colors="true"][data-sonner-toast].cn-toast-success [data-description],
+[data-rich-colors="true"][data-sonner-toast].cn-toast-pending [data-description],
+[data-rich-colors="true"][data-sonner-toast].cn-toast-error [data-description] {
+  color: rgb(255 255 255 / 0.9);
 }

@@ -1,6 +1,6 @@
 import Image from "next/image"
 
-import CustomIcon from "@/components/custom-icon"
+import StepArrow from "@/features/landing/components/step-arrow"
 import { cn } from "@/lib/utils"
 
 type StepCardProps = {
@@ -31,10 +31,7 @@ export default function StepCard({
       <span className="pt-0.5 text-sm font-bold tracking-tight [text-shadow:0_2px_3px_rgba(0,0,0,0.12)]">
         {label}
       </span>
-      <CustomIcon
-        src="/landing/icons/step-arrow.svg"
-        width={57}
-        height={48}
+      <StepArrow
         className={cn(
           "shrink-0",
           toneClass,

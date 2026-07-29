@@ -19,6 +19,7 @@ type EmployerStepMessages = {
   nationalIdInvalid: string
   phoneInvalid: string
   cityRequired: string
+  passportIssuePlaceRequired: string
 }
 
 export function createEmployerStepSchema(messages: EmployerStepMessages) {
@@ -46,7 +47,9 @@ export function createEmployerStepSchema(messages: EmployerStepMessages) {
       .trim()
       .regex(SAUDI_PHONE_PATTERN, { message: messages.phoneInvalid }),
     city_id: z.string().min(1, { message: messages.cityRequired }),
-    passport_issue_place_id: z.string(),
+    passport_issue_place_id: z
+      .string()
+      .min(1, { message: messages.passportIssuePlaceRequired }),
   })
 }
 

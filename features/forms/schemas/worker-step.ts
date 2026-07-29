@@ -33,7 +33,7 @@ type WorkerStepMessages = {
   passportExpiryDateAfterIssue: string
 }
 
-const MIN_WORKER_AGE = 18
+export const MIN_WORKER_AGE = 18
 
 export function createWorkerStepSchema(messages: WorkerStepMessages) {
   return z

@@ -1,7 +1,7 @@
 "use client"
 
 import { Controller, type Control } from "react-hook-form"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
 
 import CustomIcon from "@/components/custom-icon"
@@ -25,16 +25,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  CITY_OPTIONS,
-  PASSPORT_ISSUE_PLACE_OPTIONS,
-} from "@/features/forms/constants/employer-options"
+import { useCities } from "@/features/forms/hooks/use-cities"
+import { usePassportIssuePlaces } from "@/features/forms/hooks/use-passport-issue-places"
 import type { EmployerStepValues } from "@/features/forms/schemas/employer-step"
 import {
   keepArabicNameInput,
   keepEnglishNameInput,
   keepNationalIdInput,
 } from "@/features/forms/lib/input-filters"
+import { getCityLabel } from "@/features/forms/services/cities"
+import {
+  EMPLOYER_PASSPORT_ISSUE_COUNTRY,
+  getPassportIssuePlaceLabel,
+} from "@/features/forms/services/passport-issue-places"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
@@ -67,6 +70,13 @@ export default function EmployerStepForm({
   className,
 }: EmployerStepFormProps) {
   const t = useTranslations("Forms.renewal.wizard.employer")
+  const locale = useLocale()
+  const { data: cities = [], isPending, isError } = useCities(locale)
+  const {
+    data: passportIssuePlaces = [],
+    isPending: isPassportPlacesPending,
+    isError: isPassportPlacesError,
+  } = usePassportIssuePlaces(EMPLOYER_PASSPORT_ISSUE_COUNTRY, locale)
 
   return (
     <FieldGroup className={cn("gap-5", className)}>
@@ -259,6 +269,7 @@ export default function EmployerStepForm({
               <Select
                 value={field.value || undefined}
                 onValueChange={field.onChange}
+                disabled={isPending || isError}
               >
                 <SelectTrigger
                   id="city_id"
@@ -275,19 +286,25 @@ export default function EmployerStepForm({
                     </span>
                     <span className="min-w-0 flex-1 px-3 text-start">
                       <SelectValue
-                        placeholder={t("fields.city_id.placeholder")}
+                        placeholder={
+                          isPending
+                            ? t("fields.city_id.loading")
+                            : isError
+                              ? t("fields.city_id.loadError")
+                              : t("fields.city_id.placeholder")
+                        }
                       />
                     </span>
                   </span>
                 </SelectTrigger>
                 <SelectContent
                   align="start"
-                  className="w-(--radix-select-trigger-width)"
+                  className="w-(--radix-select-trigger-width) max-h-72"
                   position="popper"
                 >
-                  {CITY_OPTIONS.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {t(`options.cities.${option.labelKey}`)}
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={String(city.id)}>
+                      {getCityLabel(city, locale)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -308,10 +325,12 @@ export default function EmployerStepForm({
                 <MutedParensText
                   text={t("fields.passport_issue_place_id.label")}
                 />
+                <span className="text-accent">*</span>
               </FieldLabel>
               <Select
                 value={field.value || undefined}
                 onValueChange={field.onChange}
+                disabled={isPassportPlacesPending || isPassportPlacesError}
               >
                 <SelectTrigger
                   id="passport_issue_place_id"
@@ -328,21 +347,25 @@ export default function EmployerStepForm({
                     </span>
                     <span className="min-w-0 flex-1 px-3 text-start">
                       <SelectValue
-                        placeholder={t(
-                          "fields.passport_issue_place_id.placeholder",
-                        )}
+                        placeholder={
+                          isPassportPlacesPending
+                            ? t("fields.passport_issue_place_id.loading")
+                            : isPassportPlacesError
+                              ? t("fields.passport_issue_place_id.loadError")
+                              : t("fields.passport_issue_place_id.placeholder")
+                        }
                       />
                     </span>
                   </span>
                 </SelectTrigger>
                 <SelectContent
                   align="start"
-                  className="w-(--radix-select-trigger-width)"
+                  className="w-(--radix-select-trigger-width) max-h-72"
                   position="popper"
                 >
-                  {PASSPORT_ISSUE_PLACE_OPTIONS.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {t(`options.issuePlaces.${option.labelKey}`)}
+                  {passportIssuePlaces.map((place) => (
+                    <SelectItem key={place.id} value={String(place.id)}>
+                      {getPassportIssuePlaceLabel(place, locale)}
                     </SelectItem>
                   ))}
                 </SelectContent>

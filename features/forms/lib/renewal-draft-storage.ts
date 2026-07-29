@@ -9,6 +9,7 @@ import {
 } from "@/features/forms/schemas/worker-step"
 
 export const RENEWAL_DRAFT_STORAGE_KEY = "hala-we-sahla:renewal-draft"
+export const RENEWAL_DRAFT_KEEP_KEY = "hala-we-sahla:renewal-draft-keep"
 export const RENEWAL_DRAFT_VERSION = 1 as const
 const RENEWAL_STEP_COUNT = 4
 
@@ -37,6 +38,7 @@ export type StoredDocumentsValues = {
 export type RenewalDraft = {
   version: typeof RENEWAL_DRAFT_VERSION
   step: number
+  requestId: number | null
   employer: EmployerStepValues
   worker: WorkerStepValues
   documents: StoredDocumentsValues
@@ -256,6 +258,12 @@ export function readRenewalDraft(): RenewalDraft | null {
     return {
       version: RENEWAL_DRAFT_VERSION,
       step,
+      requestId:
+        typeof parsed.requestId === "number" &&
+        Number.isInteger(parsed.requestId) &&
+        parsed.requestId > 0
+          ? parsed.requestId
+          : null,
       employer: parseEmployer(parsed.employer),
       worker: parseWorker(parsed.worker),
       documents: parseDocuments(parsed.documents),
@@ -289,6 +297,7 @@ export function clearRenewalDraft() {
 
 export async function buildRenewalDraft(input: {
   step: number
+  requestId?: number | null
   employer: EmployerStepValues
   worker: WorkerStepValues
   documents: DocumentsStepValues
@@ -297,6 +306,7 @@ export async function buildRenewalDraft(input: {
   return {
     version: RENEWAL_DRAFT_VERSION,
     step: input.step,
+    requestId: input.requestId ?? null,
     employer: input.employer,
     worker: input.worker,
     documents: await serializeDocuments(input.documents, input.fileCache),
@@ -310,6 +320,7 @@ export async function loadRenewalDraftForms() {
 
   return {
     step: draft.step,
+    requestId: draft.requestId,
     employer: draft.employer,
     worker: draft.worker,
     documents: await deserializeDocuments(draft.documents),
