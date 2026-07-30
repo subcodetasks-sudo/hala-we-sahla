@@ -38,6 +38,7 @@ export type StoredDocumentsValues = {
 export type RenewalDraft = {
   version: typeof RENEWAL_DRAFT_VERSION
   step: number
+  maxReachedStep: number
   requestId: number | null
   employer: EmployerStepValues
   worker: WorkerStepValues
@@ -255,9 +256,18 @@ export function readRenewalDraft(): RenewalDraft | null {
         ? parsed.step
         : 0
 
+    const maxReachedStep =
+      typeof parsed.maxReachedStep === "number" &&
+      Number.isInteger(parsed.maxReachedStep) &&
+      parsed.maxReachedStep >= 0 &&
+      parsed.maxReachedStep < RENEWAL_STEP_COUNT
+        ? Math.max(parsed.maxReachedStep, step)
+        : step
+
     return {
       version: RENEWAL_DRAFT_VERSION,
       step,
+      maxReachedStep,
       requestId:
         typeof parsed.requestId === "number" &&
         Number.isInteger(parsed.requestId) &&
@@ -297,15 +307,25 @@ export function clearRenewalDraft() {
 
 export async function buildRenewalDraft(input: {
   step: number
+  maxReachedStep?: number
   requestId?: number | null
   employer: EmployerStepValues
   worker: WorkerStepValues
   documents: DocumentsStepValues
   fileCache?: WeakMap<File, Promise<StoredFile>>
 }): Promise<RenewalDraft> {
+  const maxReachedStep = Math.max(
+    input.step,
+    Math.min(
+      input.maxReachedStep ?? input.step,
+      RENEWAL_STEP_COUNT - 1,
+    ),
+  )
+
   return {
     version: RENEWAL_DRAFT_VERSION,
     step: input.step,
+    maxReachedStep,
     requestId: input.requestId ?? null,
     employer: input.employer,
     worker: input.worker,
@@ -320,6 +340,7 @@ export async function loadRenewalDraftForms() {
 
   return {
     step: draft.step,
+    maxReachedStep: draft.maxReachedStep,
     requestId: draft.requestId,
     employer: draft.employer,
     worker: draft.worker,

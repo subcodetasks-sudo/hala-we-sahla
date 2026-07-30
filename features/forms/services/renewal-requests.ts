@@ -145,6 +145,9 @@ export async function submitDocumentsStep(
     {
       language: locale,
       body: buildDocumentsFormData(payload),
+      // Large document/image uploads must not hit the default 30s timeout.
+      // 0 disables the client timeout so any file size can finish uploading.
+      timeoutMs: 0,
     },
   )
 

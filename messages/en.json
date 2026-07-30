@@ -691,6 +691,7 @@
           "acceptedTypes": "\" png - pdf \"",
           "preview": "Preview file",
           "close": "Close",
+          "uploading": "Uploading documents...",
           "sampleTitle": "Sample of the required passport",
           "sampleHint": "Upload a clear photo of the passport first page with the visa.",
           "fields": {

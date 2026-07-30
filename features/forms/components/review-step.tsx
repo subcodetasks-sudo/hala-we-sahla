@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, type ReactNode } from "react"
-import { Eye, Phone, SaudiRiyal } from "lucide-react"
+import { Eye, Loader2, Phone, SaudiRiyal } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useRenewalReview } from "@/features/forms/hooks/use-renewal-review"
 import {
   formatBilingualLabel,
@@ -219,6 +220,54 @@ function DocumentPreviewButton({
       </span>
       <Eye className="size-4 shrink-0 text-primary" aria-hidden="true" />
     </button>
+  )
+}
+
+function ImagePreview({
+  src,
+  alt,
+  errorMessage,
+}: {
+  src: string
+  alt: string
+  errorMessage: string
+}) {
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading")
+
+  useEffect(() => {
+    setStatus("loading")
+  }, [src])
+
+  return (
+    <div className="relative flex min-h-48 items-center justify-center">
+      {status === "loading" ? (
+<Loader2 className="size-8 text-primary animate-spin" />
+      ) : null}
+
+      {status === "error" ? (
+        <p className="px-4 py-10 text-center text-sm text-destructive">
+          {errorMessage}
+        </p>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={src}
+          src={src}
+          alt={alt}
+          onLoad={() => setStatus("ready")}
+          onError={() => setStatus("error")}
+          ref={(img) => {
+            if (img?.complete && img.naturalWidth > 0) {
+              setStatus("ready")
+            }
+          }}
+          className={cn(
+            "mx-auto h-auto max-h-[calc(85vh-10rem)] w-full object-contain transition-opacity duration-200",
+            status === "ready" ? "opacity-100" : "opacity-0",
+          )}
+        />
+      )}
+    </div>
   )
 }
 
@@ -576,11 +625,10 @@ export default function ReviewStep({
 
           <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-border/70 bg-muted/20">
             {previewUrl && previewKind === "image" ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <ImagePreview
                 src={previewUrl}
                 alt={preview?.label ?? t("preview")}
-                className="mx-auto h-auto max-h-[calc(85vh-10rem)] w-full object-contain"
+                errorMessage={t("fileLoadError")}
               />
             ) : previewUrl && previewKind === "pdf" ? (
               pdfStatus === "ready" && pdfBlobUrl ? (

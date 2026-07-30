@@ -15,11 +15,13 @@ export type RenewalStepKey = (typeof RENEWAL_STEPS)[number]
 
 type RenewalStepperProps = {
   currentStep: number
+  maxReachedStep: number
   onStepChange: (step: number) => void
 }
 
 export default function RenewalStepper({
   currentStep,
+  maxReachedStep,
   onStepChange,
 }: RenewalStepperProps) {
   const t = useTranslations("Forms.renewal.wizard")
@@ -30,9 +32,11 @@ export default function RenewalStepper({
         {RENEWAL_STEPS.map((key, index) => {
           const isSuccess = currentStep >= RENEWAL_STEPS.length
           const isActive = !isSuccess && index === currentStep
-          const isCompleted = isSuccess || index < currentStep
-          const canNavigate = !isSuccess && index <= currentStep
-          const isReached = isActive || isCompleted
+          const isCompleted =
+            isSuccess || (index <= maxReachedStep && index !== currentStep)
+          const canNavigate =
+            !isSuccess && index <= maxReachedStep && index !== currentStep
+          const isReached = isActive || isCompleted || index <= maxReachedStep
           const isLast = index === RENEWAL_STEPS.length - 1
 
           return (
@@ -46,10 +50,13 @@ export default function RenewalStepper({
               <button
                 type="button"
                 disabled={!canNavigate}
-                onClick={() => canNavigate && onStepChange(index)}
+                aria-current={isActive ? "step" : undefined}
+                onClick={() => {
+                  if (canNavigate) onStepChange(index)
+                }}
                 className={cn(
                   "flex w-full min-w-0 flex-col gap-2 text-start transition-colors",
-                  canNavigate && "cursor-pointer",
+                  canNavigate && "cursor-pointer hover:opacity-80",
                   !canNavigate && "cursor-default",
                 )}
               >

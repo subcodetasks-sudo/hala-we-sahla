@@ -6,6 +6,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useQueryClient } from "@tanstack/react-query"
 import { ArrowLeft, ChevronRight } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 import CustomIcon from "@/components/custom-icon"
 import MutedParensText from "@/components/shared/muted-parens-text"
@@ -71,6 +72,7 @@ export default function RenewalWizard() {
   const locale = useLocale()
   const queryClient = useQueryClient()
   const [step, setStep] = useState(0)
+  const [maxReachedStep, setMaxReachedStep] = useState(0)
   const [draftReady, setDraftReady] = useState(false)
   const [requestId, setRequestId] = useState<number | null>(null)
   const [confirmed, setConfirmed] = useState(false)
@@ -208,6 +210,7 @@ export default function RenewalWizard() {
           workerForm.reset(draft.worker)
           documentsForm.reset(draft.documents)
           setStep(draft.step)
+          setMaxReachedStep(draft.maxReachedStep)
           setRequestId(draft.requestId)
         }
       } else {
@@ -263,6 +266,7 @@ export default function RenewalWizard() {
 
         void buildRenewalDraft({
           step,
+          maxReachedStep,
           requestId,
           employer: employerForm.getValues(),
           worker: workerForm.getValues(),
@@ -293,6 +297,7 @@ export default function RenewalWizard() {
     documentsForm,
     draftReady,
     employerForm,
+    maxReachedStep,
     requestId,
     step,
     submittedRequestNumber,
@@ -361,6 +366,8 @@ export default function RenewalWizard() {
       if (!isValid) return
       if (!requestId) return
 
+      const uploadToastId = toast.loading(tDocuments("uploading"))
+
       try {
         await submitDocumentsStep.mutateAsync({
           requestId,
@@ -371,6 +378,8 @@ export default function RenewalWizard() {
         )
       } catch {
         return
+      } finally {
+        toast.dismiss(uploadToastId)
       }
     }
 
@@ -400,8 +409,17 @@ export default function RenewalWizard() {
     }
 
     if (step < RENEWAL_STEPS.length - 1) {
-      setStep(step + 1)
+      const nextStep = step + 1
+      setStep(nextStep)
+      setMaxReachedStep((current) => Math.max(current, nextStep))
     }
+  }
+
+  function handleStepChange(nextStep: number) {
+    if (isSubmitted) return
+    if (nextStep < 0 || nextStep > maxReachedStep) return
+    if (nextStep === step) return
+    setStep(nextStep)
   }
 
   return (
@@ -413,7 +431,10 @@ export default function RenewalWizard() {
               currentStep={
                 isSubmitted ? RENEWAL_STEPS.length : step
               }
-              onStepChange={setStep}
+              maxReachedStep={
+                isSubmitted ? RENEWAL_STEPS.length - 1 : maxReachedStep
+              }
+              onStepChange={handleStepChange}
             />
           </Card>
         </div>

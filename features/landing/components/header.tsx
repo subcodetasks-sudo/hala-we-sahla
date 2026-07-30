@@ -115,7 +115,7 @@ useEffect(() => {
                         <LanguageSwitcher className="hidden sm:flex" />
 
                         <Button  className="hidden gap-1.5 sm:flex rounded-full text-base h-12! hover:bg-accent!" asChild>
-                            <Link href="/get-started">
+                            <Link href="/renewal">
                                 <CustomIcon src="/icons/receipt-edit.svg" size={16} />
                                 {t("getStarted")}
                                 <ArrowLeft className="ltr:rotate-180"/>
@@ -157,7 +157,7 @@ useEffect(() => {
                                 <SheetFooter>
                                     <LanguageSwitcher className="w-full justify-center" />
                                     <Button size={"lg"} className="gap-1.5" asChild>
-                                        <Link href="/get-started" onClick={() => setOpen(false)}>
+                                        <Link href="/renewal" onClick={() => setOpen(false)}>
                                             {t("getStarted")}
                                             <ArrowLeft />
                                         </Link>

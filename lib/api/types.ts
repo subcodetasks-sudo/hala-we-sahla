@@ -62,6 +62,7 @@ export type ApiRequestOptions<TResponse = unknown> = {
   token?: string | null
   /** Skip Authorization header even if token exists */
   skipAuth?: boolean
+  /** Request timeout in ms. Use `0` to disable. FormData defaults to 30 minutes. */
   timeoutMs?: number
   signal?: AbortSignal
   cache?: RequestCache

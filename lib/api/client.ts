@@ -12,6 +12,8 @@ import type {
 } from "@/lib/api/types"
 
 const DEFAULT_TIMEOUT_MS = 30_000
+/** Multipart uploads can take much longer on slow networks / large files. */
+const UPLOAD_TIMEOUT_MS = 30 * 60 * 1000
 
 function getDefaultBaseURL() {
   return (
@@ -195,11 +197,15 @@ async function parseResponse<T>(
 function createTimeoutSignal(timeoutMs: number, externalSignal?: AbortSignal) {
   const controller = new AbortController()
   let timedOut = false
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
 
-  const timeoutId = setTimeout(() => {
-    timedOut = true
-    controller.abort()
-  }, timeoutMs)
+  // timeoutMs <= 0 or Infinity disables the client-side timeout.
+  if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
+    timeoutId = setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, timeoutMs)
+  }
 
   const onExternalAbort = () => {
     controller.abort(externalSignal?.reason)
@@ -217,7 +223,7 @@ function createTimeoutSignal(timeoutMs: number, externalSignal?: AbortSignal) {
     signal: controller.signal,
     didTimeout: () => timedOut,
     cleanup: () => {
-      clearTimeout(timeoutId)
+      if (timeoutId !== undefined) clearTimeout(timeoutId)
       externalSignal?.removeEventListener("abort", onExternalAbort)
     },
   }
@@ -237,7 +243,10 @@ export function createApiClient(config: ApiClientConfig = {}) {
   ): Promise<T | ApiResult<T>> {
     const throwOnError = options.throwOnError ?? true
     const method = (options.method ?? "GET").toUpperCase() as HttpMethod
-    const timeoutMs = options.timeoutMs ?? defaultTimeoutMs
+    const isUpload = options.body instanceof FormData
+    const timeoutMs =
+      options.timeoutMs ??
+      (isUpload ? UPLOAD_TIMEOUT_MS : defaultTimeoutMs)
     const responseType = options.responseType ?? "json"
 
     const language =
