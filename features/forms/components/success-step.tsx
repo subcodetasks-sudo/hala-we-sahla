@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { ArrowLeft, ArrowUpLeft, Copy } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
+import CopyButton from "@/components/shared/copy-button"
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
@@ -19,17 +19,6 @@ export default function SuccessStep({
   className,
 }: SuccessStepProps) {
   const t = useTranslations("Forms.renewal.wizard.success")
-  const [copied, setCopied] = useState(false)
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(requestNumber)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopied(false)
-    }
-  }
 
   return (
     <div
@@ -96,15 +85,14 @@ rounded-bl-[13px] bg-[#1B8354] shadow-[0_12px_40px_rgba(34,197,94,0.45)] sm:size
             </p>
           </div>
 
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleCopy}
-            className="h-10 gap-2 rounded-full bg-white px-4 text-sm font-semibold text-foreground shadow-none hover:bg-white/90"
+          <CopyButton
+            value={requestNumber}
+            label={t("copyNumber")}
+            className="h-10 gap-2 rounded-full border border-transparent bg-white px-4 text-sm font-semibold text-foreground shadow-none transition-colors hover:bg-white/90"
           >
             <Copy className="size-4" aria-hidden="true" />
-            {copied ? t("copied") : t("copyNumber")}
-          </Button>
+            {t("copyNumber")}
+          </CopyButton>
         </div>
 
         <p className="mt-6 text-center text-sm leading-6 text-muted-foreground">

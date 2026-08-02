@@ -37,7 +37,7 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
   }
 
   function handlePay() {
-    markPaid()
+    markPaid(deliveryMethod)
     toast.success(t("success"))
     router.push(`/track-orders/${encodeURIComponent(requestNumber)}`)
   }

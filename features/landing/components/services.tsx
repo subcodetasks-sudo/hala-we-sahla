@@ -139,16 +139,19 @@ export default async function Services() {
                             )
 
                             return (
-                                <div className={cn( key === "whatsapp" && "bg-footer py-10")}>
-
                                 <div
                                     key={key}
-                                    className={cn("grid items-center gap-10 lg:grid-cols-2 lg:gap-16 container")}
+                                    className={cn(key === "whatsapp" && "bg-footer py-10")}
                                 >
-                                    {imageFirst
-                                        ? [imageBlock, textBlock]
-                                        : [textBlock, imageBlock]}
-                                </div>
+                                    <div
+                                        className={cn(
+                                            "container grid items-center gap-10 lg:grid-cols-2 lg:gap-16",
+                                        )}
+                                    >
+                                        {imageFirst
+                                            ? [imageBlock, textBlock]
+                                            : [textBlock, imageBlock]}
+                                    </div>
                                 </div>
                             )
                         },

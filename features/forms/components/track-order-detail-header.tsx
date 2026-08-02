@@ -81,7 +81,7 @@ export default function TrackOrderDetailHeader({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "absolute inset-s-0 top-1/2 h-7 w-px -translate-x-1/2 -translate-y-1/2 bg-[#e5e7eb] rtl:translate-x-1/2",
+                  "absolute inset-s-0 top-1/2 h-7 w-px -translate-x-1/2 -translate-y-1/2 bg-primary/20 rtl:translate-x-1/2",
                   "hidden sm:block",
                   index % 2 === 0 && "sm:hidden xl:block",
                 )}

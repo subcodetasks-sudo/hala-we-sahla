@@ -41,6 +41,19 @@ export function keepRequestNumberInput(value: string) {
   return value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 32)
 }
 
+/** Digits only (western). */
+export function keepDigitsOnlyInput(value: string, maxLength = 20) {
+  return value.replace(/\D/g, "").slice(0, maxLength)
+}
+
+/** Letters and spaces only — strips digits (western + Arabic-Indic). */
+export function keepNameTextInput(value: string) {
+  return value.replace(/[0-9٠-٩]/g, "")
+}
+
+export const DIGITS_ONLY_PATTERN = /^\d+$/
+export const NAME_TEXT_PATTERN = /^[^\d٠-٩]+$/
+
 /** Digits only, optional single decimal point (e.g. salary amounts). */
 export function keepDecimalInput(value: string) {
   const cleaned = value.replace(/[^\d.]/g, "")

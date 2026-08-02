@@ -15,6 +15,15 @@ import {
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
+
+
+type TrackOrderDownloadActions = {
+  contractLabel: string
+  invoiceLabel: string
+  onDownloadContract: () => void
+  onDownloadInvoice: () => void
+}
+
 type TrackOrderStageItemProps = {
   status: TrackOrderStageStatus
   statusLabel: string
@@ -27,7 +36,9 @@ type TrackOrderStageItemProps = {
   actionLabel?: string
   actionHref?: string
   onActionClick?: () => void
+  downloadActions?: TrackOrderDownloadActions
   isLast?: boolean
+  index?: number
 }
 
 export default function TrackOrderStageItem({
@@ -42,16 +53,33 @@ export default function TrackOrderStageItem({
   actionLabel,
   actionHref,
   onActionClick,
+  downloadActions,
   isLast = false,
+  index = 0,
 }: TrackOrderStageItemProps) {
+  const stageItemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.55,
+        delay: index === 0 ? 0 : 0.45 + index * 0.28,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+  }
   const locale = useLocale()
   const isInProgress = status === "in_progress"
   const isCompleted = status === "completed"
   const isUpcoming = status === "upcoming"
   const isCancelled = status === "cancelled"
+  const shouldPulse = isInProgress
   const showAction = Boolean(
     actionLabel && (actionHref || onActionClick) && !isUpcoming && !isCancelled,
   )
+  const showDownloads =
+    Boolean(downloadActions) && isCompleted && !isCancelled
 
   const showRing =
     marker === "ring" || (marker == null && isInProgress)
@@ -61,12 +89,13 @@ export default function TrackOrderStageItem({
     (marker == null && isCompleted && !showCancelledMarker)
 
   return (
-    <li
+    <motion.li
       data-status={status}
       className="relative flex gap-4 sm:gap-5"
+      variants={stageItemVariants}
     >
       <div className="relative flex w-6 shrink-0 flex-col items-center self-stretch sm:w-10">
-        <motion.span
+        <span
           aria-hidden="true"
           className={cn(
             "relative z-10 mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full sm:size-10",
@@ -77,33 +106,58 @@ export default function TrackOrderStageItem({
               !showRing &&
               !showSolid &&
               !showCancelledMarker &&
-              "bg-[#d7e0e3]",
+              "bg-primary/20",
           )}
-          initial={false}
-          transition={{ type: "spring", stiffness: 420, damping: 22 }}
         >
+          {shouldPulse && showRing ? (
+            <>
+              <motion.span
+                className="pointer-events-none absolute inset-0 rounded-full border-2 border-primary"
+                initial={{ scale: 1, opacity: 0.45 }}
+                animate={{ scale: 2.1, opacity: 0 }}
+                transition={{
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                }}
+              />
+              <motion.span
+                className="pointer-events-none absolute inset-0 rounded-full border-2 border-primary"
+                initial={{ scale: 1, opacity: 0.35 }}
+                animate={{ scale: 2.1, opacity: 0 }}
+                transition={{
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.9,
+                }}
+              />
+            </>
+          ) : null}
+
           <AnimatePresence mode="wait" initial={false}>
             {showRing ? (
               <motion.span
                 key="dot"
-                className="size-2 rounded-full bg-primary sm:size-4"
+                className="relative z-10 size-2 rounded-full bg-primary sm:size-4"
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{
-                  scale: marker === "ring" ? 1 : [1, 1.28, 1],
-                  opacity: 1,
-                }}
+                animate={
+                  shouldPulse
+                    ? {
+                        scale: [1, 1.18, 1],
+                        opacity: [1, 0.72, 1],
+                      }
+                    : { scale: 1, opacity: 1 }
+                }
                 exit={{ scale: 0, opacity: 0 }}
                 transition={
-                  marker === "ring"
-                    ? { duration: 0.2 }
-                    : {
-                        scale: {
-                          duration: 1.35,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        },
-                        opacity: { duration: 0.18 },
+                  shouldPulse
+                    ? {
+                        duration: 1.6,
+                        repeat: Infinity,
+                        ease: "easeInOut",
                       }
+                    : { duration: 0.2 }
                 }
               />
             ) : null}
@@ -120,7 +174,7 @@ export default function TrackOrderStageItem({
             {showCancelledMarker ? (
               <motion.span
                 key="cancelled"
-                className="flex items-center justify-center"
+                className="relative z-10 flex items-center justify-center"
                 initial={{ scale: 0.4, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.5, opacity: 0 }}
@@ -134,7 +188,7 @@ export default function TrackOrderStageItem({
               </motion.span>
             ) : null}
           </AnimatePresence>
-        </motion.span>
+        </span>
 
         {!isLast ? (
           <span
@@ -161,7 +215,7 @@ export default function TrackOrderStageItem({
           key={status}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.25, delay: 0.08 }}
           className={cn(
             "text-xs font-medium",
             isInProgress && "text-accent",
@@ -183,7 +237,7 @@ export default function TrackOrderStageItem({
           {title}
         </h3>
 
-        <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <p className="min-w-0 text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
             {description}
           </p>
@@ -215,6 +269,35 @@ export default function TrackOrderStageItem({
                 </Link>
               </Button>
             )
+          ) : null}
+
+          {showDownloads && downloadActions ? (
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <Button
+                type="button"
+                onClick={downloadActions.onDownloadContract}
+                className="h-10 gap-2 rounded-full px-4 text-sm font-semibold sm:px-5"
+              >
+                <CustomIcon
+                  src="/icons/download.svg"
+                  size={18}
+                  className="size-4.5 text-current"
+                />
+                {downloadActions.contractLabel}
+              </Button>
+              <Button
+                type="button"
+                onClick={downloadActions.onDownloadInvoice}
+                className="h-10 gap-2 rounded-full bg-[#003143] px-4 text-sm font-semibold text-white hover:bg-[#003143]/90 sm:px-5"
+              >
+                <CustomIcon
+                  src="/icons/download.svg"
+                  size={18}
+                  className="size-4.5 text-current"
+                />
+                {downloadActions.invoiceLabel}
+              </Button>
+            </div>
           ) : null}
         </div>
 
@@ -249,13 +332,13 @@ export default function TrackOrderStageItem({
               </p>
               <p className="text-xs text-muted-foreground">
                 {formatTrackOrderCompletedTime(completedAt, locale)}
-                {" • "}
+                {" - "}
                 {formatTrackOrderRelativeMinutes(completedAt, now, locale)}
               </p>
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
-    </li>
+    </motion.li>
   )
 }

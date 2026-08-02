@@ -11,14 +11,13 @@ import {
   SaudiRiyal,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
-import { toast } from "sonner"
 
 import CustomIcon from "@/components/custom-icon"
+import CopyButton from "@/components/shared/copy-button"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { div } from "motion/react-client";
 
 export const PAYMENT_SERVICE_FEE = 199
 export const PAYMENT_VAT_AMOUNT = 29.85
@@ -55,19 +54,7 @@ export default function PaymentCheckoutSummary({
   const t = useTranslations("Forms.trackOrders.detail.payment.checkout")
   const locale = useLocale()
   const [detailsOpen, setDetailsOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
   const totals = getPaymentTotals(deliveryMethod)
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(requestNumber)
-      setCopied(true)
-      toast.success(t("copied"))
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      /* clipboard may be unavailable */
-    }
-  }
 
   return (
     <div className="mx-auto w-full max-w-xl p-px bg-linear-to-b from-primary to-transparent sm:rounded-[32px] rounded-[28px] ">
@@ -94,11 +81,10 @@ export default function PaymentCheckoutSummary({
       <div className="mt-6 space-y-5 text-start">
         <div className="flex items-center justify-between gap-3">
           <span className="text-sm text-[#8a9aa3]">{t("requestNumber")}</span>
-          <button
-            type="button"
-            onClick={handleCopy}
+          <CopyButton
+            value={requestNumber}
+            label={t("copyNumber")}
             className="flex items-center gap-1.5 text-sm font-semibold text-black"
-            aria-label={t("copyNumber")}
           >
             <span dir="ltr" className="font-clash tracking-wide">
               {requestNumber}
@@ -106,9 +92,9 @@ export default function PaymentCheckoutSummary({
             <CustomIcon
               src="/icons/copy.svg"
               size={14}
-              className={cn("size-3.5 text-black", copied && "opacity-70")}
+              className="size-3.5 text-black"
             />
-          </button>
+          </CopyButton>
         </div>
 
         <div className="flex items-center justify-between gap-3">

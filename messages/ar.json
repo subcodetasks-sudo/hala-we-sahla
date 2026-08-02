@@ -2,6 +2,10 @@
   "Common": {
     "home": "الرئيسية",
     "breadcrumb": "مسار التنقل",
+    "copy": {
+      "label": "نسخ",
+      "copiedSuccessfully": "تم النسخ بنجاح"
+    },
     "errors": {
       "network": "لا يوجد اتصال بالإنترنت، يرجى المحاولة مرة أخرى.",
       "timeout": "استغرق الطلب وقتًا طويلًا، يرجى المحاولة مرة أخرى.",
@@ -462,7 +466,8 @@
       "logoAlt": "شعار هلا وسهلا",
       "pages": {
         "renewal": "تجديد العقد",
-        "trackOrders": "الاستعلام عن طلب"
+        "trackOrders": "الاستعلام عن طلب",
+        "forgotRequestNumber": "هل نسيت رقم الطلب؟"
       }
     },
     "breadcrumbs": {
@@ -473,7 +478,8 @@
       "trackOrders": {
         "current": "الاستعلام عن طلب",
         "inquiry": "الاستعلام عن طلب",
-        "detail": "تتبع الطلبات"
+        "detail": "تتبع الطلبات",
+        "forgot": "نسيت رقم الطلب"
       }
     },
     "trackOrders": {
@@ -490,7 +496,7 @@
       "fields": {
         "requestNumber": {
           "label": "رقم الطلب",
-          "placeholder": "example: REQ-25481",
+          "placeholder": "example-12369",
           "clear": "مسح رقم الطلب"
         },
         "phone": {
@@ -502,6 +508,24 @@
         "requestNumberRequired": "يرجى إدخال رقم الطلب",
         "requestNumberInvalid": "يرجى إدخال رقم طلب صحيح",
         "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
+      },
+      "forgot": {
+        "title": "هل نسيت رقم الطلب ؟",
+        "description": "أدخل رقم الجوال المرتبط بالطلب !",
+        "submit": "إرسال رمز التحقق",
+        "success": "تم إرسال رمز التحقق إلى جوالك",
+        "successTitle": "تحقق من رسائلك",
+        "successDescription": "إذا كان الرقم مسجلاً لدينا، ستصلك رسالة نصية تحتوي على رمز التحقق خلال لحظات.",
+        "backToTrack": "العودة لتتبع الطلب",
+        "fields": {
+          "phone": {
+            "label": "رقم الجوال",
+            "placeholder": "056 472 6616"
+          }
+        },
+        "errors": {
+          "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
+        }
       },
       "detail": {
         "serviceTitle": "طلب تجديد عقد العمالة المنزلية",
@@ -518,6 +542,41 @@
           "employerName": "محمد عبدالله القحطاني",
           "workerName": "عبدالله",
           "completionPeriod": "5 أيام عمل"
+        },
+        "completedResult": {
+          "breadcrumb": "إصدار العقد",
+          "title": "تم الانتهاء من طلب تجديد العقد بنجاح !",
+          "subtitle": "يمكنك الآن فتح العقد النهائي أو تحميله، بالإضافة إلى عرض فاتورة الدفع.",
+          "requestNumber": "رقم الطلب",
+          "contractRequestNumber": "رقم طلب العقد",
+          "copyNumber": "نسخ رقم الطلب",
+          "copyShippingNumber": "نسخ رقم طلبية الشحن",
+          "service": "الخدمة",
+          "serviceValue": "تجديد عقد العمالة المنزلية",
+          "status": "الحالة",
+          "statusValue": "مكتمل",
+          "shippingNumber": "رقم طلبية الشحن",
+          "paperNote": "تم الانتهاء من إجراءات تجديد العقد بنجاح، وسيتم التواصل معكم لتنسيق عملية تسليم العقد على العنوان المسجل.",
+          "contract": {
+            "title": "عقد تجديد العمالة المنزلية",
+            "description": "يمكنك فتح العقد أو تحميل نسخة PDF.",
+            "download": "تحميل العقد",
+            "view": "عرض العقد",
+            "downloadStarted": "بدء تحميل العقد",
+            "viewStarted": "فتح العقد"
+          },
+          "invoice": {
+            "title": "الفاتورة",
+            "description": "يمكنك عرض نسخة الفاتورة الخاصة بعملية الدفع.",
+            "download": "تحميل الفاتورة",
+            "view": "عرض الفاتورة",
+            "downloadStarted": "بدء تحميل الفاتورة",
+            "viewStarted": "فتح الفاتورة"
+          },
+          "help": {
+            "prefix": "تحتاج مساعدة؟",
+            "link": "تواصل معنا"
+          }
         },
         "stages": {
           "title": "مراحل الطلب",
@@ -547,7 +606,10 @@
             },
             "completed": {
               "title": "تم الانتهاء",
-              "description": "تم إصدار العقد النهائي وإتاحته للتحميل أو الاستلام."
+              "description": "تم إصدار العقد النهائي وإتاحته للتحميل أو الاستلام.",
+              "downloadContract": "تحميل العقد",
+              "downloadInvoice": "تحميل الفاتورة",
+              "downloadStarted": "بدء التحميل"
             },
             "cancelled": {
               "title": "تم إلغاء الطلب",
@@ -650,9 +712,13 @@
             "errors": {
               "homeAddressRequired": "يرجى إدخال عنوان المنزل",
               "nationalAddressRequired": "يرجى إدخال رقم العنوان الوطني",
+              "nationalAddressInvalid": "رقم العنوان الوطني يجب أن يكون أرقامًا فقط",
               "buildingNumberRequired": "يرجى إدخال رقم المبنى",
+              "buildingNumberInvalid": "رقم المبنى يجب أن يكون أرقامًا فقط",
               "floorRequired": "يرجى إدخال الطابق",
+              "floorInvalid": "رقم الطابق يجب أن يكون أرقامًا فقط",
               "nameRequired": "يرجى إدخال الاسم",
+              "nameInvalid": "الاسم يجب أن يكون نصًا فقط بدون أرقام",
               "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
             }
           }

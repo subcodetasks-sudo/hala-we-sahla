@@ -2,6 +2,10 @@
   "Common": {
     "home": "Home",
     "breadcrumb": "Breadcrumb",
+    "copy": {
+      "label": "Copy",
+      "copiedSuccessfully": "Copied successfully"
+    },
     "errors": {
       "network": "No internet connection. Please try again.",
       "timeout": "The request took too long. Please try again.",
@@ -462,7 +466,8 @@
       "logoAlt": "Hala Wa Sahla logo",
       "pages": {
         "renewal": "Contract Renewal",
-        "trackOrders": "Request Inquiry"
+        "trackOrders": "Request Inquiry",
+        "forgotRequestNumber": "Forgot your request number?"
       }
     },
     "breadcrumbs": {
@@ -473,7 +478,8 @@
       "trackOrders": {
         "current": "Request Inquiry",
         "inquiry": "Request Inquiry",
-        "detail": "Track Orders"
+        "detail": "Track Orders",
+        "forgot": "Forgot request number"
       }
     },
     "trackOrders": {
@@ -490,7 +496,7 @@
       "fields": {
         "requestNumber": {
           "label": "Request number",
-          "placeholder": "example: REQ-25481",
+          "placeholder": "example-12369",
           "clear": "Clear request number"
         },
         "phone": {
@@ -502,6 +508,24 @@
         "requestNumberRequired": "Please enter the request number",
         "requestNumberInvalid": "Please enter a valid request number",
         "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+      },
+      "forgot": {
+        "title": "Forgot your request number?",
+        "description": "Enter the mobile number associated with the request!",
+        "submit": "Send verification code",
+        "success": "Verification code sent to your phone",
+        "successTitle": "Check your messages",
+        "successDescription": "If this number is registered with us, you will receive an SMS with a verification code shortly.",
+        "backToTrack": "Back to track order",
+        "fields": {
+          "phone": {
+            "label": "Mobile number",
+            "placeholder": "056 472 6616"
+          }
+        },
+        "errors": {
+          "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+        }
       },
       "detail": {
         "serviceTitle": "Domestic worker contract renewal request",
@@ -518,6 +542,41 @@
           "employerName": "Mohammad Abdullah Al-Qahtani",
           "workerName": "Abdullah",
           "completionPeriod": "5 working days"
+        },
+        "completedResult": {
+          "breadcrumb": "Contract issuance",
+          "title": "Your contract renewal request has been completed successfully!",
+          "subtitle": "You can now open or download the final contract, and view the payment invoice.",
+          "requestNumber": "Request number",
+          "contractRequestNumber": "Contract request number",
+          "copyNumber": "Copy request number",
+          "copyShippingNumber": "Copy shipping order number",
+          "service": "Service",
+          "serviceValue": "Domestic worker contract renewal",
+          "status": "Status",
+          "statusValue": "Completed",
+          "shippingNumber": "Shipping order number",
+          "paperNote": "The contract renewal procedures have been completed successfully, and you will be contacted to coordinate delivering the contract to the registered address.",
+          "contract": {
+            "title": "Domestic worker renewal contract",
+            "description": "You can open the contract or download a PDF copy.",
+            "download": "Download contract",
+            "view": "View contract",
+            "downloadStarted": "Contract download started",
+            "viewStarted": "Opening contract"
+          },
+          "invoice": {
+            "title": "Invoice",
+            "description": "You can view the invoice for your payment.",
+            "download": "Download invoice",
+            "view": "View invoice",
+            "downloadStarted": "Invoice download started",
+            "viewStarted": "Opening invoice"
+          },
+          "help": {
+            "prefix": "Need help?",
+            "link": "Contact us"
+          }
         },
         "stages": {
           "title": "Order stages",
@@ -547,7 +606,10 @@
             },
             "completed": {
               "title": "Completed",
-              "description": "The final contract has been issued and made available for download or pickup."
+              "description": "The final contract has been issued and made available for download or pickup.",
+              "downloadContract": "Download contract",
+              "downloadInvoice": "Download invoice",
+              "downloadStarted": "Download started"
             },
             "cancelled": {
               "title": "Request cancelled",
@@ -650,9 +712,13 @@
             "errors": {
               "homeAddressRequired": "Please enter the home address",
               "nationalAddressRequired": "Please enter the national address number",
+              "nationalAddressInvalid": "National address number must be digits only",
               "buildingNumberRequired": "Please enter the building number",
+              "buildingNumberInvalid": "Building number must be digits only",
               "floorRequired": "Please enter the floor",
+              "floorInvalid": "Floor must be digits only",
               "nameRequired": "Please enter the name",
+              "nameInvalid": "Name must be text only without numbers",
               "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
             }
           }

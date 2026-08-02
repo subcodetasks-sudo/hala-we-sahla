@@ -18,7 +18,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
-import { keepSaudiPhoneInput } from "@/features/forms/lib/input-filters"
+import { keepDigitsOnlyInput, keepNameTextInput, keepSaudiPhoneInput } from "@/features/forms/lib/input-filters"
 import {
   createPaymentDeliveryAddressSchema,
   PAYMENT_DELIVERY_ADDRESS_DEFAULT_VALUES,
@@ -53,9 +53,13 @@ export default function PaymentDeliveryAddressForm({
       createPaymentDeliveryAddressSchema({
         homeAddressRequired: t("errors.homeAddressRequired"),
         nationalAddressRequired: t("errors.nationalAddressRequired"),
+        nationalAddressInvalid: t("errors.nationalAddressInvalid"),
         buildingNumberRequired: t("errors.buildingNumberRequired"),
+        buildingNumberInvalid: t("errors.buildingNumberInvalid"),
         floorRequired: t("errors.floorRequired"),
+        floorInvalid: t("errors.floorInvalid"),
         nameRequired: t("errors.nameRequired"),
+        nameInvalid: t("errors.nameInvalid"),
         phoneInvalid: t("errors.phoneInvalid"),
       }),
     [t],
@@ -118,9 +122,13 @@ export default function PaymentDeliveryAddressForm({
                 <Input
                   {...field}
                   value={field.value ?? ""}
+                  inputMode="numeric"
                   placeholder={t("nationalPlaceholder")}
                   aria-invalid={fieldState.invalid}
                   className={fieldClassName}
+                  onChange={(event) =>
+                    field.onChange(keepDigitsOnlyInput(event.target.value, 20))
+                  }
                 />
                 {fieldState.error ? (
                   <FieldError>{fieldState.error.message}</FieldError>
@@ -136,9 +144,13 @@ export default function PaymentDeliveryAddressForm({
                 <Input
                   {...field}
                   value={field.value ?? ""}
+                  inputMode="numeric"
                   placeholder={t("buildingPlaceholder")}
                   aria-invalid={fieldState.invalid}
                   className={fieldClassName}
+                  onChange={(event) =>
+                    field.onChange(keepDigitsOnlyInput(event.target.value, 10))
+                  }
                 />
                 {fieldState.error ? (
                   <FieldError>{fieldState.error.message}</FieldError>
@@ -154,9 +166,13 @@ export default function PaymentDeliveryAddressForm({
                 <Input
                   {...field}
                   value={field.value ?? ""}
+                  inputMode="numeric"
                   placeholder={t("floorPlaceholder")}
                   aria-invalid={fieldState.invalid}
                   className={fieldClassName}
+                  onChange={(event) =>
+                    field.onChange(keepDigitsOnlyInput(event.target.value, 5))
+                  }
                 />
                 {fieldState.error ? (
                   <FieldError>{fieldState.error.message}</FieldError>
@@ -212,6 +228,9 @@ export default function PaymentDeliveryAddressForm({
                     placeholder={t("namePlaceholder")}
                     aria-invalid={fieldState.invalid}
                     className="placeholder:text-muted-foreground"
+                    onChange={(event) =>
+                      field.onChange(keepNameTextInput(event.target.value))
+                    }
                   />
                 </InputGroup>
                 {fieldState.error ? (

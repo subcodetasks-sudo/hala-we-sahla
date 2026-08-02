@@ -50,10 +50,7 @@ export function getTimelineFromElapsed(
   const rawStageIndex = initialStageIndex + completedCount
 
   const currentStageIndex = isPaid
-    ? Math.min(
-        Math.max(rawStageIndex, TRACK_ORDER_PAYMENT_STAGE_INDEX + 1),
-        TRACK_ORDER_STAGE_KEYS.length,
-      )
+    ? TRACK_ORDER_STAGE_KEYS.length
     : Math.min(rawStageIndex, TRACK_ORDER_PAYMENT_STAGE_INDEX)
 
   const isWaitingForPayment =
@@ -68,7 +65,7 @@ export function getTimelineFromElapsed(
 
   const completedAtByIndex: Record<number, Date> = {}
   for (let index = initialStageIndex; index < currentStageIndex; index += 1) {
-    if (index === TRACK_ORDER_PAYMENT_STAGE_INDEX && paidAt) {
+    if (index >= TRACK_ORDER_PAYMENT_STAGE_INDEX && paidAt) {
       completedAtByIndex[index] = paidAt
       continue
     }
@@ -95,9 +92,9 @@ export function useTrackOrderTimeline(
   const resolvedStorageKey = storageKey || DEMO_STARTED_AT_KEY
   const { isPaid = false, paidAt = null } = options
   const [timeline, setTimeline] = useState(() =>
-    getTimelineFromElapsed(Date.now(), Date.now(), initialStageIndex, {
-      isPaid,
-      paidAt,
+    getTimelineFromElapsed(0, 0, initialStageIndex, {
+      isPaid: false,
+      paidAt: null,
     }),
   )
 
@@ -119,6 +116,13 @@ export function useTrackOrderTimeline(
       frameId = window.requestAnimationFrame(sync)
     }
 
+    // Sync immediately so paid/elapsed state applies after mount (avoids hydration mismatch).
+    setTimeline(
+      getTimelineFromElapsed(startedAt, Date.now(), initialStageIndex, {
+        isPaid,
+        paidAt,
+      }),
+    )
     frameId = window.requestAnimationFrame(sync)
 
     return () => window.cancelAnimationFrame(frameId)

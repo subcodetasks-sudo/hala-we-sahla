@@ -43,7 +43,7 @@ export default function BreadcrumbNav({ items, className }: BreadcrumbNavProps) 
 
               <BreadcrumbItem>
                 {isLast || !item.href ? (
-                  <BreadcrumbPage className="text-muted-foreground font-medium ">
+                  <BreadcrumbPage className="font-medium text-[#003143]">
                     {item.label}
                   </BreadcrumbPage>
                 ) : (

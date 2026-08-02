@@ -21,8 +21,10 @@ export function formatTrackOrderRelativeMinutes(
   const minutes = Math.max(0, differenceInMinutes(now, date))
 
   if (locale === "ar") {
+    if (minutes === 0) return "منذ الآن"
     return `منذ ${minutes}د`
   }
 
+  if (minutes === 0) return "just now"
   return `${minutes}m ago`
 }

@@ -33,7 +33,8 @@ import {
   TRACK_ORDER_DEFAULT_VALUES,
   type TrackOrderValues,
 } from "@/features/forms/schemas/track-order"
-import { useRouter } from "@/i18n/navigation"
+import { getTrackOrderPaymentStorageKey } from "@/features/forms/hooks/use-track-order-payment"
+import { Link, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
@@ -70,6 +71,26 @@ function readRememberedValues(): TrackOrderValues | null {
   } catch {
     return null
   }
+}
+
+function isRequestPaid(requestNumber: string) {
+  if (typeof window === "undefined") return false
+
+  const raw = window.sessionStorage.getItem(
+    getTrackOrderPaymentStorageKey(requestNumber),
+  )
+  if (!raw) return false
+  const parsed = Number(raw)
+  return Number.isFinite(parsed)
+}
+
+function isRequestCancelled(requestNumber: string) {
+  if (typeof window === "undefined") return false
+  return (
+    window.sessionStorage.getItem(
+      `hala-track-order-cancelled:${requestNumber}`,
+    ) != null
+  )
 }
 
 function writeRememberedValues(values: TrackOrderValues) {
@@ -122,7 +143,16 @@ export default function TrackOrderForm() {
 
   function onSubmit(values: TrackOrderValues) {
     writeRememberedValues(values)
-    router.push(`/track-orders/${encodeURIComponent(values.request_number)}`)
+    const encoded = encodeURIComponent(values.request_number)
+    const isCompleted =
+      isRequestPaid(values.request_number) &&
+      !isRequestCancelled(values.request_number)
+
+    router.push(
+      isCompleted
+        ? `/track-orders/${encoded}/completed`
+        : `/track-orders/${encoded}`,
+    )
   }
 
   return (
@@ -177,7 +207,7 @@ export default function TrackOrderForm() {
                       autoComplete="off"
                       placeholder={t("fields.requestNumber.placeholder")}
                       aria-invalid={fieldState.invalid}
-                      className="pe-2"
+                      className="pe-2 font-clash"
                       onChange={(event) =>
                         field.onChange(
                           keepRequestNumberInput(event.target.value),
@@ -239,7 +269,7 @@ export default function TrackOrderForm() {
                             }}
                             aria-hidden="true"
                           />
-                          <span className="text-xs">{SAUDI_COUNTRY_CODE}</span>
+                          <span className="text-xs font-clash">{SAUDI_COUNTRY_CODE}</span>
                         </span>
                       </InputGroupText>
                     </InputGroupAddon>
@@ -253,7 +283,7 @@ export default function TrackOrderForm() {
                       value={field.value ?? ""}
                       placeholder={t("fields.phone.placeholder")}
                       aria-invalid={fieldState.invalid}
-                      className="pe-4"
+                      className="pe-4 font-clash"
                       onChange={(event) =>
                         field.onChange(keepSaudiPhoneInput(event.target.value))
                       }
@@ -284,14 +314,12 @@ export default function TrackOrderForm() {
                 )}
               />
 
-              <a
-                href={WHATSAPP_HREF}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                href="/track-orders/forgot"
                 className="text-sm font-semibold text-accent transition-opacity hover:opacity-80"
               >
                 {t("forgotRequestNumber")}
-              </a>
+              </Link>
             </div>
 
             <Button

@@ -1,6 +1,8 @@
 "use client"
 
+import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 import CustomIcon from "@/components/custom-icon"
 import TrackOrderStageItem from "@/features/forms/components/track-order-stage-item"
@@ -28,6 +30,16 @@ function getStatusLabelKey(status: TrackOrderStageStatus) {
   if (status === "in_progress") return "inProgress"
   if (status === "cancelled") return "cancelled"
   return "upcoming"
+}
+
+const listVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0,
+      delayChildren: 0,
+    },
+  },
 }
 
 export default function TrackOrderStages({
@@ -60,6 +72,10 @@ export default function TrackOrderStages({
     router.push(`/track-orders/${encodeURIComponent(requestNumber)}/payment`)
   }
 
+  function handleDownload() {
+    toast.success(t("items.completed.downloadStarted"))
+  }
+
   return (
     <section
       className={cn(
@@ -78,14 +94,23 @@ export default function TrackOrderStages({
         </h2>
       </div>
 
-      <ol className="mt-6 ms-2 sm:ms-6">
+      <motion.ol
+        className="mt-6 ms-2 sm:ms-6"
+        variants={listVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         {stages.map((stage, index) => {
           const isPaymentAction =
             stage.key === "payment" && stage.status === "in_progress" && !isPaid
+          const isCompletedDownloads =
+            stage.key === "completed" && stage.status === "completed"
 
           return (
             <TrackOrderStageItem
               key={stage.key}
+              index={index}
               status={stage.status}
               statusLabel={t(`statuses.${getStatusLabelKey(stage.status)}`)}
               title={t(`items.${stage.key}.title`)}
@@ -97,6 +122,16 @@ export default function TrackOrderStages({
                 isPaymentAction ? t("items.payment.action") : undefined
               }
               onActionClick={isPaymentAction ? handlePaymentClick : undefined}
+              downloadActions={
+                isCompletedDownloads
+                  ? {
+                      contractLabel: t("items.completed.downloadContract"),
+                      invoiceLabel: t("items.completed.downloadInvoice"),
+                      onDownloadContract: handleDownload,
+                      onDownloadInvoice: handleDownload,
+                    }
+                  : undefined
+              }
               lineFill={
                 isCancelled
                   ? 0
@@ -110,7 +145,7 @@ export default function TrackOrderStages({
             />
           )
         })}
-      </ol>
+      </motion.ol>
     </section>
   )
 }

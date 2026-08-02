@@ -7,29 +7,40 @@ import { useTranslations } from "next-intl"
 import { LanguageSwitcher } from "@/features/landing/components/language-switcher"
 import { Link, usePathname } from "@/i18n/navigation"
 
-const PAGE_TITLE_KEYS: Record<string, "renewal" | "trackOrders"> = {
+type PageTitleKey = "renewal" | "trackOrders" | "forgotRequestNumber"
+
+const PAGE_TITLE_KEYS: Record<string, PageTitleKey> = {
   "/renewal": "renewal",
   "/track-orders": "trackOrders",
+  "/track-orders/forgot": "forgotRequestNumber",
+}
+
+function resolveTitleKey(pathname: string): PageTitleKey {
+  if (PAGE_TITLE_KEYS[pathname]) return PAGE_TITLE_KEYS[pathname]
+  if (pathname.startsWith("/track-orders")) return "trackOrders"
+  if (pathname.startsWith("/renewal")) return "renewal"
+  return "renewal"
+}
+
+function resolveBackHref(pathname: string) {
+  if (pathname === "/track-orders/forgot") return "/track-orders"
+  if (pathname.startsWith("/track-orders/")) return "/track-orders"
+  return "/"
 }
 
 export default function FormsHeader() {
   const t = useTranslations("Forms.header")
   const pathname = usePathname()
-  const titleKey =
-    PAGE_TITLE_KEYS[pathname] ??
-    (pathname.startsWith("/track-orders")
-      ? "trackOrders"
-      : pathname.startsWith("/renewal")
-        ? "renewal"
-        : undefined)
-  const title = titleKey ? t(`pages.${titleKey}`) : t("pages.renewal")
+  const titleKey = resolveTitleKey(pathname)
+  const title = t(`pages.${titleKey}`)
+  const backHref = resolveBackHref(pathname)
 
   return (
     <header className="sticky top-0 z-50 bg-background">
       <div className="container flex h-16 items-center justify-between gap-4 py-3 sm:h-20 sm:py-4">
-        <div className="flex items-center gap-3 ">
+        <div className="flex items-center gap-3">
           <Link
-            href="/"
+            href={backHref}
             className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-opacity hover:opacity-80 sm:size-11"
             aria-label={t("back")}
           >
@@ -54,7 +65,7 @@ export default function FormsHeader() {
               alt={t("logoAlt")}
               width={120}
               height={40}
-              className="h-8 w-auto hidden md:block"
+              className="hidden h-8 w-auto md:block"
               priority
             />
           </Link>
