@@ -37,6 +37,10 @@ export function keepPassportNumberInput(value: string) {
   return value.replace(/\D/g, "").slice(0, 20)
 }
 
+export function keepRequestNumberInput(value: string) {
+  return value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 32)
+}
+
 /** Digits only, optional single decimal point (e.g. salary amounts). */
 export function keepDecimalInput(value: string) {
   const cleaned = value.replace(/[^\d.]/g, "")

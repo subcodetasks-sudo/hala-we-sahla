@@ -124,6 +124,8 @@
 
 @theme {
 --color-black:#003143;
+--color-custom-green:#1B8354;
+--color-custom-gray:#FBFBFB;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;

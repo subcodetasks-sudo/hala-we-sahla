@@ -462,7 +462,7 @@
       "logoAlt": "شعار هلا وسهلا",
       "pages": {
         "renewal": "تجديد العقد",
-        "trackOrders": "تتبع الطلبات"
+        "trackOrders": "الاستعلام عن طلب"
       }
     },
     "breadcrumbs": {
@@ -471,8 +471,192 @@
         "current": "إنشاء طلب تجديد العقد"
       },
       "trackOrders": {
-        "section": "تتبع الطلبات",
-        "current": "الاستعلام عن طلب"
+        "current": "الاستعلام عن طلب",
+        "inquiry": "الاستعلام عن طلب",
+        "detail": "تتبع الطلبات"
+      }
+    },
+    "trackOrders": {
+      "title": "الاستعلام عن الطلبات",
+      "description": "يمكنك معرفة رقم الطلب عبر الرسالة المرسلة على جوالك المسجل",
+      "rememberMe": "تذكرني",
+      "forgotRequestNumber": "نسيت رقم الطلب !",
+      "submit": "تتبع الطلب",
+      "whatsappFab": "تواصل عبر واتساب",
+      "help": {
+        "prefix": "للمساعدة؟",
+        "link": "تواصل معنا عبر واتساب"
+      },
+      "fields": {
+        "requestNumber": {
+          "label": "رقم الطلب",
+          "placeholder": "example: REQ-25481",
+          "clear": "مسح رقم الطلب"
+        },
+        "phone": {
+          "label": "رقم الجوال",
+          "placeholder": "05XXXXXXXX"
+        }
+      },
+      "errors": {
+        "requestNumberRequired": "يرجى إدخال رقم الطلب",
+        "requestNumberInvalid": "يرجى إدخال رقم طلب صحيح",
+        "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
+      },
+      "detail": {
+        "serviceTitle": "طلب تجديد عقد العمالة المنزلية",
+        "serviceType": "نوع الخدمة",
+        "copyNumber": "نسخ رقم الطلب",
+        "copied": "تم النسخ",
+        "fields": {
+          "employerName": "الاسم صاحب العمل",
+          "workerName": "اسم العامل",
+          "completionPeriod": "مدة الانجاز",
+          "requestNumber": "رقم طلبكم"
+        },
+        "demo": {
+          "employerName": "محمد عبدالله القحطاني",
+          "workerName": "عبدالله",
+          "completionPeriod": "5 أيام عمل"
+        },
+        "stages": {
+          "title": "مراحل الطلب",
+          "statuses": {
+            "completed": "مكتملة",
+            "inProgress": "قيد التنفيذ",
+            "upcoming": "قادمة",
+            "cancelled": "قيد التنفيذ"
+          },
+          "items": {
+            "received": {
+              "title": "تم استلام الطلب",
+              "description": "تم إنشاء الطلب بنجاح وهو بانتظار المعالجة."
+            },
+            "processed": {
+              "title": "تمت معالجة الطلب",
+              "description": "تمت مراجعة البيانات والمستندات من قبل الفريق المختص."
+            },
+            "sentForAuth": {
+              "title": "تم إرسال العقد للمصادقة",
+              "description": "تم تجهيز العقد وإرساله للجهة المختصة لاعتماده."
+            },
+            "payment": {
+              "title": "عملية الدفع",
+              "description": "العقد جاهز بعد المصادقة، ويمكن إتمام الدفع.",
+              "action": "إتمام الدفع"
+            },
+            "completed": {
+              "title": "تم الانتهاء",
+              "description": "تم إصدار العقد النهائي وإتاحته للتحميل أو الاستلام."
+            },
+            "cancelled": {
+              "title": "تم إلغاء الطلب",
+              "description": "أوقف العميل إجراءات التجديد قبل اكتمال المعالجة."
+            }
+          }
+        },
+        "cancel": {
+          "action": "إلغاء طلب التجديد",
+          "hint": "يمكن إلغاء الطلب فقط قبل بدء معالجته من قبل فريق العمل",
+          "dialogTitle": "إلغاء طلب التجديد",
+          "confirmTitle": "هل أنت متأكد من <highlight>إلغاء طلب التجديد</highlight>!.",
+          "confirmDescription": "بعد تأكيد الطلب الإلغاء، لن تتمكن من متابعة إجراءات التجديد.",
+          "reason": {
+            "label": "سبب الإلغاء",
+            "placeholder": "اختر سببًا...",
+            "required": "يرجى اختيار سبب الإلغاء",
+            "options": {
+              "changedMind": "تغيير الرأي",
+              "wrongData": "بيانات غير صحيحة",
+              "duplicate": "طلب مكرر",
+              "other": "سبب آخر"
+            }
+          },
+          "notes": {
+            "label": "ملاحظات الإلغاء",
+            "placeholder": "اكتب التفاصيل..."
+          },
+          "confirm": "تأكيد طلب إلغاء طلب التجديد",
+          "back": "تراجع",
+          "success": "تم إرسال طلب الإلغاء بنجاح"
+        },
+        "payment": {
+          "title": "إتمام الدفع",
+          "breadcrumb": "إتمام الدفع",
+          "delivery": {
+            "title": "طريقة استلام العقد",
+            "subtitle": "اختر الطريقة المناسبة لاستلام العقد بعد اكتمال الإجراءات.",
+            "options": {
+              "electronic": {
+                "title": "استلام نسخة إلكترونية مجانًا",
+                "description": "يمكنك استلام العقد من الفرع أو الجهة المحددة بعد اكتمال الإجراءات."
+              },
+              "paper": {
+                "title": "توصيل نسخة ورقية للعنوان",
+                "description": "سيتم توصيل العقد إلى العنوان المسجل عند توفر خدمة التوصيل."
+              }
+            }
+          },
+          "summary": {
+            "title": "ملخص الطلب",
+            "serviceName": "تجديد عقد العمالة المنزلية",
+            "serviceFee": "رسوم الخدمة",
+            "vat": "ضريبة القيمة المضافة (15%)",
+            "total": "الإجمالي الكلي"
+          },
+          "checkout": {
+            "heading": "طلبك جاهز لإتمام الدفع",
+            "description": "تم اعتماد طلب تجديد العقد بنجاح. يمكنك الآن الانتقال إلى صفحة الدفع لاستكمال إصدار العقد النهائي.",
+            "details": "تفاصيل الطلب",
+            "showDetails": "عرض التفاصيل",
+            "hideDetails": "إخفاء التفاصيل",
+            "requestNumber": "رقم الطلب",
+            "copyNumber": "نسخ رقم الطلب",
+            "copied": "تم النسخ",
+            "service": "الخدمة",
+            "serviceValue": "تجديد عقد العمالة المنزلية",
+            "deliveryMethod": "طريقة استلام العقد",
+            "deliveryElectronic": "استلام نسخة إلكترونية",
+            "deliveryPaper": "توصيل للعنوان",
+            "status": "الحالة",
+            "statusValue": "بانتظار الدفع",
+            "serviceFee": "رسوم الخدمة",
+            "vat": "ضريبة القيمة المضافة (15%)",
+            "deliveryFee": "تكلفة التوصيل",
+            "total": "الإجمالي الكلي",
+            "info": "بعد إتمام الدفع يُتاح العقد النهائي فورًا للتحميل أو الاستلام حسب الطريقة المختارة.",
+            "pay": "إتمام الدفع",
+            "secure": "دفع آمن ومشفر"
+          },
+          "next": "التالي",
+          "success": "تم إتمام الدفع بنجاح",
+          "address": {
+            "title": "ادخل عنوان المنزل للتوصيل :",
+            "addShort": "إضافة عنوان مختصر",
+            "homePlaceholder": "ادخل عنوان المنزل للتوصيل هنا...",
+            "infoTitle": "معلومات العنوان :",
+            "nationalPlaceholder": "أدخل رقم العنوان الوطني هنا...",
+            "buildingPlaceholder": "أدخل رقم المبنى هنا...",
+            "floorPlaceholder": "أدخل الطابق هنا...",
+            "descriptionPlaceholder": "اكتب وصف العنوان هنا...",
+            "contactTitle": "معلومات الاتصال :",
+            "namePlaceholder": "أدخل الاسم هنا...",
+            "phonePlaceholder": "5x xxx xx xx",
+            "save": "احفظ عنواني",
+            "saved": "تم حفظ العنوان بنجاح",
+            "edit": "تعديل العنوان",
+            "summaryCity": "الرياض",
+            "addressRequired": "يرجى حفظ عنوان التوصيل أولاً",
+            "errors": {
+              "homeAddressRequired": "يرجى إدخال عنوان المنزل",
+              "nationalAddressRequired": "يرجى إدخال رقم العنوان الوطني",
+              "buildingNumberRequired": "يرجى إدخال رقم المبنى",
+              "floorRequired": "يرجى إدخال الطابق",
+              "nameRequired": "يرجى إدخال الاسم",
+              "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
+            }
+          }
+        }
       }
     },
     "renewal": {

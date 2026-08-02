@@ -462,7 +462,7 @@
       "logoAlt": "Hala Wa Sahla logo",
       "pages": {
         "renewal": "Contract Renewal",
-        "trackOrders": "Track Orders"
+        "trackOrders": "Request Inquiry"
       }
     },
     "breadcrumbs": {
@@ -471,8 +471,192 @@
         "current": "Create contract renewal request"
       },
       "trackOrders": {
-        "section": "Track Orders",
-        "current": "Inquire about an order"
+        "current": "Request Inquiry",
+        "inquiry": "Request Inquiry",
+        "detail": "Track Orders"
+      }
+    },
+    "trackOrders": {
+      "title": "Order inquiry",
+      "description": "You can find the request number in the message sent to your registered mobile",
+      "rememberMe": "Remember me",
+      "forgotRequestNumber": "Forgot request number!",
+      "submit": "Track order",
+      "whatsappFab": "Contact us on WhatsApp",
+      "help": {
+        "prefix": "Need help?",
+        "link": "Contact us on WhatsApp"
+      },
+      "fields": {
+        "requestNumber": {
+          "label": "Request number",
+          "placeholder": "example: REQ-25481",
+          "clear": "Clear request number"
+        },
+        "phone": {
+          "label": "Mobile number",
+          "placeholder": "05XXXXXXXX"
+        }
+      },
+      "errors": {
+        "requestNumberRequired": "Please enter the request number",
+        "requestNumberInvalid": "Please enter a valid request number",
+        "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+      },
+      "detail": {
+        "serviceTitle": "Domestic worker contract renewal request",
+        "serviceType": "Service type",
+        "copyNumber": "Copy request number",
+        "copied": "Copied",
+        "fields": {
+          "employerName": "Employer name",
+          "workerName": "Worker name",
+          "completionPeriod": "Completion period",
+          "requestNumber": "Your request number"
+        },
+        "demo": {
+          "employerName": "Mohammad Abdullah Al-Qahtani",
+          "workerName": "Abdullah",
+          "completionPeriod": "5 working days"
+        },
+        "stages": {
+          "title": "Order stages",
+          "statuses": {
+            "completed": "Completed",
+            "inProgress": "In progress",
+            "upcoming": "Upcoming",
+            "cancelled": "In progress"
+          },
+          "items": {
+            "received": {
+              "title": "Request received",
+              "description": "The request was created successfully and is awaiting processing."
+            },
+            "processed": {
+              "title": "Request processed",
+              "description": "Data and documents have been reviewed by the specialized team."
+            },
+            "sentForAuth": {
+              "title": "Contract sent for authentication",
+              "description": "The contract has been prepared and sent to the relevant authority for approval."
+            },
+            "payment": {
+              "title": "Payment process",
+              "description": "The contract is ready after authentication, and payment can be completed.",
+              "action": "Complete payment"
+            },
+            "completed": {
+              "title": "Completed",
+              "description": "The final contract has been issued and made available for download or pickup."
+            },
+            "cancelled": {
+              "title": "Request cancelled",
+              "description": "The customer stopped the renewal process before processing was completed."
+            }
+          }
+        },
+        "cancel": {
+          "action": "Cancel renewal request",
+          "hint": "The request can only be canceled before the team starts processing it",
+          "dialogTitle": "Cancel renewal request",
+          "confirmTitle": "Are you sure you want to <highlight>cancel the renewal request</highlight>?!",
+          "confirmDescription": "After confirming cancellation, you will not be able to continue the renewal process.",
+          "reason": {
+            "label": "Cancellation reason",
+            "placeholder": "Choose a reason...",
+            "required": "Please select a cancellation reason",
+            "options": {
+              "changedMind": "Changed my mind",
+              "wrongData": "Incorrect information",
+              "duplicate": "Duplicate request",
+              "other": "Other"
+            }
+          },
+          "notes": {
+            "label": "Cancellation notes",
+            "placeholder": "Write the details..."
+          },
+          "confirm": "Confirm renewal request cancellation",
+          "back": "Go back",
+          "success": "Cancellation request submitted successfully"
+        },
+        "payment": {
+          "title": "Complete payment",
+          "breadcrumb": "Complete payment",
+          "delivery": {
+            "title": "Contract delivery method",
+            "subtitle": "Choose the appropriate method to receive the contract after procedures are completed.",
+            "options": {
+              "electronic": {
+                "title": "Receive a free electronic copy",
+                "description": "You can collect the contract from the branch or designated entity after procedures are completed."
+              },
+              "paper": {
+                "title": "Paper copy delivery to address",
+                "description": "The contract will be delivered to the registered address when delivery service is available."
+              }
+            }
+          },
+          "summary": {
+            "title": "Order summary",
+            "serviceName": "Domestic worker contract renewal",
+            "serviceFee": "Service fee",
+            "vat": "VAT (15%)",
+            "total": "Total amount"
+          },
+          "checkout": {
+            "heading": "Your order is ready for payment",
+            "description": "The contract renewal request has been approved successfully. You can now proceed to the payment page to complete issuing the final contract.",
+            "details": "Order details",
+            "showDetails": "Show details",
+            "hideDetails": "Hide details",
+            "requestNumber": "Request number",
+            "copyNumber": "Copy request number",
+            "copied": "Copied",
+            "service": "Service",
+            "serviceValue": "Domestic worker contract renewal",
+            "deliveryMethod": "Contract delivery method",
+            "deliveryElectronic": "Electronic copy",
+            "deliveryPaper": "Delivery to address",
+            "status": "Status",
+            "statusValue": "Awaiting payment",
+            "serviceFee": "Service fee",
+            "vat": "VAT (15%)",
+            "deliveryFee": "Delivery cost",
+            "total": "Grand total",
+            "info": "After completing payment, the final contract is available immediately for download or pickup according to the selected method.",
+            "pay": "Complete payment",
+            "secure": "Secure and encrypted payment"
+          },
+          "next": "Next",
+          "success": "Payment completed successfully",
+          "address": {
+            "title": "Enter the home address for delivery:",
+            "addShort": "Add short address",
+            "homePlaceholder": "Enter the home delivery address here...",
+            "infoTitle": "Address details:",
+            "nationalPlaceholder": "Enter the national address number here...",
+            "buildingPlaceholder": "Enter the building number here...",
+            "floorPlaceholder": "Enter the floor here...",
+            "descriptionPlaceholder": "Write the address description here...",
+            "contactTitle": "Contact information:",
+            "namePlaceholder": "Enter the name here...",
+            "phonePlaceholder": "5x xxx xx xx",
+            "save": "Save my address",
+            "saved": "Address saved successfully",
+            "edit": "Edit address",
+            "summaryCity": "Riyadh",
+            "addressRequired": "Please save the delivery address first",
+            "errors": {
+              "homeAddressRequired": "Please enter the home address",
+              "nationalAddressRequired": "Please enter the national address number",
+              "buildingNumberRequired": "Please enter the building number",
+              "floorRequired": "Please enter the floor",
+              "nameRequired": "Please enter the name",
+              "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+            }
+          }
+        }
       }
     },
     "renewal": {

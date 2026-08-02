@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server"
 
 import BreadcrumbNav from "@/components/shared/breadcrumb-nav"
+import TrackOrderForm from "@/features/forms/components/track-order-form"
+import TrackOrderWhatsappFab from "@/features/forms/components/track-order-whatsapp-fab"
 
 export default async function TrackOrdersPage() {
   const tCommon = await getTranslations("Common")
@@ -11,10 +13,15 @@ export default async function TrackOrdersPage() {
       <BreadcrumbNav
         items={[
           { label: tCommon("home"), href: "/" },
-          { label: t("breadcrumbs.trackOrders.section"), href: "/track-orders" },
           { label: t("breadcrumbs.trackOrders.current") },
         ]}
       />
+
+      <div className="mt-8 pb-10 sm:mt-10 sm:pb-12">
+        <TrackOrderForm />
+      </div>
+
+      <TrackOrderWhatsappFab />
     </div>
   )
 }

@@ -46,7 +46,7 @@ export default async function Hero() {
                         className="gap-1.5 h-12! text-lg! bg-transparent! text-[#003143]"
                         asChild
                     >
-                        <Link href="/about">
+                        <Link href="/track-orders">
                             <CustomIcon src="/icons/box-time.svg" className="size-4" />
                             {t("secondaryCta")}
                             <ArrowUpLeft className="ltr:rotate-180 " />

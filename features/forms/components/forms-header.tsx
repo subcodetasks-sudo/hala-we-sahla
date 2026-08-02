@@ -17,7 +17,11 @@ export default function FormsHeader() {
   const pathname = usePathname()
   const titleKey =
     PAGE_TITLE_KEYS[pathname] ??
-    (pathname.startsWith("/renewal") ? "renewal" : undefined)
+    (pathname.startsWith("/track-orders")
+      ? "trackOrders"
+      : pathname.startsWith("/renewal")
+        ? "renewal"
+        : undefined)
   const title = titleKey ? t(`pages.${titleKey}`) : t("pages.renewal")
 
   return (
