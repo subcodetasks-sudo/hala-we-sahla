@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { Eye, Loader2, Phone, SaudiRiyal } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
@@ -16,7 +16,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRenewalReview } from "@/features/forms/hooks/use-renewal-review"
 import {
-  formatBilingualLabel,
   formatNamedEntityLabel,
   type RenewalReviewDocuments,
 } from "@/features/forms/services/renewal-review"
@@ -38,6 +37,7 @@ type ReviewFieldItem = {
   icon: ReactNode
   valueSuffix?: ReactNode
   valueDir?: "ltr" | "rtl"
+  valueClassName?: string
 }
 
 type DocumentItem = {
@@ -149,41 +149,91 @@ function ReviewSectionTitle({
 
 function ReviewFieldCell({ field }: { field: ReviewFieldItem }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1.5 px-2 sm:px-3">
+    <div className="flex flex-col gap-1.5">
       <span className="flex size-5 items-center justify-center">{field.icon}</span>
-      <p className="text-xs font-medium text-muted-foreground sm:text-sm">
+      <p className="text-xs font-medium text-muted-foreground sm:text-sm sm:text-nowrap">
         {field.label}
       </p>
-      <p className="inline-flex max-w-full gap-1 text-sm font-bold wrap-break-word text-[#1a3d4d] sm:text-base">
-        <span className="min-w-0" dir={field.valueDir}>
-          {field.value}
-        </span>
-        {field.valueSuffix}
+      <p
+        className={cn(
+          "text-sm font-bold wrap-break-word text-black sm:text-base sm:text-nowrap",
+          field.valueClassName,
+        )}
+      >
+        <span dir={field.valueDir}>{field.value}</span>
+        {field.valueSuffix ? (
+          <span className="ms-1 inline-flex shrink-0 align-middle">
+            {field.valueSuffix}
+          </span>
+        ) : null}
       </p>
     </div>
   )
 }
 
-function ReviewFieldsRow({
-  fields,
-  columnsClassName,
-}: {
-  fields: ReviewFieldItem[]
-  columnsClassName: string
-}) {
+function ReviewFieldsRow({ fields }: { fields: ReviewFieldItem[] }) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const [rowStartKeys, setRowStartKeys] = useState<Set<string>>(
+    () => new Set(fields[0] ? [fields[0].key] : []),
+  )
+
+  useEffect(() => {
+    const row = rowRef.current
+    if (!row) return
+
+    function updateRowStarts() {
+      const items = Array.from(row!.children) as HTMLElement[]
+      if (items.length === 0) {
+        setRowStartKeys(new Set())
+        return
+      }
+
+      const next = new Set<string>()
+      let currentTop = items[0].offsetTop
+      next.add(items[0].dataset.fieldKey ?? "")
+
+      for (let index = 1; index < items.length; index += 1) {
+        const item = items[index]
+        if (item.offsetTop > currentTop + 1) {
+          currentTop = item.offsetTop
+          next.add(item.dataset.fieldKey ?? "")
+        }
+      }
+
+      setRowStartKeys(next)
+    }
+
+    updateRowStarts()
+
+    const observer = new ResizeObserver(updateRowStarts)
+    observer.observe(row)
+    window.addEventListener("resize", updateRowStarts)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener("resize", updateRowStarts)
+    }
+  }, [fields])
+
   return (
-    <div className={cn("grid gap-y-6", columnsClassName)}>
-      {fields.map((field, index) => (
-        <div key={field.key} className="relative min-w-0">
-          {index > 0 ? (
-            <span
-              aria-hidden="true"
-              className="absolute inset-s-0 top-1/2 hidden h-8 w-px -translate-x-1/2 -translate-y-1/2 bg-[#d7d7d7] sm:block rtl:translate-x-1/2"
-            />
-          ) : null}
-          <ReviewFieldCell field={field} />
-        </div>
-      ))}
+    <div ref={rowRef} className="flex flex-wrap gap-y-6">
+      {fields.map((field) => {
+        const isRowStart = rowStartKeys.has(field.key)
+
+        return (
+          <div
+            key={field.key}
+            data-field-key={field.key}
+            className={cn(
+              "relative w-full px-3 sm:w-auto sm:shrink-0 sm:px-5",
+              !isRowStart &&
+                "sm:before:absolute sm:before:inset-s-0 sm:before:top-1/2 sm:before:h-5 sm:before:w-px sm:before:-translate-y-1/2 sm:before:bg-[#d7d7d7]/40 sm:before:content-['']",
+            )}
+          >
+            <ReviewFieldCell field={field} />
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -328,14 +378,17 @@ export default function ReviewStep({
 
   const employerTopFields: ReviewFieldItem[] = [
     {
-      key: "employerName",
-      label: t("fields.employerName"),
-      value: formatBilingualLabel(
-        employer.employer_name_ar,
-        employer.employer_name_en,
-        empty,
-      ),
+      key: "employerNameAr",
+      label: t("fields.employerNameAr"),
+      value: employer.employer_name_ar?.trim() || empty,
       icon: <FieldIcon src="/forms/step-1/user.svg" />,
+    },
+    {
+      key: "employerNameEn",
+      label: t("fields.employerNameEn"),
+      value: employer.employer_name_en?.trim() || empty,
+      icon: <FieldIcon src="/forms/step-1/user.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "nationalId",
@@ -377,14 +430,17 @@ export default function ReviewStep({
 
   const workerFieldsTop: ReviewFieldItem[] = [
     {
-      key: "workerName",
-      label: t("fields.workerName"),
-      value: formatBilingualLabel(
-        worker.worker_name_ar,
-        worker.worker_name_en,
-        empty,
-      ),
+      key: "workerNameAr",
+      label: t("fields.workerNameAr"),
+      value: worker.worker_name_ar?.trim() || empty,
       icon: <FieldIcon src="/forms/step-2/user.svg" />,
+    },
+    {
+      key: "workerNameEn",
+      label: t("fields.workerNameEn"),
+      value: worker.worker_name_en?.trim() || empty,
+      icon: <FieldIcon src="/forms/step-2/user.svg" />,
+      valueDir: "ltr",
     },
     {
       key: "workerPhone",
@@ -447,6 +503,7 @@ export default function ReviewStep({
       value: salaryValue,
       icon: <FieldIcon src="/forms/step-3/money-recive.svg" />,
       valueDir: "ltr",
+      valueClassName: "font-clash",
       valueSuffix:
         salaryValue !== empty ? (
           <SaudiRiyal className="size-3.5 shrink-0" aria-hidden="true" />
@@ -509,14 +566,8 @@ export default function ReviewStep({
           {t("sections.employer")}
         </ReviewSectionTitle>
         <div className="flex flex-col gap-6">
-          <ReviewFieldsRow
-            fields={employerTopFields}
-            columnsClassName="sm:grid-cols-3"
-          />
-          <ReviewFieldsRow
-            fields={employerBottomFields}
-            columnsClassName="sm:grid-cols-2"
-          />
+          <ReviewFieldsRow fields={employerTopFields} />
+          <ReviewFieldsRow fields={employerBottomFields} />
         </div>
       </section>
 
@@ -533,14 +584,8 @@ export default function ReviewStep({
           {t("sections.worker")}
         </ReviewSectionTitle>
         <div className="flex flex-col gap-8">
-          <ReviewFieldsRow
-            fields={workerFieldsTop}
-            columnsClassName="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5"
-          />
-          <ReviewFieldsRow
-            fields={workerFieldsBottom}
-            columnsClassName="grid-cols-2 sm:grid-cols-2 xl:grid-cols-4"
-          />
+          <ReviewFieldsRow fields={workerFieldsTop} />
+          <ReviewFieldsRow fields={workerFieldsBottom} />
         </div>
       </section>
 
@@ -581,16 +626,18 @@ export default function ReviewStep({
           !confirmed && "ring-1 ring-border/60",
         )}
       >
-        <CustomIcon
-          src="/icons/check-green.svg"
-          size={20}
-          className={cn(
-            "size-5 shrink-0",
-            confirmed
-              ? "text-green-600/80 opacity-100"
-              : "opacity-35 grayscale",
-          )}
-        />
+        {confirmed ? (
+          <CustomIcon
+            src="/icons/check-green.svg"
+            size={20}
+            className="size-5 shrink-0 text-[#22C55E]"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="size-5 shrink-0 rounded-full border-2 border-[#c9d4d8] bg-transparent"
+          />
+        )}
         <span className="text-sm font-semibold text-black">
           {t("confirmation")}
         </span>

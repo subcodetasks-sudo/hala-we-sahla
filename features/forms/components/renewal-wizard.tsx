@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import DocumentsStepForm from "@/features/forms/components/documents-step-form"
 import EmployerStepForm from "@/features/forms/components/employer-step-form"
+import { useRegisterFormsBackHandler } from "@/features/forms/components/forms-back-provider"
 import OrderSummaryCard from "@/features/forms/components/order-summary-card"
 import RenewalStepper, {
   RENEWAL_STEPS,
@@ -422,6 +423,14 @@ export default function RenewalWizard() {
     setStep(nextStep)
   }
 
+  function handlePreviousStep() {
+    if (isSubmitted || step === 0) return false
+    setStep((current) => Math.max(0, current - 1))
+    return true
+  }
+
+  useRegisterFormsBackHandler(handlePreviousStep)
+
   return (
     <div className="mt-8 grid gap-6 pb-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1fr)_370px]">
       <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
@@ -446,14 +455,14 @@ export default function RenewalWizard() {
             <>
               {!isReviewStep ? (
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                  <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
                     <CustomIcon
                       src={STEP_ICONS[stepKey]}
                       size={22}
                       className="size-5.5 shrink-0 text-primary"
                     />
                   </span>
-                  <h2 className="text-lg font-bold text-foreground sm:text-xl">
+                  <h2 className="text-lg font-bold text-black sm:text-xl">
                     <MutedParensText text={t(`steps.${stepKey}`)} />
                   </h2>
                 </div>
@@ -496,7 +505,9 @@ export default function RenewalWizard() {
                     "h-11 shrink-0 gap-1.5 rounded-full border-border/70 bg-background/40 px-3 text-sm text-muted-foreground shadow-none hover:bg-muted/60 hover:text-muted-foreground sm:px-8 sm:text-base",
                     step === 0 ? "hidden" : "",
                   )}
-                  onClick={() => setStep((current) => Math.max(0, current - 1))}
+                  onClick={() => {
+                    handlePreviousStep()
+                  }}
                   disabled={step === 0}
                 >
                   <ChevronRight
@@ -532,7 +543,7 @@ export default function RenewalWizard() {
         </Card>
       </div>
 
-      <aside className="flex flex-col gap-4 lg:sticky lg:top-24">
+      <aside className="flex flex-col gap-4 lg:sticky lg:top-24 max-lg:order-first">
         <OrderSummaryCard
           serviceFee={SERVICE_FEE}
           vatAmount={VAT_AMOUNT}

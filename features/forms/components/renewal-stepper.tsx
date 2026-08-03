@@ -90,7 +90,7 @@ export default function RenewalStepper({
                       isReached ? "text-primary" : "text-muted-foreground",
                     )}
                   >
-                    {t("stepNumber", { number: index + 1 })}
+                    {t(`stepNumber.${index + 1}`)}
                   </span>
                   <span
                     className={cn(

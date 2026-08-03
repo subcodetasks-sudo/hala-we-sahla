@@ -8,7 +8,7 @@ export default async function RenewalPage() {
   const t = await getTranslations("Forms")
 
   return (
-    <div className="container py-4 sm:py-6">
+    <div className="container py-3 sm:py-4">
       <BreadcrumbNav
         items={[
           { label: tCommon("home"), href: "/" },
@@ -16,7 +16,7 @@ export default async function RenewalPage() {
         ]}
       />
 
-      <div className="fit-viewport mt-6 pb-10 sm:mt-8 sm:pb-12">
+      <div className="fit-viewport mt-4 sm:mt-5">
         <RenewalPrerequisitesCard />
       </div>
     </div>

@@ -815,10 +815,15 @@
         "steps": {
           "employer": "Employer details",
           "worker": "Worker details (sponsored)",
-          "documents": "Upload documents",
+          "documents": "Documents",
           "review": "Review and submit"
         },
-        "stepNumber": "Step {number}",
+        "stepNumber": {
+          "1": "First step",
+          "2": "Second step",
+          "3": "Third step",
+          "4": "Fourth step"
+        },
         "stepPlaceholder": "This step content is coming soon",
         "next": "Next",
         "previous": "Previous",
@@ -833,11 +838,15 @@
           },
           "fields": {
             "employerName": "Employer name",
+            "employerNameAr": "Employer name in Arabic",
+            "employerNameEn": "Employer name in English",
             "nationalId": "National ID number",
             "phone": "Contact number",
             "city": "City",
             "employerIssuePlace": "Place of issue",
             "workerName": "Worker name",
+            "workerNameAr": "Worker name in Arabic",
+            "workerNameEn": "Worker name in English",
             "passportNumber": "Passport number",
             "passportIssueDate": "Issue date",
             "passportExpiryDate": "Passport expiry date",
@@ -909,13 +918,15 @@
               "label": "City",
               "placeholder": "Select the city here...",
               "loading": "Loading cities...",
-              "loadError": "Could not load cities"
+              "loadError": "Could not load cities",
+              "empty": "No cities found"
             },
             "passport_issue_place_id": {
               "label": "Place of issue",
               "placeholder": "Select the place of issue here...",
               "loading": "Loading places of issue...",
-              "loadError": "Could not load places of issue"
+              "loadError": "Could not load places of issue",
+              "empty": "No places of issue found"
             }
           },
           "errors": {
@@ -955,7 +966,8 @@
               "label": "Passport place of issue in English",
               "placeholder": "Select the place of issue here...",
               "loading": "Loading places of issue...",
-              "loadError": "Could not load places of issue"
+              "loadError": "Could not load places of issue",
+              "empty": "No places of issue found"
             },
             "passport_number": {
               "label": "Passport number",

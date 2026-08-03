@@ -1,5 +1,6 @@
 import { setRequestLocale } from "next-intl/server"
 
+import { FormsBackProvider } from "@/features/forms/components/forms-back-provider"
 import FormsFooter from "@/features/forms/components/forms-footer"
 import FormsHeader from "@/features/forms/components/forms-header"
 
@@ -17,9 +18,11 @@ export default async function FormsLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <FormsHeader />
-      <main className="flex-1">{children}</main>
-      <FormsFooter />
+      <FormsBackProvider>
+        <FormsHeader />
+        <main className="flex-1">{children}</main>
+        <FormsFooter />
+      </FormsBackProvider>
     </div>
   )
 }

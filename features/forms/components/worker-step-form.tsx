@@ -1,11 +1,20 @@
 "use client"
 
-import { Controller, type Control } from "react-hook-form"
+import { Controller, useWatch, type Control } from "react-hook-form"
 import { useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
 
 import CustomIcon from "@/components/custom-icon"
 import MutedParensText from "@/components/shared/muted-parens-text"
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  useComboboxAnchor,
+} from "@/components/ui/combobox"
 import {
   Field,
   FieldError,
@@ -18,16 +27,12 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import GregorianDateField from "@/features/forms/components/gregorian-date-field"
 import { usePassportIssuePlaces } from "@/features/forms/hooks/use-passport-issue-places"
-import { getDateYearsBeforeToday } from "@/features/forms/lib/gregorian-date"
+import {
+  getDateYearsBeforeToday,
+  parseGregorianDateValue,
+} from "@/features/forms/lib/gregorian-date"
 import { MIN_WORKER_AGE } from "@/features/forms/schemas/worker-step"
 import { WORKER_PASSPORT_ISSUE_COUNTRY } from "@/features/forms/services/passport-issue-places"
 import {
@@ -46,18 +51,15 @@ const fieldShellClassName =
 
 const inputGroupClassName = cn(
   fieldShellClassName,
-  "focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20",
-)
-
-const selectTriggerClassName = cn(
-  fieldShellClassName,
-  "w-full! h-12! rounded-full px-0 pe-3 focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20 [&>svg]:text-accent!",
+  "w-full focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20",
 )
 
 const addonStartClassName = "gap-0 border-e border-border/70 pe-3 ps-4"
 
-const selectIconWrapClassName =
-  "flex h-full items-center border-e border-border/70 px-4"
+type ComboboxOption = {
+  value: string
+  label: string
+}
 
 type WorkerStepFormProps = {
   control: Control<WorkerStepValues, unknown, WorkerStepValues>
@@ -70,11 +72,33 @@ export default function WorkerStepForm({
 }: WorkerStepFormProps) {
   const t = useTranslations("Forms.renewal.wizard.worker")
   const maxBirthDate = getDateYearsBeforeToday(MIN_WORKER_AGE)
+  const passportIssueDateValue = useWatch({
+    control,
+    name: "passport_issue_date",
+  })
   const {
     data: passportIssuePlaces = [],
     isPending: isPassportPlacesPending,
     isError: isPassportPlacesError,
-  } = usePassportIssuePlaces(WORKER_PASSPORT_ISSUE_COUNTRY)
+  } = usePassportIssuePlaces(WORKER_PASSPORT_ISSUE_COUNTRY, "en")
+
+  const passportIssuePlaceOptions: ComboboxOption[] = passportIssuePlaces.map(
+    (place) => ({
+      value: String(place.id),
+      label: place.name_en,
+    }),
+  )
+
+  const passportIssuePlaceAnchor = useComboboxAnchor()
+
+  const issueDate = parseGregorianDateValue(passportIssueDateValue ?? "")
+  const minPassportExpiryDate = issueDate
+    ? new Date(
+        issueDate.getUTCFullYear(),
+        issueDate.getUTCMonth(),
+        issueDate.getUTCDate() + 1,
+      )
+    : undefined
 
   return (
     <FieldGroup className={cn("gap-5", className)}>
@@ -185,7 +209,7 @@ export default function WorkerStepForm({
                         }}
                         aria-hidden="true"
                       />
-                      <span className="text-xs">{SAUDI_COUNTRY_CODE}</span>
+                      <span className="font-clash text-xs">{SAUDI_COUNTRY_CODE}</span>
                     </span>
                   </InputGroupText>
                 </InputGroupAddon>
@@ -201,7 +225,7 @@ export default function WorkerStepForm({
                   }
                   placeholder={t("fields.worker_phone.placeholder")}
                   aria-invalid={fieldState.invalid}
-                  className="pe-4"
+                  className="pe-4 font-clash"
                 />
               </InputGroup>
               {fieldState.error ? (
@@ -273,66 +297,86 @@ export default function WorkerStepForm({
         <Controller
           name="passport_issue_place_id"
           control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid || undefined}>
-              <FieldLabel htmlFor="passport_issue_place_id">
-                <MutedParensText
-                  text={t("fields.passport_issue_place_id.label")}
-                />
-                <span className="text-accent">*</span>
-              </FieldLabel>
-              <Select
-                value={field.value || undefined}
-                onValueChange={field.onChange}
-                disabled={isPassportPlacesPending || isPassportPlacesError}
-              >
-                <SelectTrigger
-                  id="passport_issue_place_id"
-                  aria-invalid={fieldState.invalid}
-                  className={selectTriggerClassName}
-                  dir="ltr"
-                  lang="en"
+          render={({ field, fieldState }) => {
+            const selected =
+              passportIssuePlaceOptions.find(
+                (option) => option.value === field.value,
+              ) ?? null
+
+            return (
+              <Field data-invalid={fieldState.invalid || undefined}>
+                <FieldLabel htmlFor="passport_issue_place_id">
+                  <MutedParensText
+                    text={t("fields.passport_issue_place_id.label")}
+                  />
+                  <span className="text-accent">*</span>
+                </FieldLabel>
+                <Combobox
+                  items={passportIssuePlaceOptions}
+                  value={selected}
+                  onValueChange={(option) =>
+                    field.onChange(option?.value ?? "")
+                  }
+                  itemToStringValue={(option) => option.label}
+                  isItemEqualToValue={(item, value) =>
+                    item.value === value.value
+                  }
+                  disabled={
+                    isPassportPlacesPending || isPassportPlacesError
+                  }
                 >
-                  <span className="flex min-w-0 flex-1 items-center">
-                    <span className={selectIconWrapClassName}>
-                      <CustomIcon
-                        src="/forms/step-2/calender.svg"
-                        size={18}
-                        className="size-4.5 text-muted-foreground"
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1 px-3 text-start" dir="ltr">
-                      <SelectValue
-                        placeholder={
-                          isPassportPlacesPending
-                            ? t("fields.passport_issue_place_id.loading")
-                            : isPassportPlacesError
-                              ? t("fields.passport_issue_place_id.loadError")
-                              : t("fields.passport_issue_place_id.placeholder")
-                        }
-                      />
-                    </span>
-                  </span>
-                </SelectTrigger>
-                <SelectContent
-                  align="start"
-                  className="w-(--radix-select-trigger-width) max-h-72"
-                  position="popper"
-                  dir="ltr"
-                  lang="en"
-                >
-                  {passportIssuePlaces.map((place) => (
-                    <SelectItem key={place.id} value={String(place.id)}>
-                      {place.name_en}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.error ? (
-                <FieldError>{fieldState.error.message}</FieldError>
-              ) : null}
-            </Field>
-          )}
+                  <div ref={passportIssuePlaceAnchor} className="w-full">
+                    <ComboboxInput
+                      id="passport_issue_place_id"
+                      placeholder={
+                        isPassportPlacesPending
+                          ? t("fields.passport_issue_place_id.loading")
+                          : isPassportPlacesError
+                            ? t("fields.passport_issue_place_id.loadError")
+                            : t("fields.passport_issue_place_id.placeholder")
+                      }
+                      aria-invalid={fieldState.invalid}
+                      className={inputGroupClassName}
+                      showClear={Boolean(selected)}
+                      dir="ltr"
+                      lang="en"
+                    >
+                      <InputGroupAddon
+                        align="inline-start"
+                        className={addonStartClassName}
+                      >
+                        <CustomIcon
+                          src="/forms/step-1/location.svg"
+                          size={18}
+                          className="size-4.5 text-muted-foreground"
+                        />
+                      </InputGroupAddon>
+                    </ComboboxInput>
+                  </div>
+                  <ComboboxContent
+                    anchor={passportIssuePlaceAnchor}
+                    className="rounded-2xl"
+                    dir="ltr"
+                    lang="en"
+                  >
+                    <ComboboxEmpty>
+                      {t("fields.passport_issue_place_id.empty")}
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(option) => (
+                        <ComboboxItem key={option.value} value={option}>
+                          {option.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.error ? (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                ) : null}
+              </Field>
+            )
+          }}
         />
 
         <Controller
@@ -415,6 +459,7 @@ export default function WorkerStepForm({
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 invalid={fieldState.invalid}
+                minDate={minPassportExpiryDate}
               />
               {fieldState.error ? (
                 <FieldError>{fieldState.error.message}</FieldError>

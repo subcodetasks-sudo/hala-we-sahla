@@ -4,6 +4,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
 
+import { useRegisterFormsBackHandler } from "@/features/forms/components/forms-back-provider"
 import OrderSummaryCard from "@/features/forms/components/order-summary-card"
 import PaymentCheckoutSummary, {
   getPaymentTotals,
@@ -30,6 +31,12 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
     useState<DeliveryMethod>("electronic")
 
   const totals = getPaymentTotals(deliveryMethod)
+
+  useRegisterFormsBackHandler(() => {
+    if (step !== "checkout") return false
+    setStep("delivery")
+    return true
+  })
 
   function handleDeliveryNext(method: DeliveryMethod) {
     setDeliveryMethod(method)

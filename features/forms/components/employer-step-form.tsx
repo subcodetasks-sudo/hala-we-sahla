@@ -7,6 +7,15 @@ import ReactCountryFlag from "react-country-flag"
 import CustomIcon from "@/components/custom-icon"
 import MutedParensText from "@/components/shared/muted-parens-text"
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  useComboboxAnchor,
+} from "@/components/ui/combobox"
+import {
   Field,
   FieldError,
   FieldGroup,
@@ -18,13 +27,6 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { useCities } from "@/features/forms/hooks/use-cities"
 import { usePassportIssuePlaces } from "@/features/forms/hooks/use-passport-issue-places"
 import type { EmployerStepValues } from "@/features/forms/schemas/employer-step"
@@ -47,18 +49,15 @@ const fieldShellClassName =
 
 const inputGroupClassName = cn(
   fieldShellClassName,
-  "focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20 ",
-)
-
-const selectTriggerClassName = cn(
-  fieldShellClassName,
-  "w-full! h-12! rounded-full px-0 pe-3 focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/20 [&>svg]:text-accent!",
+  "w-full focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/20",
 )
 
 const addonStartClassName = "gap-0 border-e border-border/70 pe-3 ps-4"
 
-const selectIconWrapClassName =
-  "flex h-full items-center border-e border-border/70 px-4"
+type ComboboxOption = {
+  value: string
+  label: string
+}
 
 type EmployerStepFormProps = {
   control: Control<EmployerStepValues, unknown, EmployerStepValues>
@@ -77,6 +76,21 @@ export default function EmployerStepForm({
     isPending: isPassportPlacesPending,
     isError: isPassportPlacesError,
   } = usePassportIssuePlaces(EMPLOYER_PASSPORT_ISSUE_COUNTRY, locale)
+
+  const cityOptions: ComboboxOption[] = cities.map((city) => ({
+    value: String(city.id),
+    label: getCityLabel(city, locale),
+  }))
+
+  const passportIssuePlaceOptions: ComboboxOption[] = passportIssuePlaces.map(
+    (place) => ({
+      value: String(place.id),
+      label: getPassportIssuePlaceLabel(place, locale),
+    }),
+  )
+
+  const cityAnchor = useComboboxAnchor()
+  const passportIssuePlaceAnchor = useComboboxAnchor()
 
   return (
     <FieldGroup className={cn("gap-5", className)}>
@@ -151,7 +165,7 @@ export default function EmployerStepForm({
                         }}
                         aria-hidden="true"
                       />
-                      <span className="text-xs">{SAUDI_COUNTRY_CODE}</span>
+                      <span className="font-clash text-xs">{SAUDI_COUNTRY_CODE}</span>
                     </span>
                   </InputGroupText>
                 </InputGroupAddon>
@@ -164,7 +178,7 @@ export default function EmployerStepForm({
                   value={field.value ?? ""}
                   placeholder={t("fields.phone.placeholder")}
                   aria-invalid={fieldState.invalid}
-                  className="pe-4"
+                  className="pe-4 font-clash"
                 />
               </InputGroup>
               {fieldState.error ? (
@@ -260,121 +274,158 @@ export default function EmployerStepForm({
         <Controller
           name="city_id"
           control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid || undefined}>
-              <FieldLabel htmlFor="city_id">
-                <MutedParensText text={t("fields.city_id.label")} />
-                <span className="text-accent">*</span>
-              </FieldLabel>
-              <Select
-                value={field.value || undefined}
-                onValueChange={field.onChange}
-                disabled={isPending || isError}
-              >
-                <SelectTrigger
-                  id="city_id"
-                  aria-invalid={fieldState.invalid}
-                  className={selectTriggerClassName}
+          render={({ field, fieldState }) => {
+            const selected =
+              cityOptions.find((option) => option.value === field.value) ??
+              null
+
+            return (
+              <Field data-invalid={fieldState.invalid || undefined}>
+                <FieldLabel htmlFor="city_id">
+                  <MutedParensText text={t("fields.city_id.label")} />
+                  <span className="text-accent">*</span>
+                </FieldLabel>
+                <Combobox
+                  items={cityOptions}
+                  value={selected}
+                  onValueChange={(option) =>
+                    field.onChange(option?.value ?? "")
+                  }
+                  itemToStringValue={(option) => option.label}
+                  isItemEqualToValue={(item, value) =>
+                    item.value === value.value
+                  }
+                  disabled={isPending || isError}
                 >
-                  <span className="flex min-w-0 flex-1 items-center">
-                    <span className={selectIconWrapClassName}>
-                      <CustomIcon
-                        src="/forms/step-1/location.svg"
-                        size={18}
-                        className="size-4.5 text-muted-foreground"
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1 px-3 text-start">
-                      <SelectValue
-                        placeholder={
-                          isPending
-                            ? t("fields.city_id.loading")
-                            : isError
-                              ? t("fields.city_id.loadError")
-                              : t("fields.city_id.placeholder")
-                        }
-                      />
-                    </span>
-                  </span>
-                </SelectTrigger>
-                <SelectContent
-                  align="start"
-                  className="w-(--radix-select-trigger-width) max-h-72"
-                  position="popper"
-                >
-                  {cities.map((city) => (
-                    <SelectItem key={city.id} value={String(city.id)}>
-                      {getCityLabel(city, locale)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.error ? (
-                <FieldError>{fieldState.error.message}</FieldError>
-              ) : null}
-            </Field>
-          )}
+                  <div ref={cityAnchor} className="w-full">
+                    <ComboboxInput
+                      id="city_id"
+                      placeholder={
+                        isPending
+                          ? t("fields.city_id.loading")
+                          : isError
+                            ? t("fields.city_id.loadError")
+                            : t("fields.city_id.placeholder")
+                      }
+                      aria-invalid={fieldState.invalid}
+                      className={inputGroupClassName}
+                      showClear={Boolean(selected)}
+                    >
+                      <InputGroupAddon
+                        align="inline-start"
+                        className={addonStartClassName}
+                      >
+                        <CustomIcon
+                          src="/forms/step-1/location.svg"
+                          size={18}
+                          className="size-4.5 text-muted-foreground"
+                        />
+                      </InputGroupAddon>
+                    </ComboboxInput>
+                  </div>
+                  <ComboboxContent
+                    anchor={cityAnchor}
+                    className="rounded-2xl"
+                  >
+                    <ComboboxEmpty>
+                      {t("fields.city_id.empty")}
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(option) => (
+                        <ComboboxItem key={option.value} value={option}>
+                          {option.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.error ? (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                ) : null}
+              </Field>
+            )
+          }}
         />
 
         <Controller
           name="passport_issue_place_id"
           control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid || undefined}>
-              <FieldLabel htmlFor="passport_issue_place_id">
-                <MutedParensText
-                  text={t("fields.passport_issue_place_id.label")}
-                />
-                <span className="text-accent">*</span>
-              </FieldLabel>
-              <Select
-                value={field.value || undefined}
-                onValueChange={field.onChange}
-                disabled={isPassportPlacesPending || isPassportPlacesError}
-              >
-                <SelectTrigger
-                  id="passport_issue_place_id"
-                  aria-invalid={fieldState.invalid}
-                  className={selectTriggerClassName}
+          render={({ field, fieldState }) => {
+            const selected =
+              passportIssuePlaceOptions.find(
+                (option) => option.value === field.value,
+              ) ?? null
+
+            return (
+              <Field data-invalid={fieldState.invalid || undefined}>
+                <FieldLabel htmlFor="passport_issue_place_id">
+                  <MutedParensText
+                    text={t("fields.passport_issue_place_id.label")}
+                  />
+                  <span className="text-accent">*</span>
+                </FieldLabel>
+                <Combobox
+                  items={passportIssuePlaceOptions}
+                  value={selected}
+                  onValueChange={(option) =>
+                    field.onChange(option?.value ?? "")
+                  }
+                  itemToStringValue={(option) => option.label}
+                  isItemEqualToValue={(item, value) =>
+                    item.value === value.value
+                  }
+                  disabled={
+                    isPassportPlacesPending || isPassportPlacesError
+                  }
                 >
-                  <span className="flex min-w-0 flex-1 items-center">
-                    <span className={selectIconWrapClassName}>
-                      <CustomIcon
-                        src="/forms/step-1/location.svg"
-                        size={18}
-                        className="size-4.5 text-muted-foreground"
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1 px-3 text-start">
-                      <SelectValue
-                        placeholder={
-                          isPassportPlacesPending
-                            ? t("fields.passport_issue_place_id.loading")
-                            : isPassportPlacesError
-                              ? t("fields.passport_issue_place_id.loadError")
-                              : t("fields.passport_issue_place_id.placeholder")
-                        }
-                      />
-                    </span>
-                  </span>
-                </SelectTrigger>
-                <SelectContent
-                  align="start"
-                  className="w-(--radix-select-trigger-width) max-h-72"
-                  position="popper"
-                >
-                  {passportIssuePlaces.map((place) => (
-                    <SelectItem key={place.id} value={String(place.id)}>
-                      {getPassportIssuePlaceLabel(place, locale)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.error ? (
-                <FieldError>{fieldState.error.message}</FieldError>
-              ) : null}
-            </Field>
-          )}
+                  <div ref={passportIssuePlaceAnchor} className="w-full">
+                    <ComboboxInput
+                      id="passport_issue_place_id"
+                      placeholder={
+                        isPassportPlacesPending
+                          ? t("fields.passport_issue_place_id.loading")
+                          : isPassportPlacesError
+                            ? t("fields.passport_issue_place_id.loadError")
+                            : t("fields.passport_issue_place_id.placeholder")
+                      }
+                      aria-invalid={fieldState.invalid}
+                      className={inputGroupClassName}
+                      showClear={Boolean(selected)}
+                    >
+                      <InputGroupAddon
+                        align="inline-start"
+                        className={addonStartClassName}
+                      >
+                        <CustomIcon
+                          src="/forms/step-1/location.svg"
+                          size={18}
+                          className="size-4.5 text-muted-foreground"
+                        />
+                      </InputGroupAddon>
+                    </ComboboxInput>
+                  </div>
+                  <ComboboxContent
+                    anchor={passportIssuePlaceAnchor}
+                    className="rounded-2xl"
+                  >
+                    <ComboboxEmpty>
+                      {t("fields.passport_issue_place_id.empty")}
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(option) => (
+                        <ComboboxItem key={option.value} value={option}>
+                          {option.label}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.error ? (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                ) : null}
+              </Field>
+            )
+          }}
         />
       </div>
     </FieldGroup>
