@@ -1,12 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { Eye } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
 
 import CopyButton from "@/components/shared/copy-button"
 import CustomIcon from "@/components/custom-icon"
 import { Button } from "@/components/ui/button"
+import ContractPreviewDialog from "@/features/forms/components/contract-preview-dialog"
 import type { PreviousRequest } from "@/features/forms/lib/previous-requests-demo"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
@@ -95,8 +96,10 @@ export default function PreviousRequestCard({
     refund_requested: viewRequestAction,
   }[request.status]
 
+  const [contractOpen, setContractOpen] = useState(false)
+
   function handleDownloadContract() {
-    toast.success(t("actions.downloadContract"))
+    setContractOpen(true)
   }
 
   return (
@@ -231,6 +234,11 @@ export default function PreviousRequestCard({
           </CopyButton>
         </div>
       )}
+
+      <ContractPreviewDialog
+        open={contractOpen}
+        onOpenChange={setContractOpen}
+      />
     </article>
   )
 }

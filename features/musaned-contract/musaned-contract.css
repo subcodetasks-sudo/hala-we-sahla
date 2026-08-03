@@ -1,0 +1,334 @@
+/* Musaned standard employment contract — print-faithful A4 layout */
+
+.musaned-contract {
+  --musaned-gray: #f2f2f2;
+  --musaned-border: #000;
+  --musaned-font-en: Cambria, "Times New Roman", Times, serif;
+  --musaned-font-en-sans: Calibri, Carlito, "Segoe UI", Arial, sans-serif;
+  --musaned-font-ar: "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  --musaned-size: 10pt;
+  --musaned-lh: 1.18;
+
+  background: #e8e8e8;
+  padding: 24px 0;
+  color: #000;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.musaned-contract * {
+  box-sizing: border-box;
+}
+
+.musaned-page {
+  width: 210mm;
+  min-height: 297mm;
+  height: 297mm;
+  margin: 0 auto 16px;
+  background: #fff;
+  position: relative;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+
+.musaned-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+  margin-bottom: 0;
+}
+
+.musaned-page-inner {
+  padding: 14mm 12mm 12mm;
+  height: 100%;
+}
+
+.musaned-page-footer-num {
+  position: absolute;
+  left: 8mm;
+  bottom: 8mm;
+  font-family: var(--musaned-font-en-sans);
+  font-size: 6pt;
+  line-height: 1;
+}
+
+.musaned-bi-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 1px solid var(--musaned-border);
+}
+
+.musaned-bi-table > tbody > tr > td {
+  width: 50%;
+  border: 1px solid var(--musaned-border);
+  vertical-align: top;
+  padding: 3px 6px;
+  font-size: var(--musaned-size);
+  line-height: var(--musaned-lh);
+}
+
+.musaned-cell.musaned-en {
+  font-family: var(--musaned-font-en);
+  text-align: left;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.musaned-cell.musaned-ar {
+  font-family: var(--musaned-font-ar);
+  text-align: right;
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+/* Keep Latin/numeric field values readable inside RTL Arabic cells */
+.musaned-ltr-value,
+.musaned-cell.musaned-ar .musaned-ltr-value {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: left;
+}
+
+.musaned-title-ar,
+.musaned-ar-line,
+.musaned-annex-label-ar,
+.musaned-sig-table .ar,
+[lang="ar"] {
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+.musaned-shaded > td,
+td.musaned-shaded {
+  background: var(--musaned-gray);
+}
+
+.musaned-bold {
+  font-weight: 700;
+}
+
+.musaned-title {
+  font-family: var(--musaned-font-en-sans);
+  font-weight: 700;
+  font-size: 10pt;
+  line-height: 1.22;
+  text-transform: uppercase;
+}
+
+.musaned-title-ar {
+  font-family: var(--musaned-font-ar);
+  font-weight: 700;
+  font-size: 10pt;
+  line-height: 1.35;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: right;
+}
+
+.musaned-field-row {
+  display: block;
+  margin: 0;
+  padding: 0;
+  line-height: 1.25;
+}
+
+.musaned-field-row + .musaned-field-row {
+  margin-top: 1px;
+}
+
+.musaned-clause p {
+  margin: 0 0 0.35em;
+}
+
+.musaned-clause p:last-child {
+  margin-bottom: 0;
+}
+
+.musaned-list {
+  margin: 0.35em 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.musaned-list li {
+  margin: 0 0 0.55em;
+  padding-left: 1.4em;
+  position: relative;
+}
+
+.musaned-list li .musaned-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.musaned-list-ar li {
+  padding-left: 0;
+  padding-right: 1.4em;
+}
+
+.musaned-list-ar li .musaned-marker {
+  left: auto;
+  right: 0;
+}
+
+.musaned-sig-block {
+  margin-top: 14px;
+}
+
+.musaned-sig-block + .musaned-sig-block {
+  margin-top: 18px;
+}
+
+.musaned-annex {
+  font-family: var(--musaned-font-en);
+  font-size: 10pt;
+  line-height: 1.35;
+}
+
+.musaned-annex-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.musaned-annex-header .musaned-ar-line {
+  font-family: var(--musaned-font-ar);
+  direction: rtl;
+  margin-top: 4px;
+}
+
+.musaned-annex-section-title {
+  text-align: center;
+  font-weight: 700;
+  text-decoration: underline;
+  margin: 16px 0 20px;
+  font-family: var(--musaned-font-en), var(--musaned-font-ar);
+}
+
+.musaned-annex-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+  margin-bottom: 28px;
+  min-height: 48px;
+}
+
+.musaned-annex-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 28px;
+}
+
+.musaned-annex-label {
+  display: block;
+  font-size: 9.5pt;
+}
+
+.musaned-annex-label-ar {
+  font-family: var(--musaned-font-ar);
+  direction: rtl;
+  display: block;
+}
+
+.musaned-annex-value {
+  display: block;
+  margin-top: 10px;
+  min-height: 1.2em;
+  border-bottom: 1px solid #000;
+  padding: 0 4px 2px;
+  font-size: 10pt;
+}
+
+.musaned-duty-list {
+  margin: 8px 0 16px;
+}
+
+.musaned-duty-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 0;
+  font-size: 10pt;
+}
+
+.musaned-duty-yn {
+  letter-spacing: 0.35em;
+  font-family: var(--musaned-font-en);
+  white-space: nowrap;
+}
+
+.musaned-other-duty {
+  margin: 4px 0;
+  min-height: 1.2em;
+}
+
+.musaned-sig-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 18px;
+}
+
+.musaned-sig-table td {
+  border: 1px solid #000;
+  background: #e5e5e5;
+  vertical-align: top;
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 8pt;
+  line-height: 1.25;
+}
+
+.musaned-sig-table tr.musaned-sig-blank td {
+  background: #fff;
+  height: 70px;
+  padding: 0;
+}
+
+.musaned-sig-table .ar {
+  font-family: var(--musaned-font-ar);
+  direction: rtl;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.musaned-sig-table .en {
+  font-family: var(--musaned-font-en);
+  display: block;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* Prefer dedicated print window; keep light fallback for direct print */
+  .contract-preview-toolbar,
+  .no-print {
+    display: none !important;
+  }
+
+  .musaned-contract {
+    background: #fff;
+    padding: 0;
+  }
+
+  .musaned-page {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0;
+    box-shadow: none;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .musaned-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}

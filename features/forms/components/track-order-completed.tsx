@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { CircleCheck, Eye } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
@@ -8,6 +9,7 @@ import CustomIcon from "@/components/custom-icon"
 import CopyButton from "@/components/shared/copy-button"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import ContractPreviewDialog from "@/features/forms/components/contract-preview-dialog"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
@@ -34,19 +36,22 @@ export default function TrackOrderCompleted({
   const { deliveryMethod } = useTrackOrderPayment(requestNumber)
   const isPaper = deliveryMethod === "paper"
   const shippingNumber = getDemoShippingNumber(requestNumber)
+  const [contractOpen, setContractOpen] = useState(false)
 
   function handleDownload(kind: "contract" | "invoice") {
-    toast.success(
-      kind === "contract"
-        ? t("contract.downloadStarted")
-        : t("invoice.downloadStarted"),
-    )
+    if (kind === "contract") {
+      setContractOpen(true)
+      return
+    }
+    toast.success(t("invoice.downloadStarted"))
   }
 
   function handleView(kind: "contract" | "invoice") {
-    toast.success(
-      kind === "contract" ? t("contract.viewStarted") : t("invoice.viewStarted"),
-    )
+    if (kind === "contract") {
+      setContractOpen(true)
+      return
+    }
+    toast.success(t("invoice.viewStarted"))
   }
 
   return (
@@ -255,9 +260,12 @@ export default function TrackOrderCompleted({
                 {t("help.link")}
               </Link>
             </p>
-
-
       </Card>
+
+      <ContractPreviewDialog
+        open={contractOpen}
+        onOpenChange={setContractOpen}
+      />
     </div>
   )
 }

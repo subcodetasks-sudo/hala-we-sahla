@@ -607,6 +607,15 @@
           "workerName": "عبدالله",
           "completionPeriod": "5 أيام عمل"
         },
+        "contractPreview": {
+          "title": "عقد تجديد العمالة المنزلية",
+          "print": "طباعة",
+          "download": "تنزيل PDF",
+          "close": "إغلاق",
+          "downloadStarted": "تم تنزيل العقد",
+          "downloadFailed": "تعذر تنزيل العقد",
+          "printFailed": "تعذر فتح نافذة الطباعة"
+        },
         "completedResult": {
           "breadcrumb": "إصدار العقد",
           "title": "تم الانتهاء من طلب تجديد العقد بنجاح !",

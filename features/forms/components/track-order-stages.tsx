@@ -1,10 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 import CustomIcon from "@/components/custom-icon"
+import ContractPreviewDialog from "@/features/forms/components/contract-preview-dialog"
 import TrackOrderStageItem from "@/features/forms/components/track-order-stage-item"
 import { useTrackOrderCancellation } from "@/features/forms/hooks/use-track-order-cancellation"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
@@ -58,6 +60,7 @@ export default function TrackOrderStages({
       : undefined,
     { isPaid, paidAt },
   )
+  const [contractOpen, setContractOpen] = useState(false)
 
   const stages =
     isCancelled && cancelledAt
@@ -72,7 +75,7 @@ export default function TrackOrderStages({
     router.push(`/track-orders/${encodeURIComponent(requestNumber)}/payment`)
   }
 
-  function handleDownload() {
+  function handleDownloadInvoice() {
     toast.success(t("items.completed.downloadStarted"))
   }
 
@@ -127,8 +130,8 @@ export default function TrackOrderStages({
                   ? {
                       contractLabel: t("items.completed.downloadContract"),
                       invoiceLabel: t("items.completed.downloadInvoice"),
-                      onDownloadContract: handleDownload,
-                      onDownloadInvoice: handleDownload,
+                      onDownloadContract: () => setContractOpen(true),
+                      onDownloadInvoice: handleDownloadInvoice,
                     }
                   : undefined
               }
@@ -146,6 +149,11 @@ export default function TrackOrderStages({
           )
         })}
       </motion.ol>
+
+      <ContractPreviewDialog
+        open={contractOpen}
+        onOpenChange={setContractOpen}
+      />
     </section>
   )
 }

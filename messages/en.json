@@ -607,6 +607,15 @@
           "workerName": "Abdullah",
           "completionPeriod": "5 working days"
         },
+        "contractPreview": {
+          "title": "Domestic worker renewal contract",
+          "print": "Print",
+          "download": "Download PDF",
+          "close": "Close",
+          "downloadStarted": "Contract downloaded",
+          "downloadFailed": "Could not download the contract",
+          "printFailed": "Could not open the print dialog"
+        },
         "completedResult": {
           "breadcrumb": "Contract issuance",
           "title": "Your contract renewal request has been completed successfully!",
