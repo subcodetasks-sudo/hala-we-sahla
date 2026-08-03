@@ -120,9 +120,9 @@ export default function TrackOrderCancelAction({
 
         <DialogContent
           showCloseButton={false}
-          className="max-w-[calc(100%-2rem)] gap-0 overflow-hidden rounded-3xl border-0 bg-white p-0 ring-1 ring-black/5 sm:max-w-md"
+          className="flex max-h-[90vh] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-3xl border-0 bg-white p-0 ring-1 ring-black/5 sm:max-w-md"
         >
-          <DialogHeader className="relative gap-0  px-5 py-6 sm:px-6">
+          <DialogHeader className="relative shrink-0 gap-0 px-5 py-6 sm:px-6">
             <DialogTitle className="pe-12 text-start text-base font-semibold text-[#4b626d]">
               {t("dialogTitle")}
             </DialogTitle>
@@ -139,9 +139,9 @@ export default function TrackOrderCancelAction({
             </DialogClose>
           </DialogHeader>
 
-          <div className="w-[90%] mx-auto h-px bg-border"></div>
+          <div className="mx-auto h-px w-[90%] shrink-0 bg-border" />
 
-          <div className="px-5 py-6 sm:px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 scrollbar-hide sm:px-6">
             <div className="flex flex-col items-center text-center">
               <span
                 className="flex size-18 items-center justify-center rounded-full"

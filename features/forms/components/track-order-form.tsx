@@ -42,7 +42,7 @@ const WHATSAPP_HREF = "https://wa.me/96670006741"
 const TRACK_ORDER_STORAGE_KEY = "hala-track-order-remember"
 
 const fieldShellClassName =
-  "h-12 rounded-full border-border/70 bg-footer shadow-none"
+  "h-12 rounded-full border-border/70 bg-custom-gray shadow-none"
 
 const inputGroupClassName = cn(
   fieldShellClassName,
@@ -283,7 +283,7 @@ export default function TrackOrderForm() {
                       value={field.value ?? ""}
                       placeholder={t("fields.phone.placeholder")}
                       aria-invalid={fieldState.invalid}
-                      className="pe-4 font-clash"
+                      className="pe-4 font-clash "
                       onChange={(event) =>
                         field.onChange(keepSaudiPhoneInput(event.target.value))
                       }
@@ -308,6 +308,7 @@ export default function TrackOrderForm() {
                         field.onChange(checked === true)
                       }
                       aria-label={t("rememberMe")}
+                      className="size-4 bg-custom-gray border-none"
                     />
                     <span>{t("rememberMe")}</span>
                   </label>
@@ -316,7 +317,7 @@ export default function TrackOrderForm() {
 
               <Link
                 href="/track-orders/forgot"
-                className="text-sm font-semibold text-accent transition-opacity hover:opacity-80"
+                className="text-xs font-bold text-accent transition-opacity hover:opacity-80"
               >
                 {t("forgotRequestNumber")}
               </Link>
@@ -324,7 +325,7 @@ export default function TrackOrderForm() {
 
             <Button
               type="submit"
-              className="mt-1 mx-auto h-12 w-fit justify-between gap-3 rounded-full px-6 text-base font-bold text-white sm:px-8"
+              className="mt-1 mx-auto h-14 w-fit justify-between gap-1.5 rounded-full  text-base font-bold text-white  bg-[#288296] hover:bg-[#288296]/90"
             >
               <CustomIcon
                 src="/icons/search.svg"
