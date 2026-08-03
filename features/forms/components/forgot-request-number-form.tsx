@@ -1,9 +1,8 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { ArrowLeft, CircleCheck } from "lucide-react"
 import { useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
 import { toast } from "sonner"
@@ -24,12 +23,13 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 import { keepSaudiPhoneInput } from "@/features/forms/lib/input-filters"
+import { FORGOT_PHONE_STORAGE_KEY } from "@/features/forms/lib/forgot-request-storage"
 import {
   createForgotRequestNumberSchema,
   FORGOT_REQUEST_NUMBER_DEFAULT_VALUES,
   type ForgotRequestNumberValues,
 } from "@/features/forms/schemas/forgot-request-number"
-import { Link } from "@/i18n/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
@@ -49,7 +49,7 @@ const addonStartClassName = "gap-0 border-e border-[#d7e0e3] pe-3 ps-2"
 
 export default function ForgotRequestNumberForm() {
   const t = useTranslations("Forms.trackOrders.forgot")
-  const [submitted, setSubmitted] = useState(false)
+  const router = useRouter()
   const schema = useMemo(
     () =>
       createForgotRequestNumberSchema({
@@ -64,36 +64,12 @@ export default function ForgotRequestNumberForm() {
     mode: "onChange",
   })
 
-  function onSubmit(_values: ForgotRequestNumberValues) {
-    setSubmitted(true)
+  function onSubmit(values: ForgotRequestNumberValues) {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(FORGOT_PHONE_STORAGE_KEY, values.phone)
+    }
     toast.success(t("success"))
-  }
-
-  if (submitted) {
-    return (
-      <Card className={cardClassName}>
-        <div className="flex flex-col items-center text-center">
-          <span className="flex size-16 items-center justify-center rounded-full bg-[#e8f8ef] text-custom-green">
-            <CircleCheck className="size-8" strokeWidth={2} aria-hidden="true" />
-          </span>
-          <h2 className="mt-6 text-xl font-bold text-primary sm:text-2xl">
-            {t("successTitle")}
-          </h2>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            {t("successDescription")}
-          </p>
-          <Button
-            asChild
-            className="mt-8 h-12 gap-2 rounded-full px-8 text-base font-bold shadow-[0_8px_24px_rgba(40,130,150,0.35)]"
-          >
-            <Link href="/track-orders">
-              {t("backToTrack")}
-              <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
-            </Link>
-          </Button>
-        </div>
-      </Card>
-    )
+    router.push("/track-orders/forgot/verify")
   }
 
   return (
@@ -161,7 +137,7 @@ export default function ForgotRequestNumberForm() {
                     maxLength={10}
                     autoComplete="tel"
                     value={field.value ?? ""}
-                    placeholder={"05XXXXXXXX"}
+                    placeholder={t("fields.phone.placeholder")}
                     aria-invalid={fieldState.invalid}
                     className="pe-5 font-clash tracking-wide"
                     onChange={(event) =>
@@ -183,8 +159,9 @@ export default function ForgotRequestNumberForm() {
             <span>{t("submit")}</span>
             <CustomIcon
               src="/icons/arrows.svg"
-size={28}
-              className="grow text-white ltr:rotate-180"
+              width={28}
+              height={16}
+              className="shrink-0 text-white ltr:rotate-180"
             />
           </Button>
         </FieldGroup>

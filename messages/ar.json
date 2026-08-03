@@ -467,7 +467,9 @@
       "pages": {
         "renewal": "تجديد العقد",
         "trackOrders": "الاستعلام عن طلب",
-        "forgotRequestNumber": "هل نسيت رقم الطلب؟"
+        "forgotRequestNumber": "هل نسيت رقم الطلب؟",
+        "verifyMobile": "تأكيد رقم الجوال",
+        "previousRequests": "طلباتك السابقة"
       }
     },
     "breadcrumbs": {
@@ -479,7 +481,8 @@
         "current": "الاستعلام عن طلب",
         "inquiry": "الاستعلام عن طلب",
         "detail": "تتبع الطلبات",
-        "forgot": "نسيت رقم الطلب"
+        "forgot": "نسيت رقم الطلب",
+        "requests": "طلباتك السابقة"
       }
     },
     "trackOrders": {
@@ -514,9 +517,6 @@
         "description": "أدخل رقم الجوال المرتبط بالطلب !",
         "submit": "إرسال رمز التحقق",
         "success": "تم إرسال رمز التحقق إلى جوالك",
-        "successTitle": "تحقق من رسائلك",
-        "successDescription": "إذا كان الرقم مسجلاً لدينا، ستصلك رسالة نصية تحتوي على رمز التحقق خلال لحظات.",
-        "backToTrack": "العودة لتتبع الطلب",
         "fields": {
           "phone": {
             "label": "رقم الجوال",
@@ -525,6 +525,70 @@
         },
         "errors": {
           "phoneInvalid": "يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05"
+        },
+        "verify": {
+          "title": "تأكيد رقم الجوال",
+          "description": "أدخل الرمز المرسل إلى رقم الجوال الخاص بك.",
+          "submit": "تأكيد الرمز",
+          "success": "تم التحقق بنجاح",
+          "resent": "تم إعادة إرسال رمز التحقق",
+          "fields": {
+            "code": {
+              "label": "رمز التحقق"
+            }
+          },
+          "resend": {
+            "prompt": "لم تستلم الرمز؟",
+            "action": "إعادة إرسال رمز التحقق"
+          },
+          "errors": {
+            "required": "يرجى إدخال رمز التحقق المكون من 4 أرقام"
+          }
+        }
+      },
+      "previousRequests": {
+        "title": "طلباتك السابقة",
+        "description": "اختر الطلب لمتابعته أو الاطلاع على حالته.",
+        "count": "{count} طلبات",
+        "searchPlaceholder": "ابحث برقم الطلب أو اسم العامل",
+        "search": "بحث",
+        "reset": "إعادة تعيين البحث والتصفية",
+        "empty": "لا توجد طلبات مطابقة لبحثك.",
+        "filters": {
+          "all": "الكل",
+          "ongoing": "الجارية",
+          "completed": "المكتملة",
+            "cancelled": "ملغي"
+        },
+        "status": {
+          "received": "تم استلام الطلب",
+          "awaitingPayment": "بانتظار الدفع",
+          "sentForAuth": "تم الإرسال للمصادقة",
+          "processed": "تمت المعالجة",
+          "inProgress": "قيد التنفيذ",
+          "completed": "تم الإنتهاء",
+          "cancelled": "ملغية",
+          "refundRequested": "تم طلب الاسترداد"
+        },
+        "delivery": {
+          "pickup": "استلام شخصي",
+          "delivery": "توصيل للعنوان"
+        },
+        "services": {
+          "renewal": "تجديد عقد العمالة المنزلية"
+        },
+        "dates": {
+          "june12": "12 يونيو 2026"
+        },
+        "actions": {
+          "completePayment": "إتمام الدفع",
+          "trackRequest": "متابعة الطلب",
+          "viewContract": "عرض العقد",
+          "viewInvoice": "عرض الفاتورة",
+          "downloadContract": "تحميل العقد",
+          "viewDetails": "عرض التفاصيل",
+          "viewRequest": "الإطلاع على الطلب",
+          "copyNumber": "نسخ الرقم"
         }
       },
       "detail": {

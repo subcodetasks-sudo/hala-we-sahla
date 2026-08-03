@@ -7,12 +7,19 @@ import { useTranslations } from "next-intl"
 import { LanguageSwitcher } from "@/features/landing/components/language-switcher"
 import { Link, usePathname } from "@/i18n/navigation"
 
-type PageTitleKey = "renewal" | "trackOrders" | "forgotRequestNumber"
+type PageTitleKey =
+  | "renewal"
+  | "trackOrders"
+  | "forgotRequestNumber"
+  | "verifyMobile"
+  | "previousRequests"
 
 const PAGE_TITLE_KEYS: Record<string, PageTitleKey> = {
   "/renewal": "renewal",
   "/track-orders": "trackOrders",
   "/track-orders/forgot": "forgotRequestNumber",
+  "/track-orders/forgot/verify": "verifyMobile",
+  "/track-orders/requests": "previousRequests",
 }
 
 function resolveTitleKey(pathname: string): PageTitleKey {
@@ -23,7 +30,9 @@ function resolveTitleKey(pathname: string): PageTitleKey {
 }
 
 function resolveBackHref(pathname: string) {
+  if (pathname === "/track-orders/forgot/verify") return "/track-orders/forgot"
   if (pathname === "/track-orders/forgot") return "/track-orders"
+  if (pathname === "/track-orders/requests") return "/track-orders"
   if (pathname.startsWith("/track-orders/")) return "/track-orders"
   return "/"
 }

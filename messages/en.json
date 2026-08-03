@@ -467,7 +467,9 @@
       "pages": {
         "renewal": "Contract Renewal",
         "trackOrders": "Request Inquiry",
-        "forgotRequestNumber": "Forgot your request number?"
+        "forgotRequestNumber": "Forgot your request number?",
+        "verifyMobile": "Confirm mobile number",
+        "previousRequests": "Your previous requests"
       }
     },
     "breadcrumbs": {
@@ -479,7 +481,8 @@
         "current": "Request Inquiry",
         "inquiry": "Request Inquiry",
         "detail": "Track Orders",
-        "forgot": "Forgot request number"
+        "forgot": "Forgot request number",
+        "requests": "Your previous requests"
       }
     },
     "trackOrders": {
@@ -514,9 +517,6 @@
         "description": "Enter the mobile number associated with the request!",
         "submit": "Send verification code",
         "success": "Verification code sent to your phone",
-        "successTitle": "Check your messages",
-        "successDescription": "If this number is registered with us, you will receive an SMS with a verification code shortly.",
-        "backToTrack": "Back to track order",
         "fields": {
           "phone": {
             "label": "Mobile number",
@@ -525,6 +525,70 @@
         },
         "errors": {
           "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+        },
+        "verify": {
+          "title": "Confirm mobile number",
+          "description": "Enter the code sent to your mobile number.",
+          "submit": "Confirm code",
+          "success": "Verified successfully",
+          "resent": "Verification code resent",
+          "fields": {
+            "code": {
+              "label": "Verification code"
+            }
+          },
+          "resend": {
+            "prompt": "Didn't receive the code?",
+            "action": "Resend verification code"
+          },
+          "errors": {
+            "required": "Please enter the 4-digit verification code"
+          }
+        }
+      },
+      "previousRequests": {
+        "title": "Your previous requests",
+        "description": "Choose a request to track it or view its status.",
+        "count": "{count} requests",
+        "searchPlaceholder": "Search by request number or worker name",
+        "search": "Search",
+        "reset": "Reset search and filters",
+        "empty": "No requests match your search.",
+        "filters": {
+          "all": "All",
+          "ongoing": "Ongoing",
+          "completed": "Completed",
+          "cancelled": "Cancelled"
+        },
+        "status": {
+          "received": "Request received",
+          "awaitingPayment": "Awaiting payment",
+          "sentForAuth": "Sent for authentication",
+          "processed": "Processed",
+          "inProgress": "In progress",
+          "completed": "Finished",
+          "cancelled": "Cancelled",
+          "refundRequested": "Refund requested"
+        },
+        "delivery": {
+          "pickup": "Personal pickup",
+          "delivery": "Delivery to address"
+        },
+        "services": {
+          "renewal": "Domestic worker contract renewal"
+        },
+        "dates": {
+          "june12": "12 June 2026"
+        },
+        "actions": {
+          "completePayment": "Complete payment",
+          "trackRequest": "Track request",
+          "viewContract": "View contract",
+          "viewInvoice": "View invoice",
+          "downloadContract": "Download contract",
+          "viewDetails": "View details",
+          "viewRequest": "View request",
+          "copyNumber": "Copy number"
         }
       },
       "detail": {
