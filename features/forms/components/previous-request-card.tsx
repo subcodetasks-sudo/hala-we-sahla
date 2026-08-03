@@ -30,7 +30,7 @@ export default function PreviousRequestCard({
   const statusConfig = {
     received: {
       label: t("status.received"),
-      className: "bg-[#e8f5ef] text-custom-green",
+      className: "border border-[#00A63E33] bg-[#DEFFEA] text-[#00A63E]",
       icon: "/icons/tick-circle.svg",
     },
     awaiting_payment: {
@@ -40,27 +40,27 @@ export default function PreviousRequestCard({
     },
     sent_for_auth: {
       label: t("status.sentForAuth"),
-      className: "bg-[#e8f0fe] text-[#155DFC]",
+      className: "border border-[#155DFC33] bg-[#E2EBFF] text-[#155DFC]",
       icon: "/icons/frame.svg",
     },
     processed: {
       label: t("status.processed"),
-      className: "bg-[#e8f5ef] text-custom-green",
+      className: "border border-[#00A63E33] bg-[#DEFFEA] text-[#00A63E]",
       icon: "/icons/chart.svg",
     },
     completed: {
       label: t("status.completed"),
-      className: "bg-[#e8f5ef] text-custom-green",
+      className: "border border-[#00A63E33] bg-[#DEFFEA] text-[#00A63E]",
       icon: "/icons/receipt-2.svg",
     },
     cancelled: {
       label: t("status.cancelled"),
-      className: "bg-[#fff1e8] text-[#e85d04]",
+      className: "border border-[#FFB39C] bg-[#FFDCD2] text-[#FF3C00]",
       icon: "/icons/information.svg",
     },
     refund_requested: {
       label: t("status.refundRequested"),
-      className: "bg-[#fff1e8] text-[#e85d04]",
+      className: "border border-[#FFB39C] bg-[#FFDCD2] text-[#FF3C00]",
       icon: "/icons/information.svg",
     },
   }[request.status]
@@ -100,10 +100,10 @@ export default function PreviousRequestCard({
   }
 
   return (
-    <article className="rounded-2xl border border-[#e8ecee] bg-footer p-4 sm:rounded-3xl sm:p-5">
+    <article className="rounded-2xl border border-primary/10 bg-[#F9F9F9] p-4 sm:rounded-3xl sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
-          <p className="font-clash text-base font-bold tabular-nums text-foreground sm:text-lg">
+          <p className="font-clash text-base font-bold tabular-nums text-black sm:text-lg">
             {request.requestNumber}
           </p>
           <p className="text-sm text-muted-foreground">
@@ -113,7 +113,7 @@ export default function PreviousRequestCard({
 
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold",
+            "inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold",
             statusConfig.className,
           )}
         >
@@ -142,7 +142,7 @@ export default function PreviousRequestCard({
             {request.workerInitial}
           </span>
           <div className="min-w-0 space-y-1">
-            <p className="truncate text-sm font-semibold text-foreground sm:text-base">
+            <p className="truncate text-sm font-semibold text-black sm:text-base">
               {request.workerName}
             </p>
             <p className="text-sm text-muted-foreground">
@@ -189,10 +189,10 @@ export default function PreviousRequestCard({
           <CopyButton
             value={request.requestNumber}
             label={t("actions.copyNumber")}
-            className="h-11 shrink-0 gap-1.5 rounded-full border border-[#d7e0e3] bg-white px-3 text-xs font-semibold text-foreground sm:h-12 sm:px-4 sm:text-sm"
+            className="h-11 shrink-0 gap-1.5 rounded-full border border-[#d7e0e3] bg-white px-3 text-xs font-semibold text-black sm:h-12 sm:px-4 sm:text-sm"
           >
-            <CustomIcon src="/icons/copy.svg" size={14} className="size-3.5" />
             <span className="hidden sm:inline">{t("actions.copyNumber")}</span>
+            <CustomIcon src="/icons/copy.svg" size={14} className="size-3.5" />
           </CopyButton>
         </div>
       ) : (
@@ -224,10 +224,10 @@ export default function PreviousRequestCard({
           <CopyButton
             value={request.requestNumber}
             label={t("actions.copyNumber")}
-            className="h-11 shrink-0 gap-1.5 rounded-full border border-[#d7e0e3] bg-white px-3 text-xs font-semibold text-foreground sm:h-12 sm:px-4 sm:text-sm"
+            className="h-11 shrink-0 gap-1.5 rounded-full border border-[#d7e0e3] bg-white px-3 text-xs font-semibold text-black sm:h-12 sm:px-4 sm:text-sm"
           >
-            <CustomIcon src="/icons/copy.svg" size={14} className="size-3.5" />
             <span className="hidden sm:inline">{t("actions.copyNumber")}</span>
+            <CustomIcon src="/icons/copy.svg" size={14} className="size-3.5" />
           </CopyButton>
         </div>
       )}

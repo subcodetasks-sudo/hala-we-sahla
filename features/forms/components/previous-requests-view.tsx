@@ -54,7 +54,7 @@ export default function PreviousRequestsView() {
             {t("description")}
           </p>
         </div>
-        <span className="inline-flex items-center rounded-full bg-[#e8f5ef] px-3 py-1 text-xs font-semibold text-custom-green sm:text-sm">
+        <span className="inline-flex h-9 items-center rounded-full border border-[#00A63E33] bg-[#DEFFEA] px-3 text-xs font-semibold text-[#00A63E] sm:h-10 sm:text-sm">
           {t("count", { count: PREVIOUS_REQUESTS_DEMO.length })}
         </span>
       </div>
@@ -68,7 +68,7 @@ export default function PreviousRequestsView() {
         >
           <InputGroupAddon
             align="inline-start"
-            className="gap-0 border-e border-foreground/20 pe-3 ps-4"
+            className="relative gap-0 pe-3 ps-4 before:absolute before:inset-e-0 before:top-1/2 before:h-4 before:w-px before:-translate-y-1/2 before:bg-foreground/10 before:content-['']"
           >
             <CustomIcon
               src="/icons/receipt-item.svg"

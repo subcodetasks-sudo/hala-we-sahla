@@ -558,7 +558,7 @@
           "all": "الكل",
           "ongoing": "الجارية",
           "completed": "المكتملة",
-            "cancelled": "ملغي"
+          "cancelled": "الملغية"
         },
         "status": {
           "received": "تم استلام الطلب",
