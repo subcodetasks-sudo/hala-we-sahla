@@ -378,7 +378,18 @@
       "passport": "Worker's passport",
       "previousContract": "Previous contract"
     },
-    "cta": "Start the renewal now"
+    "cta": "Start the renewal now",
+    "whatsapp": {
+      "title": "Apply via WhatsApp",
+      "description": "Contact the support team",
+      "highlight": "Direct support",
+      "steps": {
+        "contactSupport": "Contact the support team",
+        "sendData": "Send your details",
+        "completeContract": "Complete the contract"
+      },
+      "cta": "Contact via WhatsApp"
+    }
   },
   "Services": {
     "eyebrow": "Essential Services",

@@ -378,7 +378,18 @@
       "passport": "جواز سفر العامل/ة",
       "previousContract": "العقد القديم"
     },
-    "cta": "ابدأ التجديد الآن"
+    "cta": "ابدأ التجديد الآن",
+    "whatsapp": {
+      "title": "التقديم عبر الواتساب",
+      "description": "تواصل مع فريق الدعم",
+      "highlight": "دعم مباشر",
+      "steps": {
+        "contactSupport": "تواصل مع فريق الدعم",
+        "sendData": "ارسل بياناتك",
+        "completeContract": "اتمام العقد"
+      },
+      "cta": "تواصل عن طريق الواتساب"
+    }
   },
   "Services": {
     "eyebrow": "خدمات أساسية",
