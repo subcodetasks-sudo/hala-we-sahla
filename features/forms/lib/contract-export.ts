@@ -1,8 +1,10 @@
-import html2canvas from "html2canvas"
+import html2canvas from "html2canvas-pro"
 import { jsPDF } from "jspdf"
 
 const A4_WIDTH_MM = 210
 const A4_HEIGHT_MM = 297
+const A4_WIDTH_PX = Math.round((210 / 25.4) * 96)
+const A4_HEIGHT_PX = Math.round((297 / 25.4) * 96)
 
 const PRINT_PAGE_STYLES = `
   @page { size: A4 portrait; margin: 0; }
@@ -10,6 +12,7 @@ const PRINT_PAGE_STYLES = `
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
+    color: #000 !important;
   }
   .musaned-contract {
     background: #fff !important;
@@ -31,11 +34,45 @@ const PRINT_PAGE_STYLES = `
   }
 `
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")
+}
+
+/** Keep only a safe basename ending in `.pdf` (no paths / traversal). */
+function safePdfFilename(filename: string): string {
+  const base = filename.split(/[/\\]/).pop()?.trim() || "musaned-contract.pdf"
+  const cleaned = base
+    .replace(/[^\w.\u0600-\u06FF-]+/g, "-")
+    .replace(/^\.+/, "")
+    .replace(/-+/g, "-")
+  const withExt = cleaned.toLowerCase().endsWith(".pdf")
+    ? cleaned
+    : `${cleaned || "musaned-contract"}.pdf`
+  return withExt.slice(0, 180)
+}
+
 function collectStylesHtml(): string {
   return Array.from(
     document.querySelectorAll('link[rel="stylesheet"], style'),
   )
-    .map((node) => node.outerHTML)
+    .map((node) => {
+      if (node instanceof HTMLLinkElement) {
+        // Only same-origin stylesheets — avoid injecting cross-origin URLs.
+        try {
+          const href = new URL(node.href, window.location.href)
+          if (href.origin !== window.location.origin) return ""
+        } catch {
+          return ""
+        }
+      }
+      return node.outerHTML
+    })
+    .filter(Boolean)
     .join("\n")
 }
 
@@ -75,13 +112,15 @@ export async function printMusanedContract(
   }
 
   const root = getContractRoot(contractEl)
+  const safeTitle = escapeHtml(title)
 
   printWindow.document.open()
   printWindow.document.write(`<!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8" />
-    <title>${title}</title>
+    <meta name="referrer" content="no-referrer" />
+    <title>${safeTitle}</title>
     ${collectStylesHtml()}
     <style>${PRINT_PAGE_STYLES}</style>
   </head>
@@ -110,11 +149,22 @@ export async function printMusanedContract(
 function createOffscreenClone(contractEl: HTMLElement): HTMLElement {
   const host = document.createElement("div")
   host.setAttribute("aria-hidden", "true")
-  host.style.cssText =
-    "position:fixed;left:-10000px;top:0;width:210mm;z-index:-1;pointer-events:none;opacity:1;zoom:1;"
+  host.style.cssText = [
+    "position:fixed",
+    "left:-10000px",
+    "top:0",
+    `width:${A4_WIDTH_PX}px`,
+    "z-index:-1",
+    "pointer-events:none",
+    "opacity:1",
+    "zoom:1",
+    "background:#ffffff",
+    "color:#000000",
+  ].join(";")
 
   const clone = getContractRoot(contractEl).cloneNode(true) as HTMLElement
-  clone.style.background = "#fff"
+  clone.style.background = "#ffffff"
+  clone.style.color = "#000000"
   clone.style.padding = "0"
   clone.style.zoom = "1"
   host.appendChild(clone)
@@ -123,10 +173,42 @@ function createOffscreenClone(contractEl: HTMLElement): HTMLElement {
   return host
 }
 
+function prepareCloneForCapture(clonedDoc: Document) {
+  const root = clonedDoc.querySelector<HTMLElement>(".musaned-contract")
+  if (!root) return
+
+  // Force print-faithful colors so theme tokens (oklch) never leak into capture.
+  root.style.background = "#ffffff"
+  root.style.color = "#000000"
+  root.style.padding = "0"
+  root.style.zoom = "1"
+
+  clonedDoc.querySelectorAll<HTMLElement>(".musaned-page").forEach((page) => {
+    page.style.width = `${A4_WIDTH_PX}px`
+    page.style.height = `${A4_HEIGHT_PX}px`
+    page.style.minHeight = `${A4_HEIGHT_PX}px`
+    page.style.margin = "0 0 16px"
+    page.style.boxShadow = "none"
+    page.style.overflow = "hidden"
+    page.style.background = "#ffffff"
+    page.style.color = "#000000"
+  })
+}
+
+function canvasToJpegDataUrl(canvas: HTMLCanvasElement): string {
+  try {
+    return canvas.toDataURL("image/jpeg", 0.92)
+  } catch {
+    // Tainted canvas / SecurityError — never use allowTaint.
+    throw new Error("CANVAS_TAINTED")
+  }
+}
+
 export async function downloadMusanedContractPdf(
   contractEl: HTMLElement,
   filename = "musaned-contract.pdf",
 ): Promise<void> {
+  const safeName = safePdfFilename(filename)
   const host = createOffscreenClone(contractEl)
 
   try {
@@ -147,14 +229,19 @@ export async function downloadMusanedContractPdf(
       const canvas = await html2canvas(page, {
         scale: 2,
         useCORS: true,
-        allowTaint: true,
+        // Never taint the canvas — toDataURL would throw and export would fail.
+        allowTaint: false,
         backgroundColor: "#ffffff",
         logging: false,
-        windowWidth: Math.ceil(page.getBoundingClientRect().width) || 794,
-        windowHeight: Math.ceil(page.getBoundingClientRect().height) || 1123,
+        imageTimeout: 15000,
+        width: A4_WIDTH_PX,
+        height: A4_HEIGHT_PX,
+        windowWidth: A4_WIDTH_PX,
+        windowHeight: A4_HEIGHT_PX,
+        onclone: prepareCloneForCapture,
       })
 
-      const image = canvas.toDataURL("image/jpeg", 0.95)
+      const image = canvasToJpegDataUrl(canvas)
       if (index > 0) pdf.addPage()
       pdf.addImage(
         image,
@@ -168,7 +255,21 @@ export async function downloadMusanedContractPdf(
       )
     }
 
-    pdf.save(filename)
+    // Blob download avoids some browser quirks with data-URL saves.
+    const blob = pdf.output("blob")
+    const url = URL.createObjectURL(blob)
+    try {
+      const anchor = document.createElement("a")
+      anchor.href = url
+      anchor.download = safeName
+      anchor.rel = "noopener"
+      anchor.style.display = "none"
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+    } finally {
+      URL.revokeObjectURL(url)
+    }
   } finally {
     host.remove()
   }

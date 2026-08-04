@@ -1,6 +1,6 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Download, Loader2, Printer, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
@@ -27,6 +27,13 @@ import { cn } from "@/lib/utils"
 /** A4 width in CSS px at 96dpi (210mm). */
 const A4_WIDTH_PX = (210 / 25.4) * 96
 
+function fitScale(availableWidth: number) {
+  // Leave a tiny inset so borders aren't clipped by rounding.
+  const available = Math.max(0, availableWidth - 2)
+  if (available <= 0) return null
+  return Math.min(1, available / A4_WIDTH_PX)
+}
+
 type ContractPreviewDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -41,32 +48,51 @@ export default function ContractPreviewDialog({
   className,
 }: ContractPreviewDialogProps) {
   const t = useTranslations("Forms.trackOrders.detail.contractPreview")
-  const viewportRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement | null>(null)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
   const contractRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
   const [busyAction, setBusyAction] = useState<"print" | "download" | null>(
     null,
   )
 
-  useLayoutEffect(() => {
-    if (!open) return
+  const updateScaleFrom = useCallback((viewport: HTMLElement) => {
+    const next = fitScale(viewport.clientWidth)
+    if (next == null) return
+    setScale((prev) => (Math.abs(prev - next) < 0.001 ? prev : next))
+  }, [])
 
-    const viewport = viewportRef.current
-    if (!viewport) return
+  // Callback ref: Radix portals the dialog after open flips, so a layout
+  // effect keyed only on `open` can miss the viewport node and leave scale=1.
+  const setViewportRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      resizeObserverRef.current?.disconnect()
+      resizeObserverRef.current = null
+      viewportRef.current = node
 
-    const updateScale = () => {
-      // Leave a tiny inset so borders aren't clipped by rounding.
-      const available = Math.max(0, viewport.clientWidth - 2)
-      const next = available > 0 ? Math.min(1, available / A4_WIDTH_PX) : 1
-      setScale(next)
+      if (!node) return
+
+      updateScaleFrom(node)
+      const observer = new ResizeObserver(() => updateScaleFrom(node))
+      observer.observe(node)
+      resizeObserverRef.current = observer
+    },
+    [updateScaleFrom],
+  )
+
+  useEffect(() => {
+    if (!open) {
+      setScale(1)
+      return
     }
 
-    updateScale()
-
-    const observer = new ResizeObserver(updateScale)
-    observer.observe(viewport)
-    return () => observer.disconnect()
-  }, [open])
+    // Re-measure after open animation / flex layout settles.
+    const id = requestAnimationFrame(() => {
+      const viewport = viewportRef.current
+      if (viewport) updateScaleFrom(viewport)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [open, updateScaleFrom])
 
   async function handlePrint() {
     const contractEl = contractRef.current
@@ -90,7 +116,8 @@ export default function ContractPreviewDialog({
     try {
       await downloadMusanedContractPdf(contractEl, "musaned-contract.pdf")
       toast.success(t("downloadStarted"))
-    } catch {
+    } catch (error) {
+      console.error("Contract PDF download failed:", error)
       toast.error(t("downloadFailed"))
     } finally {
       setBusyAction(null)
@@ -155,7 +182,7 @@ export default function ContractPreviewDialog({
 
         {/* Force LTR so RTL page direction doesn't clip the English column. */}
         <div
-          ref={viewportRef}
+          ref={setViewportRef}
           dir="ltr"
           className="contract-preview-scroll min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-[#e8e8e8] scrollbar-hide"
         >
