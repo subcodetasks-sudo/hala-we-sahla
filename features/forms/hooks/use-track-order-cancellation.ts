@@ -35,10 +35,22 @@ export function useTrackOrderCancellation(requestNumber?: string) {
     () => null,
   )
 
-  const cancelRequest = useCallback(() => {
+  const cancelRequest = useCallback((cancelledAt?: Date | number | string) => {
     if (!storageKey) return
 
-    window.sessionStorage.setItem(storageKey, String(Date.now()))
+    const timestamp =
+      cancelledAt instanceof Date
+        ? cancelledAt.getTime()
+        : typeof cancelledAt === "number"
+          ? cancelledAt
+          : typeof cancelledAt === "string"
+            ? Date.parse(cancelledAt.includes("T") ? cancelledAt : cancelledAt.replace(" ", "T"))
+            : Date.now()
+
+    window.sessionStorage.setItem(
+      storageKey,
+      String(Number.isFinite(timestamp) ? timestamp : Date.now()),
+    )
     window.dispatchEvent(new Event(CANCELLATION_CHANGE_EVENT))
   }, [storageKey])
 

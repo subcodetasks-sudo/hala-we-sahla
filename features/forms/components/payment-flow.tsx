@@ -12,6 +12,7 @@ import PaymentCheckoutSummary, {
   PAYMENT_VAT_AMOUNT,
 } from "@/features/forms/components/payment-checkout-summary"
 import PaymentDeliveryForm from "@/features/forms/components/payment-delivery-form"
+import PaymentDeliveryUnavailable from "@/features/forms/components/payment-delivery-unavailable"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
 import { useRouter } from "@/i18n/navigation"
 
@@ -22,6 +23,12 @@ type PaymentFlowProps = {
   requestNumber: string
 }
 
+/**
+ * Static until payment/delivery availability comes from the API.
+ * `true` → delivery-unavailable screen; `false` → normal delivery + checkout flow.
+ */
+const STATIC_DELIVERY_UNAVAILABLE = false
+
 export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment")
   const router = useRouter()
@@ -30,10 +37,13 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
   const [deliveryMethod, setDeliveryMethod] =
     useState<DeliveryMethod>("electronic")
 
-  const totals = getPaymentTotals(deliveryMethod)
+  const deliveryUnavailable = STATIC_DELIVERY_UNAVAILABLE
+  const totals = getPaymentTotals(
+    deliveryUnavailable ? "electronic" : deliveryMethod,
+  )
 
   useRegisterFormsBackHandler(() => {
-    if (step !== "checkout") return false
+    if (deliveryUnavailable || step !== "checkout") return false
     setStep("delivery")
     return true
   })
@@ -43,10 +53,19 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
     setStep("checkout")
   }
 
-  function handlePay() {
-    markPaid(deliveryMethod)
+  function handlePay(method: DeliveryMethod = deliveryMethod) {
+    markPaid(method)
     toast.success(t("success"))
     router.push(`/track-orders/${encodeURIComponent(requestNumber)}`)
+  }
+
+  if (deliveryUnavailable) {
+    return (
+      <PaymentDeliveryUnavailable
+        requestNumber={requestNumber}
+        onPay={() => handlePay("electronic")}
+      />
+    )
   }
 
   if (step === "checkout") {
@@ -54,7 +73,7 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
       <PaymentCheckoutSummary
         requestNumber={requestNumber}
         deliveryMethod={deliveryMethod}
-        onPay={handlePay}
+        onPay={() => handlePay()}
       />
     )
   }

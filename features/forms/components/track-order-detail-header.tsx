@@ -9,11 +9,15 @@ import { cn } from "@/lib/utils"
 
 type TrackOrderDetailHeaderProps = {
   requestNumber: string
+  employerName?: string
+  workerName?: string
   className?: string
 }
 
 export default function TrackOrderDetailHeader({
   requestNumber,
+  employerName,
+  workerName,
   className,
 }: TrackOrderDetailHeaderProps) {
   const t = useTranslations("Forms.trackOrders.detail")
@@ -25,7 +29,7 @@ export default function TrackOrderDetailHeader({
         <TrackOrderMetaField
           icon="/icons/user.svg"
           label={t("fields.employerName")}
-          value={t("demo.employerName")}
+          value={employerName || t("demo.employerName")}
         />
       ),
     },
@@ -35,7 +39,7 @@ export default function TrackOrderDetailHeader({
         <TrackOrderMetaField
           icon="/icons/user.svg"
           label={t("fields.workerName")}
-          value={t("demo.workerName")}
+          value={workerName || t("demo.workerName")}
         />
       ),
     },

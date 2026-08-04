@@ -521,7 +521,9 @@
       "errors": {
         "requestNumberRequired": "Please enter the request number",
         "requestNumberInvalid": "Please enter a valid request number",
-        "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+        "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
+        "trackFailed": "Could not track the request. Check the details and try again",
+        "sessionMissing": "Please enter the request number and mobile to view request status"
       },
       "forgot": {
         "title": "Forgot your request number?",
@@ -535,7 +537,8 @@
           }
         },
         "errors": {
-          "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05"
+          "phoneInvalid": "Please enter a valid Saudi mobile number starting with 05",
+          "sendFailed": "Could not send the verification code. Please try again"
         },
         "verify": {
           "title": "Confirm mobile number",
@@ -553,7 +556,8 @@
             "action": "Resend verification code"
           },
           "errors": {
-            "required": "Please enter the 4-digit verification code"
+            "required": "Please enter the 4-digit verification code",
+            "verifyFailed": "Invalid or expired verification code. Please try again"
           }
         }
       },
@@ -565,6 +569,8 @@
         "search": "Search",
         "reset": "Reset search and filters",
         "empty": "No requests match your search.",
+        "sessionMissing": "Please verify your mobile number to view your previous requests",
+        "trackFailed": "Could not open the request. Please try again",
         "filters": {
           "all": "All",
           "ongoing": "Ongoing",
@@ -729,7 +735,11 @@
           },
           "confirm": "Confirm renewal request cancellation",
           "back": "Go back",
-          "success": "Cancellation request submitted successfully"
+          "success": "Cancellation request submitted successfully",
+          "errors": {
+            "sessionMissing": "Could not cancel the request. Please track the request again first",
+            "cancelFailed": "Could not cancel the request. Please try again"
+          }
         },
         "payment": {
           "title": "Complete payment",
@@ -778,6 +788,17 @@
             "info": "After completing payment, the final contract is available immediately for download or pickup according to the selected method.",
             "pay": "Complete payment",
             "secure": "Secure and encrypted payment"
+          },
+          "deliveryUnavailable": {
+            "title": "Delivery service is currently unavailable",
+            "description": "Shipment tracking numbers are not available at this time, so the contract receipt method has been switched to personal pickup, and any delivery fees have been removed from the order total.",
+            "updateTitle": "Receipt method update",
+            "fromMethod": "Delivery to address",
+            "toMethod": "Personal pickup",
+            "unavailableBadge": "Currently unavailable",
+            "availableBadge": "Available now",
+            "payInfo": "You can continue payment normally without adding delivery fees.",
+            "branchInfo": "Unavailable delivery will not affect completing the process, and you can pick up the contract from the branch later."
           },
           "next": "Next",
           "success": "Payment completed successfully",

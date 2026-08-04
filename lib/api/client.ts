@@ -191,7 +191,28 @@ async function parseResponse<T>(
   const text = await response.text()
   if (!text) return undefined as T
 
-  return JSON.parse(text) as T
+  const cleaned = text.replace(/^\uFEFF/, "").replace(/^[\u200B\u00A0]+/, "").trim()
+  if (!cleaned) return undefined as T
+
+  try {
+    return JSON.parse(cleaned) as T
+  } catch {
+    const start = cleaned.search(/[\[{]/)
+    const end = Math.max(cleaned.lastIndexOf("}"), cleaned.lastIndexOf("]"))
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(cleaned.slice(start, end + 1)) as T
+      } catch {
+        // fall through
+      }
+    }
+
+    throw new ApiError({
+      message: "Invalid JSON response from server",
+      code: "INVALID_JSON",
+      details: cleaned.slice(0, 200),
+    })
+  }
 }
 
 function createTimeoutSignal(timeoutMs: number, externalSignal?: AbortSignal) {

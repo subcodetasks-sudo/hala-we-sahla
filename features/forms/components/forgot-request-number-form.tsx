@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
 import { toast } from "sonner"
@@ -22,14 +23,16 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
+import { useSendForgotRequestOtp } from "@/features/forms/hooks/use-send-forgot-request-otp"
+import { saveForgotOtpSession } from "@/features/forms/lib/forgot-request-storage"
 import { keepSaudiPhoneInput } from "@/features/forms/lib/input-filters"
-import { FORGOT_PHONE_STORAGE_KEY } from "@/features/forms/lib/forgot-request-storage"
 import {
   createForgotRequestNumberSchema,
   FORGOT_REQUEST_NUMBER_DEFAULT_VALUES,
   type ForgotRequestNumberValues,
 } from "@/features/forms/schemas/forgot-request-number"
 import { useRouter } from "@/i18n/navigation"
+import { getApiErrorMessages } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
@@ -49,7 +52,9 @@ const addonStartClassName = "gap-0 border-e border-[#d7e0e3] pe-3 ps-2"
 
 export default function ForgotRequestNumberForm() {
   const t = useTranslations("Forms.trackOrders.forgot")
+  const tCommon = useTranslations("Common.errors")
   const router = useRouter()
+  const sendOtpMutation = useSendForgotRequestOtp()
   const schema = useMemo(
     () =>
       createForgotRequestNumberSchema({
@@ -64,13 +69,32 @@ export default function ForgotRequestNumberForm() {
     mode: "onChange",
   })
 
-  function onSubmit(values: ForgotRequestNumberValues) {
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem(FORGOT_PHONE_STORAGE_KEY, values.phone)
+  async function onSubmit(values: ForgotRequestNumberValues) {
+    try {
+      const result = await sendOtpMutation.mutateAsync(values.phone)
+
+      saveForgotOtpSession({
+        phone: values.phone,
+        expiresIn: result.data.expires_in || 300,
+        sentAt: Date.now(),
+      })
+
+      toast.success(result.message || t("success"))
+      router.push("/track-orders/forgot/verify")
+    } catch (error) {
+      const message =
+        getApiErrorMessages(error, {
+          network: tCommon("network"),
+          timeout: tCommon("timeout"),
+          unknown: t("errors.sendFailed"),
+        })[0] ?? t("errors.sendFailed")
+
+      form.setError("root", { message })
     }
-    toast.success(t("success"))
-    router.push("/track-orders/forgot/verify")
   }
+
+  const isSubmitting =
+    sendOtpMutation.isPending || form.formState.isSubmitting
 
   return (
     <Card className={cardClassName}>
@@ -146,16 +170,28 @@ export default function ForgotRequestNumberForm() {
                   />
                 </InputGroup>
                 {fieldState.error ? (
-                  <FieldError>{fieldState.error.message}</FieldError>
+                  <FieldError className="text-center">
+                    {fieldState.error.message}
+                  </FieldError>
                 ) : null}
               </Field>
             )}
           />
 
+          {form.formState.errors.root?.message ? (
+            <FieldError className="text-center">
+              {form.formState.errors.root.message}
+            </FieldError>
+          ) : null}
+
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="mx-auto h-12 w-full max-w-70 gap-3 rounded-full px-8 text-base font-bold text-white shadow-[0_8px_24px_rgba(40,130,150,0.35)] sm:w-fit"
           >
+            {isSubmitting ? (
+              <Loader2 className="size-5 animate-spin" aria-hidden="true" />
+            ) : null}
             <span>{t("submit")}</span>
             <CustomIcon
               src="/icons/arrows.svg"

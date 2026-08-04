@@ -10,20 +10,21 @@ import ContractPreviewDialog from "@/features/forms/components/contract-preview-
 import TrackOrderStageItem from "@/features/forms/components/track-order-stage-item"
 import { useTrackOrderCancellation } from "@/features/forms/hooks/use-track-order-cancellation"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
-import { useTrackOrderTimeline } from "@/features/forms/hooks/use-track-order-timeline"
+import {
+  getApiLineFill,
+  mapApiTimelineToStages,
+} from "@/features/forms/lib/map-track-order-timeline"
 import {
   getCancelledTrackOrderStages,
-  getTrackOrderLineFill,
-  getTrackOrderStages,
-  TRACK_ORDER_CURRENT_STAGE_INDEX,
   type TrackOrderStageStatus,
 } from "@/features/forms/lib/track-order-stages"
+import type { TrackOrderData } from "@/features/forms/services/track-order"
 import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
 type TrackOrderStagesProps = {
-  initialStageIndex?: number
   requestNumber?: string
+  trackData: TrackOrderData
   className?: string
 }
 
@@ -45,30 +46,39 @@ const listVariants = {
 }
 
 export default function TrackOrderStages({
-  initialStageIndex = TRACK_ORDER_CURRENT_STAGE_INDEX,
   requestNumber,
+  trackData,
   className,
 }: TrackOrderStagesProps) {
   const t = useTranslations("Forms.trackOrders.detail.stages")
   const router = useRouter()
   const { isCancelled, cancelledAt } = useTrackOrderCancellation(requestNumber)
-  const { isPaid, paidAt } = useTrackOrderPayment(requestNumber)
-  const timeline = useTrackOrderTimeline(
-    initialStageIndex,
-    requestNumber
-      ? `hala-track-order-stages-started-at:${requestNumber}`
-      : undefined,
-    { isPaid, paidAt },
-  )
+  const { isPaid } = useTrackOrderPayment(requestNumber)
   const [contractOpen, setContractOpen] = useState(false)
+  const [now] = useState(() => new Date())
 
-  const stages =
-    isCancelled && cancelledAt
-      ? getCancelledTrackOrderStages(cancelledAt)
-      : getTrackOrderStages(
-          timeline.currentStageIndex,
-          timeline.completedAtByIndex,
-        )
+  const apiStages = mapApiTimelineToStages(trackData)
+  const hasApiCancelled =
+    trackData.status === "cancelled" ||
+    trackData.timeline.some(
+      (stage) => stage.key === "cancelled" || stage.state === "cancelled",
+    )
+
+  const cancelledStages =
+    !hasApiCancelled && isCancelled && cancelledAt
+      ? getCancelledTrackOrderStages(cancelledAt).map((stage, index) => ({
+          key: stage.key,
+          status: stage.status,
+          statusLabel: t(`statuses.${getStatusLabelKey(stage.status)}`),
+          title: t(`items.${stage.key}.title`),
+          description: t(`items.${stage.key}.description`),
+          completedAt: stage.completedAt,
+          marker: stage.marker,
+          index,
+        }))
+      : null
+
+  const stages = cancelledStages ?? apiStages
 
   function handlePaymentClick() {
     if (!requestNumber) return
@@ -93,12 +103,12 @@ export default function TrackOrderStages({
           className="size-5 text-primary"
         />
         <h2 className="text-base font-bold text-primary sm:text-lg">
-          {t("title")}
+          {trackData.timeline_title || t("title")}
         </h2>
       </div>
 
       <motion.ol
-        key={isCancelled ? "cancelled" : "active"}
+        key={isCancelled ? "cancelled" : `api-${trackData.id}`}
         className="mt-6 ms-2 sm:ms-6"
         variants={listVariants}
         initial="hidden"
@@ -106,20 +116,27 @@ export default function TrackOrderStages({
       >
         {stages.map((stage, index) => {
           const isPaymentAction =
-            stage.key === "payment" && stage.status === "in_progress" && !isPaid
+            stage.key === "payment" &&
+            stage.status === "in_progress" &&
+            !isPaid
           const isCompletedDownloads =
             stage.key === "completed" && stage.status === "completed"
 
+          const statusLabel =
+            "statusLabel" in stage && stage.statusLabel
+              ? stage.statusLabel
+              : t(`statuses.${getStatusLabelKey(stage.status)}`)
+
           return (
             <TrackOrderStageItem
-              key={stage.key}
+              key={`${stage.key}-${index}`}
               index={index}
               status={stage.status}
-              statusLabel={t(`statuses.${getStatusLabelKey(stage.status)}`)}
-              title={t(`items.${stage.key}.title`)}
-              description={t(`items.${stage.key}.description`)}
+              statusLabel={statusLabel}
+              title={stage.title}
+              description={stage.description}
               completedAt={stage.completedAt}
-              now={timeline.now}
+              now={now}
               marker={stage.marker}
               actionLabel={
                 isPaymentAction ? t("items.payment.action") : undefined
@@ -138,11 +155,7 @@ export default function TrackOrderStages({
               lineFill={
                 isCancelled
                   ? 0
-                  : getTrackOrderLineFill(
-                      index,
-                      timeline.currentStageIndex,
-                      timeline.intervalProgress,
-                    )
+                  : getApiLineFill(index, apiStages)
               }
               isLast={index === stages.length - 1}
             />

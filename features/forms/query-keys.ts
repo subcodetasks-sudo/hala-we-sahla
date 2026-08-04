@@ -14,4 +14,15 @@ export const formsKeys = {
     [...formsKeys.renewalRequests(), "review", requestId, locale] as const,
   renewalRequestSubmit: () =>
     [...formsKeys.renewalRequests(), "submit"] as const,
+  trackOrder: () => [...formsKeys.all, "track-order"] as const,
+  trackOrderDetail: (requestNumber: string, phone: string, locale: string) =>
+    [...formsKeys.trackOrder(), "detail", requestNumber, phone, locale] as const,
+  forgotRequestSendOtp: () =>
+    [...formsKeys.all, "forgot-request", "send-otp"] as const,
+  forgotRequestVerifyOtp: () =>
+    [...formsKeys.all, "forgot-request", "verify-otp"] as const,
+  cancelStatuses: () => [...formsKeys.all, "cancel-statuses"] as const,
+  cancelStatusesList: (locale: string) =>
+    [...formsKeys.cancelStatuses(), "list", locale] as const,
+  cancelRequest: () => [...formsKeys.all, "cancel-request"] as const,
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useEffectEvent, useState } from "react"
+import { Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
@@ -10,12 +11,22 @@ import { Card } from "@/components/ui/card"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { InputOTP, InputOTPGroup } from "@/components/ui/input-otp"
 import OtpPillSlot from "@/features/forms/components/otp-pill-slot"
-import { FORGOT_PHONE_STORAGE_KEY } from "@/features/forms/lib/forgot-request-storage"
+import { useSendForgotRequestOtp } from "@/features/forms/hooks/use-send-forgot-request-otp"
+import { useVerifyForgotRequestOtp } from "@/features/forms/hooks/use-verify-forgot-request-otp"
+import {
+  clearForgotOtpSession,
+  getForgotOtpSecondsLeft,
+  readForgotOtpSession,
+  saveForgotOtpSession,
+  type ForgotOtpSession,
+} from "@/features/forms/lib/forgot-request-storage"
+import { savePreviousRequestsSession } from "@/features/forms/lib/previous-requests-session"
 import { useRouter } from "@/i18n/navigation"
+import { getApiErrorMessages } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const OTP_LENGTH = 4
-const RESEND_SECONDS = 59
+const DEFAULT_RESEND_SECONDS = 300
 
 const cardClassName =
   "mx-auto max-w-lg gap-0 rounded-[28px] border-none bg-card px-6 py-10 shadow-[0_12px_40px_rgba(40,130,150,0.1)] ring-0 sm:rounded-[32px] sm:px-10 sm:py-12"
@@ -28,68 +39,111 @@ function formatTimer(seconds: number) {
 
 export default function ForgotVerifyOtpForm() {
   const t = useTranslations("Forms.trackOrders.forgot.verify")
+  const tForgot = useTranslations("Forms.trackOrders.forgot")
+  const tCommon = useTranslations("Common.errors")
   const router = useRouter()
+  const sendOtpMutation = useSendForgotRequestOtp()
+  const verifyOtpMutation = useVerifyForgotRequestOtp()
   const [otp, setOtp] = useState("")
-  const [timerKey, setTimerKey] = useState(0)
-  const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS)
+  const [session, setSession] = useState<ForgotOtpSession | null>(null)
+  const [secondsLeft, setSecondsLeft] = useState(DEFAULT_RESEND_SECONDS)
   const [error, setError] = useState<string | null>(null)
-  const [phoneReady, setPhoneReady] = useState(false)
 
-  const canResend = secondsLeft <= 0
+  const isBusy = sendOtpMutation.isPending || verifyOtpMutation.isPending
+  const canResend = secondsLeft <= 0 && !isBusy
   const isComplete = otp.length === OTP_LENGTH
 
-  const ensurePhone = useEffectEvent(() => {
-    if (typeof window === "undefined") return
-    const phone = window.sessionStorage.getItem(FORGOT_PHONE_STORAGE_KEY)
-    if (!phone) {
+  const ensureSession = useEffectEvent(() => {
+    const next = readForgotOtpSession()
+    if (!next) {
       router.replace("/track-orders/forgot")
       return
     }
-    setPhoneReady(true)
+    setSession(next)
+    setSecondsLeft(getForgotOtpSecondsLeft(next))
   })
 
   useEffect(() => {
-    ensurePhone()
+    ensureSession()
   }, [])
 
   useEffect(() => {
-    if (!phoneReady) return
+    if (!session) return
 
-    setSecondsLeft(RESEND_SECONDS)
+    setSecondsLeft(getForgotOtpSecondsLeft(session))
     const id = window.setInterval(() => {
-      setSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1))
+      setSecondsLeft(getForgotOtpSecondsLeft(session))
     }, 1000)
 
     return () => window.clearInterval(id)
-  }, [phoneReady, timerKey])
+  }, [session])
 
   function handleOtpChange(value: string) {
     setOtp(value)
     if (error) setError(null)
   }
 
-  function handleResend() {
-    if (!canResend) return
-    setTimerKey((key) => key + 1)
-    setOtp("")
-    setError(null)
-    toast.success(t("resent"))
+  async function handleResend() {
+    if (!canResend || !session) return
+
+    try {
+      const result = await sendOtpMutation.mutateAsync(session.phone)
+      const nextSession: ForgotOtpSession = {
+        phone: session.phone,
+        expiresIn: result.data.expires_in || DEFAULT_RESEND_SECONDS,
+        sentAt: Date.now(),
+      }
+      saveForgotOtpSession(nextSession)
+      setSession(nextSession)
+      setOtp("")
+      setError(null)
+      toast.success(result.message || t("resent"))
+    } catch (err) {
+      const message =
+        getApiErrorMessages(err, {
+          network: tCommon("network"),
+          timeout: tCommon("timeout"),
+          unknown: tForgot("errors.sendFailed"),
+        })[0] ?? tForgot("errors.sendFailed")
+      toast.error(message)
+    }
   }
 
-  function handleConfirm() {
+  async function handleConfirm() {
+    if (!session) return
+
     if (!isComplete) {
       setError(t("errors.required"))
       return
     }
 
-    toast.success(t("success"))
-    if (typeof window !== "undefined") {
-      window.sessionStorage.removeItem(FORGOT_PHONE_STORAGE_KEY)
+    try {
+      const result = await verifyOtpMutation.mutateAsync({
+        phone: session.phone,
+        otp,
+      })
+
+      savePreviousRequestsSession({
+        phone: session.phone,
+        data: result.data,
+        fetchedAt: Date.now(),
+      })
+      clearForgotOtpSession()
+
+      toast.success(result.message || t("success"))
+      router.push("/track-orders/requests")
+    } catch (err) {
+      const message =
+        getApiErrorMessages(err, {
+          network: tCommon("network"),
+          timeout: tCommon("timeout"),
+          unknown: t("errors.verifyFailed"),
+        })[0] ?? t("errors.verifyFailed")
+      setError(message)
     }
-    router.push("/track-orders/requests")
   }
 
-  if (!phoneReady) {
+  if (!session) {
     return null
   }
 
@@ -122,6 +176,7 @@ export default function ForgotVerifyOtpForm() {
               onChange={handleOtpChange}
               containerClassName="w-full justify-center gap-3 sm:gap-4"
               aria-invalid={error ? true : undefined}
+              disabled={verifyOtpMutation.isPending}
             >
               <InputOTPGroup
                 dir="ltr"
@@ -132,7 +187,9 @@ export default function ForgotVerifyOtpForm() {
                 ))}
               </InputOTPGroup>
             </InputOTP>
-            {error ? <FieldError>{error}</FieldError> : null}
+            {error ? (
+              <FieldError className="text-center">{error}</FieldError>
+            ) : null}
           </Field>
 
           <div className="flex flex-col items-center gap-3 text-center">
@@ -151,11 +208,15 @@ export default function ForgotVerifyOtpForm() {
                   : "cursor-not-allowed text-muted-foreground/70",
               )}
             >
-              <CustomIcon
-                src="/icons/message.svg"
-                size={18}
-                className="size-4.5 shrink-0"
-              />
+              {sendOtpMutation.isPending ? (
+                <Loader2 className="size-4.5 animate-spin shrink-0" aria-hidden />
+              ) : (
+                <CustomIcon
+                  src="/icons/message.svg"
+                  size={18}
+                  className="size-4.5 shrink-0"
+                />
+              )}
               <span>{t("resend.action")}</span>
             </button>
           </div>
@@ -163,7 +224,7 @@ export default function ForgotVerifyOtpForm() {
           <Button
             type="button"
             onClick={handleConfirm}
-            disabled={!isComplete}
+            disabled={!isComplete || isBusy}
             className={cn(
               "mx-auto h-12 w-full max-w-70 gap-3 rounded-full px-8 text-base font-bold text-white sm:w-fit",
               isComplete
@@ -171,6 +232,9 @@ export default function ForgotVerifyOtpForm() {
                 : "bg-[#5b6b73] shadow-[0_8px_24px_rgba(91,107,115,0.35)] disabled:opacity-100",
             )}
           >
+            {verifyOtpMutation.isPending ? (
+              <Loader2 className="size-5 animate-spin" aria-hidden="true" />
+            ) : null}
             <span>{t("submit")}</span>
             <CustomIcon
               src="/icons/arrows.svg"

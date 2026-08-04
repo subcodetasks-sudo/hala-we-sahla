@@ -48,7 +48,7 @@ useEffect(() => {
 },[])
 
     return (
-        <div className="sticky top-0 z-50 bg-white">
+        <div className="sticky top-0 left-0 right-0 z-50 bg-white">
             <div
                 className={cn(
                     "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out",
