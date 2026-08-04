@@ -716,6 +716,11 @@
               "wrongData": "Incorrect information",
               "duplicate": "Duplicate request",
               "other": "Other"
+            },
+            "other": {
+              "label": "Other reason",
+              "placeholder": "Write the other reason...",
+              "required": "Please write the other reason"
             }
           },
           "notes": {

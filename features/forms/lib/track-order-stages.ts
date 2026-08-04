@@ -22,7 +22,7 @@ export type TrackOrderStage = {
   marker?: "solid" | "ring" | "cancelled"
 }
 
-export const TRACK_ORDER_STAGE_INTERVAL_MS = 60_000
+export const TRACK_ORDER_STAGE_INTERVAL_MS = 10000
 
 /** Static demo: first stage is active so UI actions can target `in_progress`. */
 export const TRACK_ORDER_CURRENT_STAGE_INDEX = 0

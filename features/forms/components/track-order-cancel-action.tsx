@@ -5,6 +5,7 @@ import { CircleAlert, Trash2, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
+import CustomIcon from "@/components/custom-icon"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -30,7 +32,6 @@ import {
   TRACK_ORDER_CURRENT_STAGE_INDEX,
 } from "@/features/forms/lib/track-order-stages"
 import { cn } from "@/lib/utils"
-import CustomIcon from "@/components/custom-icon";
 
 const CANCEL_RED = "#FF0A0E"
 
@@ -62,8 +63,10 @@ export default function TrackOrderCancelAction({
   const { isCancelled, cancelRequest } = useTrackOrderCancellation(requestNumber)
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState<CancelReasonKey | "">("")
+  const [otherReason, setOtherReason] = useState("")
   const [notes, setNotes] = useState("")
   const [reasonError, setReasonError] = useState<string | null>(null)
+  const [otherReasonError, setOtherReasonError] = useState<string | null>(null)
 
   if (!isTrackOrderCancellable(timeline.currentStageIndex, isCancelled)) {
     return null
@@ -71,8 +74,10 @@ export default function TrackOrderCancelAction({
 
   function resetForm() {
     setReason("")
+    setOtherReason("")
     setNotes("")
     setReasonError(null)
+    setOtherReasonError(null)
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -83,6 +88,11 @@ export default function TrackOrderCancelAction({
   function handleConfirm() {
     if (!reason) {
       setReasonError(t("reason.required"))
+      return
+    }
+
+    if (reason === "other" && !otherReason.trim()) {
+      setOtherReasonError(t("reason.other.required"))
       return
     }
 
@@ -145,9 +155,15 @@ export default function TrackOrderCancelAction({
             <div className="flex flex-col items-center text-center">
               <span
                 className="flex size-18 items-center justify-center rounded-full"
-                style={{ backgroundColor: "color-mix(in srgb, #FF0A0E 10%, white)" }}
+                style={{
+                  backgroundColor: "color-mix(in srgb, #FF0A0E 10%, white)",
+                }}
               >
-<CustomIcon src="/icons/trach.svg" size={40} className="text-[#FF0A0E]" />
+                <CustomIcon
+                  src="/icons/trach.svg"
+                  size={40}
+                  className="text-[#FF0A0E]"
+                />
               </span>
 
               <DialogDescription asChild>
@@ -155,7 +171,10 @@ export default function TrackOrderCancelAction({
                   <p className="text-lg font-bold text-black sm:text-xl md:text-3xl">
                     {t.rich("confirmTitle", {
                       highlight: (chunks) => (
-                        <span className="font-bold" style={{ color: CANCEL_RED }}>
+                        <span
+                          className="font-bold"
+                          style={{ color: CANCEL_RED }}
+                        >
                           {chunks}
                         </span>
                       ),
@@ -177,8 +196,13 @@ export default function TrackOrderCancelAction({
                 <Select
                   value={reason || undefined}
                   onValueChange={(value) => {
-                    setReason(value as CancelReasonKey)
+                    const nextReason = value as CancelReasonKey
+                    setReason(nextReason)
                     setReasonError(null)
+                    if (nextReason !== "other") {
+                      setOtherReason("")
+                      setOtherReasonError(null)
+                    }
                   }}
                 >
                   <SelectTrigger className="h-12! w-full rounded-full border-[#d7e0e3] bg-custom-gray px-4 shadow-none">
@@ -198,6 +222,27 @@ export default function TrackOrderCancelAction({
                 </Select>
                 {reasonError ? <FieldError>{reasonError}</FieldError> : null}
               </Field>
+
+              {reason === "other" ? (
+                <Field data-invalid={otherReasonError ? true : undefined}>
+                  <FieldLabel className="font-semibold text-black">
+                    {t("reason.other.label")}
+                    <span style={{ color: CANCEL_RED }}>*</span>
+                  </FieldLabel>
+                  <Input
+                    value={otherReason}
+                    onChange={(event) => {
+                      setOtherReason(event.target.value)
+                      setOtherReasonError(null)
+                    }}
+                    placeholder={t("reason.other.placeholder")}
+                    className="h-12 rounded-full border-[#d7e0e3] bg-custom-gray px-4 shadow-none"
+                  />
+                  {otherReasonError ? (
+                    <FieldError>{otherReasonError}</FieldError>
+                  ) : null}
+                </Field>
+              ) : null}
 
               <Field>
                 <FieldLabel className="font-semibold text-black">

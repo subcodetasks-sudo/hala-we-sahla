@@ -98,11 +98,11 @@ export default function TrackOrderStages({
       </div>
 
       <motion.ol
+        key={isCancelled ? "cancelled" : "active"}
         className="mt-6 ms-2 sm:ms-6"
         variants={listVariants}
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        animate="show"
       >
         {stages.map((stage, index) => {
           const isPaymentAction =
