@@ -9,6 +9,7 @@ export type EmployerStepPayload = {
   phone: string
   city_id: number
   passport_issue_place_id: number
+  plan_id: number
 }
 
 export type WorkerStepPayload = {
@@ -31,6 +32,11 @@ export type DocumentsStepPayload = {
   salary: string
   worker_signature: File
   employer_signature: File
+}
+
+export type SignaturesStepPayload = {
+  employer_signature: File
+  worker_signature: File
 }
 
 export type RenewalRequestStepResult = {
@@ -154,6 +160,28 @@ export async function submitDocumentsStep(
   return response.data
 }
 
+export async function submitSignaturesStep(
+  locale: string,
+  requestId: number,
+  payload: SignaturesStepPayload,
+): Promise<RenewalRequestStepResult> {
+  const formData = new FormData()
+  formData.append("employer_signature", payload.employer_signature)
+  formData.append("worker_signature", payload.worker_signature)
+
+  const response = await api.post<RenewalRequestStepApiResponse>(
+    `/website/renewal-requests/${requestId}/step-3`,
+    {
+      language: locale,
+      body: formData,
+      // Signature images must not hit the default 30s timeout.
+      timeoutMs: 0,
+    },
+  )
+
+  return response.data
+}
+
 export async function submitRenewalRequest(
   locale: string,
   requestId: number,
@@ -199,6 +227,19 @@ export function submitDocumentsStepMutationOptions(locale: string) {
       requestId: number
       values: DocumentsStepValues
     }) => submitDocumentsStep(locale, requestId, values),
+  }
+}
+
+export function submitSignaturesStepMutationOptions(locale: string) {
+  return {
+    mutationKey: formsKeys.renewalRequestSignatures(),
+    mutationFn: ({
+      requestId,
+      payload,
+    }: {
+      requestId: number
+      payload: SignaturesStepPayload
+    }) => submitSignaturesStep(locale, requestId, payload),
   }
 }
 

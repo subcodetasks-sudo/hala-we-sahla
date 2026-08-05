@@ -480,7 +480,52 @@
         "trackOrders": "Request Inquiry",
         "forgotRequestNumber": "Forgot your request number?",
         "verifyMobile": "Confirm mobile number",
-        "previousRequests": "Your previous requests"
+        "previousRequests": "Your previous requests",
+        "signature": "Contract signature"
+      }
+    },
+    "signature": {
+      "breadcrumb": "Contract signature",
+      "title": "Contract signature",
+      "description": "Add the employer and worker signatures to complete the contract. You can draw by hand or upload a signature image.",
+      "progress": "{signed} of {total} signatures",
+      "parties": {
+        "employer": {
+          "title": "Employer signature",
+          "subtitle": "First party",
+          "action": "Add employer signature",
+          "hint": "Draw with your finger or mouse, or upload a ready image.",
+          "emptyHint": "Draw your signature or upload an image"
+        },
+        "worker": {
+          "title": "Worker signature",
+          "subtitle": "Second party",
+          "action": "Upload worker signature image",
+          "hint": "The worker signature is accepted as an uploaded PNG or JPG image only.",
+          "emptyHint": "Choose the signature image from your device"
+        }
+      },
+      "status": {
+        "signed": "Signed",
+        "pending": "Awaiting signature"
+      },
+      "methods": {
+        "label": "Available methods",
+        "draw": "Hand drawing",
+        "upload": "Image upload",
+        "drawn": "Hand drawn",
+        "uploaded": "Uploaded image"
+      },
+      "actions": {
+        "edit": "Edit signature",
+        "remove": "Delete signature"
+      },
+      "submit": "Save signatures",
+      "submitting": "Saving...",
+      "submitHint": "Both parties must sign to complete the contract.",
+      "success": "Signatures saved successfully",
+      "errors": {
+        "missingOrderId": "The request id is missing from the URL, please open this page from your request."
       }
     },
     "breadcrumbs": {
@@ -1093,6 +1138,7 @@
             "emptyLabel": "Click to add customer signature",
             "emptyHint": "Upload an image or draw your signature",
             "description": "Choose to upload a signature image or draw it directly.",
+            "descriptionUpload": "Upload the signature image in PNG or JPG format.",
             "edit": "Edit",
             "tabs": {
               "draw": "Draw signature",

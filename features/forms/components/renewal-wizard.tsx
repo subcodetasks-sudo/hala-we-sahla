@@ -325,6 +325,8 @@ export default function RenewalWizard() {
             phone: values.phone,
             city_id: Number(values.city_id),
             passport_issue_place_id: Number(values.passport_issue_place_id),
+            plan_id:1
+
           })
           setRequestId(result.id)
         } catch {
@@ -355,6 +357,7 @@ export default function RenewalWizard() {
             passport_number: values.passport_number,
             passport_issue_date: values.passport_issue_date,
             passport_expiry_date: values.passport_expiry_date,
+
           },
         })
       } catch {

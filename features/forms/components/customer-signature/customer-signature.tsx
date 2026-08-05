@@ -26,14 +26,19 @@ import { cn } from "@/lib/utils"
 
 const ACCEPT = "image/png,image/jpeg,image/jpg"
 
+const ALL_MODES: SignatureMode[] = ["draw", "upload"]
+
 type CustomerSignatureProps = {
   value: SignatureValue | null
   onChange: (value: SignatureValue | null) => void
   label?: string
   emptyLabel?: string
+  emptyHint?: string
   invalid?: boolean
   /** `button` keeps the original dark pill trigger used in the documents step */
   variant?: "button" | "card"
+  /** Restrict the available capture methods, e.g. upload only */
+  modes?: SignatureMode[]
   className?: string
 }
 
@@ -55,8 +60,10 @@ export default function CustomerSignature({
   onChange,
   label,
   emptyLabel,
+  emptyHint,
   invalid,
   variant = "button",
+  modes,
   className,
 }: CustomerSignatureProps) {
   const t = useTranslations("Forms.renewal.wizard.documents.signature")
@@ -65,9 +72,13 @@ export default function CustomerSignature({
   const inputRef = useRef<HTMLInputElement>(null)
   const pad = useSignaturePad()
 
+  const availableModes = modes?.length ? modes : ALL_MODES
+  const forcedMode = availableModes.length === 1 ? availableModes[0] : null
+  const defaultMode = forcedMode ?? value?.type ?? availableModes[0]
+
   const [open, setOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
-  const [mode, setMode] = useState<SignatureMode>(value?.type ?? "draw")
+  const [mode, setMode] = useState<SignatureMode>(defaultMode)
   const [draftUpload, setDraftUpload] = useState<{
     file: File
     image: string
@@ -84,7 +95,7 @@ export default function CustomerSignature({
   useEffect(() => {
     if (!open) return
 
-    setMode(value?.type ?? "draw")
+    setMode(defaultMode)
     setError(null)
     setSaving(false)
 
@@ -96,7 +107,7 @@ export default function CustomerSignature({
 
     setDraftUpload(null)
     pad.clear()
-    if (value?.type === "draw" && value.image) {
+    if (forcedMode !== "upload" && value?.type === "draw" && value.image) {
       window.requestAnimationFrame(() => pad.loadFromImage(value.image))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when dialog opens
@@ -228,17 +239,21 @@ export default function CustomerSignature({
           ) : (
             <>
               <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <CustomIcon
-                  src="/forms/step-3/brush.svg"
-                  size={18}
-                  className="size-4.5"
-                />
+                {forcedMode === "upload" ? (
+                  <Upload className="size-4.5" aria-hidden="true" />
+                ) : (
+                  <CustomIcon
+                    src="/forms/step-3/brush.svg"
+                    size={18}
+                    className="size-4.5"
+                  />
+                )}
               </span>
               <span className="text-sm font-semibold text-foreground">
                 {triggerLabel}
               </span>
               <span className="text-xs text-muted-foreground">
-                {t("emptyHint")}
+                {emptyHint ?? t("emptyHint")}
               </span>
             </>
           )}
@@ -261,7 +276,7 @@ export default function CustomerSignature({
               {title}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
-              {t("description")}
+              {t(forcedMode === "upload" ? "descriptionUpload" : "description")}
             </DialogDescription>
           </DialogHeader>
 
@@ -273,7 +288,12 @@ export default function CustomerSignature({
             }}
             className="min-h-0 flex-1 gap-3 sm:gap-4"
           >
-            <TabsList className="grid h-11! w-full grid-cols-2 gap-1 rounded-full bg-[#e8f0f2] p-1 sm:h-12! sm:p-1.5 group-data-horizontal/tabs:h-11! sm:group-data-horizontal/tabs:h-12!">
+            <TabsList
+              className={cn(
+                "grid h-11! w-full grid-cols-2 gap-1 rounded-full bg-[#e8f0f2] p-1 sm:h-12! sm:p-1.5 group-data-horizontal/tabs:h-11! sm:group-data-horizontal/tabs:h-12!",
+                forcedMode && "hidden",
+              )}
+            >
               <TabsTrigger
                 value="draw"
                 className={cn(

@@ -12,6 +12,8 @@ export const formsKeys = {
     [...formsKeys.renewalRequests(), "step", step] as const,
   renewalRequestReview: (requestId: number, locale: string) =>
     [...formsKeys.renewalRequests(), "review", requestId, locale] as const,
+  renewalRequestSignatures: () =>
+    [...formsKeys.renewalRequests(), "signatures"] as const,
   renewalRequestSubmit: () =>
     [...formsKeys.renewalRequests(), "submit"] as const,
   trackOrder: () => [...formsKeys.all, "track-order"] as const,

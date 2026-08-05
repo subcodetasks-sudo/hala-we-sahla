@@ -15,6 +15,7 @@ type PageTitleKey =
   | "forgotRequestNumber"
   | "verifyMobile"
   | "previousRequests"
+  | "signature"
 
 const PAGE_TITLE_KEYS: Record<string, PageTitleKey> = {
   "/renewal": "renewal",
@@ -22,6 +23,7 @@ const PAGE_TITLE_KEYS: Record<string, PageTitleKey> = {
   "/track-orders/forgot": "forgotRequestNumber",
   "/track-orders/forgot/verify": "verifyMobile",
   "/track-orders/requests": "previousRequests",
+  "/signature": "signature",
 }
 
 function resolveTitleKey(pathname: string): PageTitleKey {
