@@ -1,23 +1,21 @@
-import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import BlogImage from "@/features/blog/components/blog-image"
+import type { BlogPostView } from "@/features/blog/services/blogs"
 import { Link } from "@/i18n/navigation"
 
-export type BlogRelatedCardData = {
-  id: string
-  slug: string
-  image: string
-}
-
 type BlogRelatedCardProps = {
-  article: BlogRelatedCardData
+  article: BlogPostView
 }
 
-export default async function BlogRelatedCard({ article }: BlogRelatedCardProps) {
+export default async function BlogRelatedCard({
+  article,
+}: BlogRelatedCardProps) {
   const t = await getTranslations("Blog.related")
   const href = `/blog/${article.slug}`
+  const categoryLabel = article.categoryName || t("category")
 
   return (
     <article className="flex h-full flex-col gap-4 rounded-3xl bg-background p-5 sm:p-6">
@@ -25,9 +23,9 @@ export default async function BlogRelatedCard({ article }: BlogRelatedCardProps)
         href={href}
         className="relative aspect-16/10 overflow-hidden rounded-2xl"
       >
-        <Image
+        <BlogImage
           src={article.image}
-          alt={t(`items.${article.id}.title`)}
+          alt={article.title}
           fill
           className="object-cover transition-transform hover:scale-[1.02]"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -41,12 +39,12 @@ export default async function BlogRelatedCard({ article }: BlogRelatedCardProps)
             size={16}
             className="size-4 text-accent"
           />
-          <span>{t("category")}</span>
+          <span>{categoryLabel}</span>
         </div>
 
         <h3 className="text-base font-bold leading-snug text-foreground sm:text-lg">
           <Link href={href} className="transition-colors hover:text-primary">
-            {t(`items.${article.id}.title`)}
+            {article.title}
           </Link>
         </h3>
 

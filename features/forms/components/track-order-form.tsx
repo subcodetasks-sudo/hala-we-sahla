@@ -25,6 +25,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 import { useTrackOrderMutation } from "@/features/forms/hooks/use-track-order-mutation"
+import { useWhatsappHref } from "@/features/landing/hooks/use-whatsapp-href"
 import {
   keepRequestNumberInput,
   keepSaudiPhoneInput,
@@ -41,7 +42,6 @@ import { getApiErrorMessages } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const SAUDI_COUNTRY_CODE = "+966"
-const WHATSAPP_HREF = "https://wa.me/96670006741"
 const TRACK_ORDER_STORAGE_KEY = "hala-track-order-remember"
 
 const fieldShellClassName =
@@ -102,6 +102,7 @@ export default function TrackOrderForm() {
   const tCommon = useTranslations("Common.errors")
   const router = useRouter()
   const trackMutation = useTrackOrderMutation()
+  const whatsappHref = useWhatsappHref()
   const schema = useMemo(
     () =>
       createTrackOrderSchema({
@@ -359,7 +360,7 @@ export default function TrackOrderForm() {
       <p className="mt-6 text-center text-sm text-muted-foreground">
         {t("help.prefix")}{" "}
         <a
-          href={WHATSAPP_HREF}
+          href={whatsappHref}
           target="_blank"
           rel="noreferrer"
           className="font-semibold text-custom-green transition-opacity hover:opacity-80"

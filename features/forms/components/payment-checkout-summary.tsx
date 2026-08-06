@@ -16,12 +16,9 @@ import CustomIcon from "@/components/custom-icon"
 import CopyButton from "@/components/shared/copy-button"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { usePaymentTotals } from "@/features/forms/hooks/use-order-pricing"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
-
-export const PAYMENT_SERVICE_FEE = 199
-export const PAYMENT_VAT_AMOUNT = 29.85
-export const PAYMENT_DELIVERY_FEE = 15.99
 
 type DeliveryMethod = "electronic" | "paper"
 
@@ -30,19 +27,6 @@ type PaymentCheckoutSummaryProps = {
   deliveryMethod: DeliveryMethod
   onPay: () => void
   className?: string
-}
-
-export function getPaymentTotals(deliveryMethod: DeliveryMethod) {
-  const deliveryFee =
-    deliveryMethod === "paper" ? PAYMENT_DELIVERY_FEE : 0
-  const total = PAYMENT_SERVICE_FEE + PAYMENT_VAT_AMOUNT + deliveryFee
-
-  return {
-    serviceFee: PAYMENT_SERVICE_FEE,
-    vatAmount: PAYMENT_VAT_AMOUNT,
-    deliveryFee,
-    total,
-  }
 }
 
 export default function PaymentCheckoutSummary({
@@ -54,7 +38,7 @@ export default function PaymentCheckoutSummary({
   const t = useTranslations("Forms.trackOrders.detail.payment.checkout")
   const locale = useLocale()
   const [detailsOpen, setDetailsOpen] = useState(false)
-  const totals = getPaymentTotals(deliveryMethod)
+  const totals = usePaymentTotals(deliveryMethod)
 
   return (
     <div className="mx-auto w-full max-w-xl p-px bg-linear-to-b from-primary to-transparent sm:rounded-[32px] rounded-[28px] ">
@@ -159,7 +143,9 @@ export default function PaymentCheckoutSummary({
                 </div>
 
                 <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#e8eef0] pt-4">
-                  <span className="text-sm text-[#6b7c85]">{t("vat")}</span>
+                  <span className="text-sm text-[#6b7c85]">
+                    {t("vat", { percent: totals.taxPercent })}
+                  </span>
                   <span className="flex items-center gap-1 font-clash text-base font-medium text-[#3d4f57]">
                     {formatNumber(totals.vatAmount, locale, {
                       minimumFractionDigits: 2,

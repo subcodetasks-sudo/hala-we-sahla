@@ -19,7 +19,11 @@
     "search": {
       "placeholder": "Search articles ..",
       "ariaLabel": "Search articles",
-      "submit": "Search"
+      "submit": "Search",
+      "resultsEyebrow": "Search",
+      "resultsHeading": "Search results",
+      "resultsDescription": "Showing articles matching \"{query}\"",
+      "noResults": "No articles match your search. Try different keywords."
     },
     "featured": {
       "category": "Contract Renewal",
@@ -202,6 +206,9 @@
       "title": "Send your inquiry",
       "description": "Fill in the details below and our support team will contact you as soon as possible.",
       "submit": "Send inquiry",
+      "submitting": "Sending...",
+      "success": "Your inquiry was sent successfully. We will contact you soon.",
+      "submitError": "Could not send your inquiry. Please try again.",
       "note": "If your inquiry is related to a previous order, please enter the order number to speed up assistance.",
       "fields": {
         "fullName": {
@@ -214,7 +221,7 @@
         },
         "orderNumber": {
           "label": "Order number (optional)",
-          "placeholder": "example : REQ-25481",
+          "placeholder": "example: 25481",
           "clear": "Clear order number"
         },
         "inquiryType": {
@@ -807,7 +814,7 @@
             "title": "Order summary",
             "serviceName": "Domestic worker contract renewal",
             "serviceFee": "Service fee",
-            "vat": "VAT (15%)",
+            "vat": "VAT ({percent}%)",
             "total": "Total amount"
           },
           "checkout": {
@@ -827,7 +834,7 @@
             "status": "Status",
             "statusValue": "Awaiting payment",
             "serviceFee": "Service fee",
-            "vat": "VAT (15%)",
+            "vat": "VAT ({percent}%)",
             "deliveryFee": "Delivery cost",
             "total": "Grand total",
             "info": "After completing payment, the final contract is available immediately for download or pickup according to the selected method.",
@@ -1182,8 +1189,8 @@
           "hideDetails": "Hide order details",
           "serviceFee": "Service fee",
           "serviceFeeInfo": "The service fee is shown clearly before payment and is charged when you submit the request",
-          "vat": "VAT (15%)",
-          "vatInfo": "VAT is calculated at 15% of the service fee",
+          "vat": "VAT ({percent}%)",
+          "vatInfo": "VAT is calculated at {percent}% of the service fee",
           "total": "Grand total"
         },
         "support": {
@@ -1221,7 +1228,12 @@
       "follow": "Follow us on",
       "snapchat": "Snapchat",
       "tiktok": "TikTok",
-      "instagram": "Instagram"
+      "instagram": "Instagram",
+      "whatsapp": "WhatsApp",
+      "twitter": "X",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube"
     },
     "columns": {
       "importantLinks": {
@@ -1246,5 +1258,34 @@
       "privacy": "Privacy Policy"
     },
     "copyright": "All rights reserved to Hala Wa Sahla platform © {year}"
+  },
+  "Chat": {
+    "openLabel": "Open smart guide chat",
+    "closeLabel": "Close chat",
+    "resetLabel": "Reset conversation",
+    "whatsappLabel": "Contact via WhatsApp",
+    "sendLabel": "Send",
+    "scrollToLatest": "Jump to latest message",
+    "welcomeBubble": "Hello, I'm your smart guide",
+    "title": "Chat with your smart guide",
+    "online": "Online now",
+    "keywordsTitle": "Frequently asked questions",
+    "placeholder": "How can I help you today..!",
+    "quickReplies": {
+      "renewal": "Renew contract",
+      "plans": "Plans",
+      "track": "Track order"
+    },
+    "messages": {
+      "welcome1": "Hello, I'm your smart guide 👋",
+      "welcome2": "How can I help you today? ✌️",
+      "welcome3": "I'm here to help you renew domestic worker contracts with ease ✈️",
+      "fallbackReply": "Thanks for reaching out! I can help with renewals, plans, or order tracking. Pick a suggested keyword or type your question."
+    },
+    "replies": {
+      "renewal": "To renew a domestic worker contract, go to the renewal page and follow the steps. Need help with requirements?",
+      "plans": "You can browse our plans and pricing in the Plans section on the homepage. Which plan interests you?",
+      "track": "To track your order, enter your request number on the track orders page. Do you have your request number?"
+    }
   }
 }

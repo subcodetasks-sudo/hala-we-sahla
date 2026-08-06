@@ -1,11 +1,11 @@
 "use client"
 
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { ArrowRight } from "lucide-react"
 
 import { useFormsBack } from "@/features/forms/components/forms-back-provider"
 import { LanguageSwitcher } from "@/features/landing/components/language-switcher"
+import { SiteLogo } from "@/features/landing/components/site-logo"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils";
 
@@ -42,7 +42,13 @@ function resolveFallbackHref(pathname: string) {
   return "/"
 }
 
-export default function FormsHeader() {
+export default function FormsHeader({
+  logoSrc = "/logo.svg",
+  logoAlt,
+}: {
+  logoSrc?: string
+  logoAlt?: string
+}) {
   const t = useTranslations("Forms.header")
   const pathname = usePathname()
   const router = useRouter()
@@ -85,9 +91,9 @@ export default function FormsHeader() {
             className="flex shrink-0 items-center"
             aria-label={t("home")}
           >
-            <Image
-              src="/logo.svg"
-              alt={t("logoAlt")}
+            <SiteLogo
+              src={logoSrc}
+              alt={logoAlt ?? t("logoAlt")}
               width={120}
               height={40}
               className="hidden h-8 w-auto md:block"

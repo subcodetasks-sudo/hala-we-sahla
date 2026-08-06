@@ -66,6 +66,7 @@ const SIGNATURE_FIELDS = [
   {
     name: "worker_signature",
     labelKey: "worker",
+    modes: ["upload"] as const,
   },
 ] as const
 
@@ -171,6 +172,9 @@ export default function DocumentsStepForm({
                     onChange={field.onChange}
                     invalid={fieldState.invalid}
                     className="min-w-0"
+                    modes={
+                      "modes" in item ? [...item.modes] : undefined
+                    }
                   />
                   {fieldState.error ? (
                     <FieldError>{fieldState.error.message}</FieldError>

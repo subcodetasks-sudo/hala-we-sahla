@@ -1,29 +1,20 @@
 import { getTranslations } from "next-intl/server"
 
-import BlogRelatedCard, {
-  type BlogRelatedCardData,
-} from "@/features/blog/components/blog-related-card"
+import BlogRelatedCard from "@/features/blog/components/blog-related-card"
+import type { BlogPostView } from "@/features/blog/services/blogs"
 
-const RELATED_ARTICLES: BlogRelatedCardData[] = [
-  {
-    id: "steps",
-    slug: "guide-contract-renewal",
-    image: "/images/blog.png",
-  },
-  {
-    id: "documents",
-    slug: "guide-contract-renewal",
-    image: "/images/blog.png",
-  },
-  {
-    id: "tracking",
-    slug: "guide-contract-renewal",
-    image: "/images/blog.png",
-  },
-]
+type BlogRelatedSectionProps = {
+  posts: BlogPostView[]
+}
 
-export default async function BlogRelatedSection() {
+export default async function BlogRelatedSection({
+  posts,
+}: BlogRelatedSectionProps) {
   const t = await getTranslations("Blog.related")
+
+  if (posts.length === 0) {
+    return null
+  }
 
   return (
     <section className="bg-white py-12 md:py-16">
@@ -41,7 +32,7 @@ export default async function BlogRelatedSection() {
         </header>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:mt-10 lg:grid-cols-3">
-          {RELATED_ARTICLES.map((article) => (
+          {posts.map((article) => (
             <BlogRelatedCard key={article.id} article={article} />
           ))}
         </div>

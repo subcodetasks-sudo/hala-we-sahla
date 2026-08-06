@@ -7,8 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "@/i18n/navigation"
 import { formatNumber } from "@/lib/format"
-
-const PLAN_PRICE = 199
+import { getRenewalPlanPrice } from "@/features/landing/services/plans"
 
 const REQUIREMENT_ITEMS = [
   {
@@ -28,6 +27,7 @@ const REQUIREMENT_ITEMS = [
 export default async function RenewalPrerequisitesCard() {
   const t = await getTranslations("Forms.renewal.prerequisites")
   const locale = await getLocale()
+  const planPrice = await getRenewalPlanPrice(locale)
 
   return (
     <div className="renewal-prereq mx-auto w-full max-w-3xl overflow-hidden rounded-[28px] bg-linear-to-b from-primary to-transparent p-px sm:rounded-[40px]">
@@ -51,7 +51,7 @@ export default async function RenewalPrerequisitesCard() {
 
           <p className="renewal-prereq-price mt-4 flex flex-wrap items-center justify-center gap-1.5 font-clash text-3xl text-primary sm:mt-5 sm:text-4xl">
             <span className="font-semibold">
-              {formatNumber(PLAN_PRICE, locale)}
+              {formatNumber(planPrice, locale)}
             </span>
             <SaudiRiyal className="size-5 shrink-0 sm:size-6" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground sm:text-base">

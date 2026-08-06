@@ -1,9 +1,18 @@
 import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "hala.subcodeco.com",
+        pathname: "/storage/**",
+      },
+    ],
   },
 }
 

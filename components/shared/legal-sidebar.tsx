@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import CustomIcon from "@/components/custom-icon"
 import { cn } from "@/lib/utils"
@@ -16,12 +16,37 @@ type LegalSidebarProps = {
   className?: string
 }
 
+/** Matches `scroll-mt-28` on legal section cards + a little breathing room. */
+const SCROLL_OFFSET_PX = 112
+
+function scrollToSection(id: string) {
+  const element = document.getElementById(id)
+  if (!element) {
+    return false
+  }
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches
+  const top =
+    element.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET_PX
+
+  window.scrollTo({
+    top: Math.max(0, top),
+    behavior: prefersReducedMotion ? "auto" : "smooth",
+  })
+
+  return true
+}
+
 export default function LegalSidebar({
   title,
   items,
   className,
 }: LegalSidebarProps) {
   const [activeId, setActiveId] = useState(items[0]?.id ?? "")
+  const isScrollingRef = useRef(false)
+  const scrollTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     const elements = items
@@ -34,6 +59,10 @@ export default function LegalSidebar({
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (isScrollingRef.current) {
+          return
+        }
+
         const visibleEntries = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
@@ -54,14 +83,30 @@ export default function LegalSidebar({
     return () => observer.disconnect()
   }, [items])
 
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
+
   function handleNavigate(id: string) {
-    const element = document.getElementById(id)
-    if (!element) {
+    if (!scrollToSection(id)) {
       return
     }
 
-    element.scrollIntoView({ behavior: "smooth", block: "start" })
     setActiveId(id)
+    isScrollingRef.current = true
+
+    if (scrollTimeoutRef.current !== null) {
+      window.clearTimeout(scrollTimeoutRef.current)
+    }
+
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isScrollingRef.current = false
+      scrollTimeoutRef.current = null
+    }, 800)
   }
 
   return (
@@ -91,15 +136,15 @@ export default function LegalSidebar({
                 type="button"
                 onClick={() => handleNavigate(item.id)}
                 className={cn(
-                  "flex w-full items-center gap-2.5  px-3 py-2.5 text-start text-sm transition-colors",
+                  "flex w-full items-center gap-2.5 px-3 py-2.5 text-start text-sm transition-colors duration-200",
                   isActive
-                    ? "bg-primary/10 font-semibold text-primary border-s-4 border-primary"
+                    ? "border-s-4 border-primary bg-primary/10 font-semibold text-primary"
                     : "font-medium text-black hover:bg-muted/60 hover:text-black",
                 )}
               >
                 <span
                   className={cn(
-                    "size-1.5 shrink-0 rounded-full",
+                    "size-1.5 shrink-0 rounded-full transition-colors duration-200",
                     isActive ? "bg-primary" : "bg-black",
                   )}
                   aria-hidden="true"

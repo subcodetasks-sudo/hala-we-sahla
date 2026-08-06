@@ -1,0 +1,92 @@
+---
+description: Use Motion (motion.dev, formerly Framer Motion) to build modern, performant animations in React/Next.js. Apply whenever the user asks for animations, transitions, micro-interactions, scroll effects, or UI motion.
+globs: ["**/*.tsx", "**/*.jsx"]
+alwaysApply: false
+---
+
+# Motion Animations — Modern & Performant
+
+You are generating animation code using the **Motion** library (`motion/react`, formerly `framer-motion`).
+Always prioritize **GPU-accelerated properties**, **small bundle size**, and **accessibility** over flashy but expensive effects.
+
+## 1. Setup
+
+- Install the correct package:
+  ```bash
+  npm install motion
+  ```
+- Import from `motion/react` (not the legacy `framer-motion` package unless the project already depends on it):
+  ```tsx
+  import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+  ```
+- For bundle-size-sensitive apps, prefer `LazyMotion` + `domAnimation` instead of importing the full `motion` component everywhere:
+  ```tsx
+  import { LazyMotion, domAnimation, m } from "motion/react";
+
+  <LazyMotion features={domAnimation}>
+    <m.div animate={{ opacity: 1 }} />
+  </LazyMotion>
+  ```
+
+## 2. Performance rules (non-negotiable)
+
+1. **Only animate `transform` and `opacity`.** Never animate `width`, `height`, `top`, `left`, `margin`, or `box-shadow` directly — these trigger layout/paint. Use `scale`, `x`, `y` instead.
+   - Bad: `animate={{ width: 300 }}`
+   - Good: `animate={{ scaleX: 1.5 }}` (with `transformOrigin` set)
+2. **Layout animations**: use the `layout` prop instead of manually animating size/position:
+   ```tsx
+   <motion.div layout />
+   ```
+   For groups of items reordering, wrap with `<LayoutGroup>`.
+3. **Avoid re-renders during animation.** Use motion values (`useMotionValue`, `useTransform`) for scroll/drag-linked animations instead of `useState`, since motion values update outside React's render cycle.
+4. **Scroll animations**: use `useScroll` + `useTransform` (or `useSpring` for smoothing), not `onScroll` + `setState`:
+   ```tsx
+   const { scrollYProgress } = useScroll();
+   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+   ```
+5. **Trigger once**: for scroll-reveal animations, always set `viewport={{ once: true, margin: "-100px" }}` on `whileInView` to avoid re-triggering and wasted recalculations.
+6. **Reduce simultaneous animations.** Stagger children instead of animating everything at once:
+   ```tsx
+   const container = { animate: { transition: { staggerChildren: 0.06 } } };
+   ```
+7. **Respect `prefers-reduced-motion`**:
+   ```tsx
+   const shouldReduceMotion = useReducedMotion();
+   <motion.div animate={{ x: shouldReduceMotion ? 0 : 100 }} />
+   ```
+8. **Code-split heavy motion components** (complex SVG path animations, canvas-based effects) with `next/dynamic` or `React.lazy` so they don't block initial paint.
+9. **Don't animate on mount unnecessarily.** Use `initial={false}` when the element doesn't need an entrance animation (e.g., already-visible content on first paint).
+
+## 3. Modern animation patterns to default to
+
+- **Entrance/exit**: fade + slight translate + `AnimatePresence` for unmount animations.
+  ```tsx
+  <AnimatePresence>
+    {show && (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      />
+    )}
+  </AnimatePresence>
+  ```
+- **Spring over duration-based easing** for anything interactive (buttons, drag, hover) — feels more natural:
+  ```tsx
+  transition={{ type: "spring", stiffness: 300, damping: 24 }}
+  ```
+- **Micro-interactions**: `whileHover={{ scale: 1.03 }}` and `whileTap={{ scale: 0.97 }}` on interactive elements.
+- **Staggered lists**: parent variant with `staggerChildren`, children with simple fade/slide variants.
+- **Scroll-reveal**: `whileInView` with `viewport={{ once: true }}`.
+- **Shared layout transitions** (e.g., tab indicators, modal expand-from-card): `layoutId`.
+
+## 4. Checklist before finishing any animation task
+
+- [ ] Only `transform`/`opacity` are animated (no layout-triggering properties)
+- [ ] `viewport={{ once: true }}` set on any `whileInView`
+- [ ] `useReducedMotion` respected for non-essential motion
+- [ ] Springs used for interactive/gesture animations, easing curves for entrances
+- [ ] No `useState` driving high-frequency animation values (scroll/drag) — motion values used instead
+- [ ] Heavy/rare animation components are code-split
+- [ ] `LazyMotion` used if the project is bundle-size sensitive

@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { getTranslations } from "next-intl/server"
 
 import BlogSearch from "@/features/blog/components/blog-search"
@@ -29,7 +30,16 @@ export default async function BlogHeader() {
       </p>
 
       <div className="mt-8 md:mt-10">
-        <BlogSearch />
+        <Suspense
+          fallback={
+            <div
+              className="mx-auto h-12 w-3/4 max-w-xl rounded-full bg-primary/10"
+              aria-hidden
+            />
+          }
+        >
+          <BlogSearch />
+        </Suspense>
       </div>
     </header>
   )

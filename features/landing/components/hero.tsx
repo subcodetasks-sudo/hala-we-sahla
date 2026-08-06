@@ -1,70 +1,32 @@
-import { getTranslations } from "next-intl/server"
-import Image from "next/image"
-import { ArrowLeft, ArrowUpLeft, ArrowUpRight, CircleCheck } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { Button } from "@/components/ui/button"
-import CustomIcon from "@/components/custom-icon";
+import { getLocale, getTranslations } from "next-intl/server"
+
+import HeroContent from "@/features/landing/components/hero-content"
+import { getHeroContent } from "@/features/landing/services/hero"
 
 export default async function Hero() {
-    const t = await getTranslations("Hero")
+  const t = await getTranslations("Hero")
+  const locale = await getLocale()
 
-    return (
-        <section className="container grid items-center gap-10 py-10 lg:grid-cols-2 lg:gap-16 lg:py-16">
-            <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-start">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 ps-1.5 pe-4 py-1.5 text-sm font-medium">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                        <CustomIcon src="/icons/file-2.svg" size={16} className="size-4" />
-                    </span>
-                    {t("badge")}
-                    🚀
-                </span>
+  const hero = await getHeroContent(locale, {
+    badge: t("badge"),
+    description: t("description"),
+    imageSrc: "/landing/hero.svg",
+    imageAlt: t("imageAlt"),
+  })
 
-                <h1 className="lg:max-w-lg text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">
-                    {t.rich("heading", {
-                        primary: (chunks) => (
-                            <span className="text-primary">{chunks}</span>
-                        ),
-                    })}
-                </h1>
-
-                <p className="max-w-lg text-balance text-muted-foreground sm:text-lg">
-                    {t("description")}
-                </p>
-
-                <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                    <Button  className="gap-1.5 rounded-full text-base! h-fit! p-3 bg-[#003143] hover:bg-accent! s shadow-[0_0_70px_rgba(0,0,0,0.6)]" asChild>
-                        <Link href="/renewal">
-                            <CustomIcon size={22} src="/icons/receipt-edit.svg" className="size-4" />
-                            {t("primaryCta")}
-                            <div className="flex items-center gap-2 size-8 shrink-0  justify-center rounded-full bg-white text-black ">
-                                <ArrowUpRight className="rtl:-rotate-90" />
-                            </div>
-                        </Link>
-                    </Button>
-                    <Button
-                    
-                        className="gap-1.5 h-12! text-lg! bg-transparent! text-[#003143]"
-                        asChild
-                    >
-                        <Link href="/track-orders">
-                            <CustomIcon src="/icons/box-time.svg" className="size-4" />
-                            {t("secondaryCta")}
-                            <ArrowUpLeft className="ltr:rotate-180 " />
-                        </Link>
-                    </Button>
-                </div>
-            </div>
-
-            <div className="hidden md:block mx-auto w-full max-w-lg lg:max-w-none">
-                <Image
-                    src="/landing/hero.svg"
-                    alt={t("imageAlt")}
-                    width={799}
-                    height={677}
-                    priority
-                    className="h-auto w-full"
-                />
-            </div>
-        </section>
-    )
+  return (
+    <HeroContent
+      badge={hero.badge}
+      titleHtml={hero.titleHtml}
+      titleFallback={t.rich("heading", {
+        primary: (chunks) => <span className="text-primary">{chunks}</span>,
+      })}
+      descriptionHtml={hero.descriptionHtml}
+      descriptionText={hero.descriptionText}
+      primaryCta={t("primaryCta")}
+      secondaryCta={t("secondaryCta")}
+      imageSrc={hero.imageSrc}
+      imageAlt={hero.imageAlt}
+    />
+  )
 }

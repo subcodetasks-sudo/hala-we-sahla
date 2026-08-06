@@ -1,46 +1,20 @@
 import { getTranslations } from "next-intl/server"
 
-import BlogMostReadItem, {
-  type BlogMostReadItemData,
-} from "@/features/blog/components/blog-most-read-item"
+import BlogMostReadItem from "@/features/blog/components/blog-most-read-item"
+import type { BlogPostView } from "@/features/blog/services/blogs"
 
-const MOST_READ_ITEMS: BlogMostReadItemData[] = [
-  {
-    id: "documents",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2025, 1, 11),
-    readingMinutes: 5,
-    views: 1800,
-    tone: "bg-[#f8e4e8]",
-  },
-  {
-    id: "status",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2025, 1, 11),
-    readingMinutes: 5,
-    views: 1800,
-    tone: "bg-[#dff0e6]",
-  },
-  {
-    id: "inquiry",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2025, 1, 11),
-    readingMinutes: 5,
-    views: 1800,
-    tone: "bg-[#f3e6d8]",
-  },
-  {
-    id: "forgot",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2025, 1, 11),
-    readingMinutes: 5,
-    views: 1800,
-    tone: "bg-[#ebe4f5]",
-  },
-]
+type BlogMostReadSectionProps = {
+  posts: BlogPostView[]
+}
 
-export default async function BlogMostReadSection() {
+export default async function BlogMostReadSection({
+  posts,
+}: BlogMostReadSectionProps) {
   const t = await getTranslations("Blog.mostRead")
+
+  if (posts.length === 0) {
+    return null
+  }
 
   return (
     <section className="mt-16 md:mt-24">
@@ -56,7 +30,7 @@ export default async function BlogMostReadSection() {
 
       <div className="mx-auto mt-8 max-w-4xl rounded-3xl border border-border/50 bg-white px-4 shadow-sm sm:mt-10 sm:px-6 md:px-8">
         <ul className="divide-y divide-border/70">
-          {MOST_READ_ITEMS.map((item) => (
+          {posts.map((item) => (
             <BlogMostReadItem key={item.id} item={item} />
           ))}
         </ul>

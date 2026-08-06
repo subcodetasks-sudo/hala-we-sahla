@@ -3,41 +3,17 @@ import { ar, enUS } from "date-fns/locale"
 import { getLocale, getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import type { BlogPostView } from "@/features/blog/services/blogs"
 import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
-const LATEST_ITEMS = [
-  {
-    id: "docs",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2026, 5, 12),
-    readingMinutes: 5,
-    tone: "bg-[#ebe4f5]",
-  },
-  {
-    id: "timeline",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2026, 5, 12),
-    readingMinutes: 5,
-    tone: "bg-[#f3e6d8]",
-  },
-  {
-    id: "status",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2026, 5, 12),
-    readingMinutes: 5,
-    tone: "bg-[#dceef5]",
-  },
-  {
-    id: "mistakes",
-    slug: "guide-contract-renewal",
-    publishedAt: new Date(2026, 5, 12),
-    readingMinutes: 5,
-    tone: "bg-[#dff0e6]",
-  },
-] as const
+type BlogLatestArticlesProps = {
+  posts: BlogPostView[]
+}
 
-export default async function BlogLatestArticles() {
+export default async function BlogLatestArticles({
+  posts,
+}: BlogLatestArticlesProps) {
   const t = await getTranslations("Blog.latest")
   const locale = await getLocale()
   const dateLocale = locale === "ar" ? ar : enUS
@@ -56,7 +32,7 @@ export default async function BlogLatestArticles() {
       </div>
 
       <ul className="flex flex-1 flex-col justify-between gap-5">
-        {LATEST_ITEMS.map((item) => {
+        {posts.map((item) => {
           const dateLabel = format(item.publishedAt, "d MMMM yyyy", {
             locale: dateLocale,
           })
@@ -70,7 +46,7 @@ export default async function BlogLatestArticles() {
                 <span
                   className={cn(
                     "flex size-11 shrink-0 items-center justify-center rounded-lg sm:size-12",
-                    item.tone
+                    item.tone,
                   )}
                   aria-hidden="true"
                 >
@@ -83,7 +59,7 @@ export default async function BlogLatestArticles() {
 
                 <div className="min-w-0 flex-1 text-start">
                   <p className="text-sm font-bold leading-snug text-foreground sm:text-[0.95rem]">
-                    {t(`items.${item.id}.title`)}
+                    {item.title}
                   </p>
                   <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm">
                     {t("meta", {

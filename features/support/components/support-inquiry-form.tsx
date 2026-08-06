@@ -3,10 +3,13 @@
 import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { motion, useReducedMotion, type Variants } from "motion/react"
 import { useTranslations } from "next-intl"
 import ReactCountryFlag from "react-country-flag"
-import { ArrowLeft, X } from "lucide-react"
+import { ArrowLeft, Loader2, X } from "lucide-react"
+import { toast } from "sonner"
 
+import { keepDigitsOnlyInput, keepSaudiPhoneInput } from "@/features/forms/lib/input-filters"
 import CustomIcon from "@/components/custom-icon"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,11 +35,14 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import {
   createSupportInquirySchema,
-  INQUIRY_TYPE_KEYS,
   type SupportInquiryValues,
 } from "@/features/support/schemas/support-inquiry"
+import { useSupportContactMutation } from "@/features/support/hooks/use-support-contact-mutation"
+import type { InquiryTypeView } from "@/features/support/services/support"
+import { getApiErrorMessages } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
+const EASE = [0.22, 1, 0.36, 1] as const
 const SAUDI_COUNTRY_CODE = "+966"
 
 const pillInputGroupClassName =
@@ -45,22 +51,46 @@ const pillInputGroupClassName =
 const pillAddonStartClassName =
   "gap-0 border-e border-border/70 pe-3 ps-4"
 
-export default function SupportInquiryForm() {
+type SupportInquiryFormProps = {
+  formTitleHtml?: string | null
+  formTitle: string
+  formDescription: string
+  inquiryTypes: InquiryTypeView[]
+}
+
+export default function SupportInquiryForm({
+  formTitleHtml,
+  formTitle,
+  formDescription,
+  inquiryTypes,
+}: SupportInquiryFormProps) {
   const t = useTranslations("Support.form")
+  const tCommon = useTranslations("Common.errors")
+  const shouldReduceMotion = useReducedMotion()
+  const contactMutation = useSupportContactMutation()
+
+  const inquiryTypeIds = useMemo(
+    () => inquiryTypes.map((type) => type.id),
+    [inquiryTypes],
+  )
 
   const schema = useMemo(
     () =>
-      createSupportInquirySchema({
-        fullNameRequired: t("errors.fullNameRequired"),
-        phoneInvalid: t("errors.phoneInvalid"),
-        inquiryTypeRequired: t("errors.inquiryTypeRequired"),
-        messageRequired: t("errors.messageRequired"),
-      }),
-    [t],
+      createSupportInquirySchema(
+        {
+          fullNameRequired: t("errors.fullNameRequired"),
+          phoneInvalid: t("errors.phoneInvalid"),
+          inquiryTypeRequired: t("errors.inquiryTypeRequired"),
+          messageRequired: t("errors.messageRequired"),
+        },
+        inquiryTypeIds,
+      ),
+    [t, inquiryTypeIds],
   )
 
   const form = useForm<SupportInquiryValues>({
     resolver: standardSchemaResolver(schema),
+    mode: "onChange",
     defaultValues: {
       fullName: "",
       phone: "",
@@ -71,19 +101,61 @@ export default function SupportInquiryForm() {
   })
 
   const orderNumber = form.watch("orderNumber")
+  const isSubmitting =
+    contactMutation.isPending || form.formState.isSubmitting
 
-  function onSubmit(_values: SupportInquiryValues) {
-    form.reset()
+  async function onSubmit(values: SupportInquiryValues) {
+    try {
+      const result = await contactMutation.mutateAsync(values)
+      toast.success(result.message || t("success"))
+      form.reset()
+    } catch (error) {
+      const message =
+        getApiErrorMessages(error, {
+          network: tCommon("network"),
+          timeout: tCommon("timeout"),
+          unknown: t("submitError"),
+        })[0] ?? t("submitError")
+
+      toast.error(message)
+    }
+  }
+
+  const variants: Variants = {
+    hidden: shouldReduceMotion
+      ? { opacity: 1, y: 0 }
+      : { opacity: 0, y: 24 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: shouldReduceMotion ? 0 : 0.65,
+        ease: EASE,
+      },
+    },
   }
 
   return (
-    <section className="mx-auto max-w-4xl pb-12 md:pb-16">
+    <motion.section
+      className="mx-auto max-w-4xl pb-12 md:pb-16"
+      variants={variants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+    >
       <div className="mx-auto max-w-xl text-center">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {t("title")}
-        </h2>
+        {formTitleHtml ? (
+          <h2
+            className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl [&_strong]:font-bold [&_p]:m-0"
+            dangerouslySetInnerHTML={{ __html: formTitleHtml }}
+          />
+        ) : (
+          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {formTitle}
+          </h2>
+        )}
         <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-          {t("description")}
+          {formDescription}
         </p>
       </div>
 
@@ -172,10 +244,15 @@ export default function SupportInquiryForm() {
                       id="phone"
                       type="tel"
                       inputMode="numeric"
+                      autoComplete="tel"
+                      maxLength={10}
                       value={field.value ?? ""}
                       placeholder={t("fields.phone.placeholder")}
                       aria-invalid={fieldState.invalid}
                       className="pe-4"
+                      onChange={(event) =>
+                        field.onChange(keepSaudiPhoneInput(event.target.value))
+                      }
                     />
                   </InputGroup>
                   {fieldState.error ? (
@@ -208,11 +285,16 @@ export default function SupportInquiryForm() {
                   <InputGroupInput
                     {...field}
                     id="orderNumber"
+                    type="tel"
+                    inputMode="numeric"
                     value={field.value ?? ""}
                     autoComplete="off"
                     placeholder={t("fields.orderNumber.placeholder")}
                     aria-invalid={fieldState.invalid}
                     className="pe-2 placeholder:text-muted-foreground"
+                    onChange={(event) =>
+                      field.onChange(keepDigitsOnlyInput(event.target.value))
+                    }
                   />
                   <InputGroupAddon align="inline-end" className="pe-4">
                     <InputGroupButton
@@ -277,9 +359,9 @@ export default function SupportInquiryForm() {
                     className="w-(--radix-select-trigger-width)"
                     position="popper"
                   >
-                    {INQUIRY_TYPE_KEYS.map((type) => (
-                      <SelectItem key={type} value={type} >
-                        {t(`fields.inquiryType.options.${type}`)}
+                    {inquiryTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -320,17 +402,26 @@ export default function SupportInquiryForm() {
         <div className="mt-8 flex flex-col items-center gap-3">
           <Button
             type="submit"
-            disabled={form.formState.isSubmitting}
+            disabled={isSubmitting}
             className="h-12 gap-2 rounded-full px-8 text-base"
           >
-            {t("submit")}
-            <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
+            {isSubmitting ? (
+              <>
+                <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden="true" />
+                {t("submitting")}
+              </>
+            ) : (
+              <>
+                {t("submit")}
+                <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
+              </>
+            )}
           </Button>
           <p className="max-w-lg text-center text-xs text-muted-foreground sm:text-sm">
             {t("note")}
           </p>
         </div>
       </form>
-    </section>
+    </motion.section>
   )
 }

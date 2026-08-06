@@ -3,15 +3,15 @@
 import { useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
-
-const WHATSAPP_HREF = "https://wa.me/96670006741"
+import { useWhatsappHref } from "@/features/landing/hooks/use-whatsapp-href"
 
 export default function TrackOrderWhatsappFab() {
   const t = useTranslations("Forms.trackOrders")
+  const whatsappHref = useWhatsappHref()
 
   return (
     <a
-      href={WHATSAPP_HREF}
+      href={whatsappHref}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t("whatsappFab")}

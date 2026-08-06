@@ -1,42 +1,34 @@
-import Image from "next/image"
 import { format } from "date-fns"
 import { ar, enUS } from "date-fns/locale"
 import { getLocale, getTranslations } from "next-intl/server"
 
 import CustomIcon from "@/components/custom-icon"
+import BlogImage from "@/features/blog/components/blog-image"
+import type { BlogPostView } from "@/features/blog/services/blogs"
 import { Link } from "@/i18n/navigation"
-import { formatNumber } from "@/lib/format"
 
-const FEATURED = {
-  slug: "guide-contract-renewal",
-  publishedAt: new Date(2026, 5, 12),
-  readingMinutes: 5,
-  views: 2140,
-  image: "/images/blog.png",
-} as const
+type BlogFeaturedCardProps = {
+  post: BlogPostView
+}
 
-export default async function BlogFeaturedCard() {
+export default async function BlogFeaturedCard({ post }: BlogFeaturedCardProps) {
   const t = await getTranslations("Blog.featured")
   const locale = await getLocale()
   const dateLocale = locale === "ar" ? ar : enUS
 
-  const dateLabel = format(FEATURED.publishedAt, "d MMMM yyyy", {
+  const dateLabel = format(post.publishedAt, "d MMMM yyyy", {
     locale: dateLocale,
   })
-  const viewsLabel = formatNumber(FEATURED.views, locale)
-  const href = `/blog/${FEATURED.slug}`
+  const href = `/blog/${post.slug}`
+  const categoryLabel = post.categoryName || t("category")
 
   return (
     <article className="relative h-full min-h-[480px] overflow-hidden rounded-3xl">
-      <Link
-        href={href}
-        className="absolute inset-0 z-10"
-        aria-label={t("title")}
-      />
+      <Link href={href} className="absolute inset-0 z-10" aria-label={post.title} />
 
-      <Image
-        src={FEATURED.image}
-        alt={t("title")}
+      <BlogImage
+        src={post.image}
+        alt={post.title}
         fill
         priority
         className="object-cover"
@@ -53,7 +45,7 @@ export default async function BlogFeaturedCard() {
         <p className="text-sm text-white/95">
           {t("meta", {
             date: dateLabel,
-            minutes: FEATURED.readingMinutes,
+            minutes: post.readingMinutes,
           })}
         </p>
 
@@ -64,29 +56,16 @@ export default async function BlogFeaturedCard() {
               size={16}
               className="size-4 text-white"
             />
-            {t("category")}
+            {categoryLabel}
           </span>
 
           <h2 className="text-xl font-bold leading-snug text-balance text-white sm:text-2xl md:text-[1.75rem] md:leading-snug">
-            {t("title")}
+            {post.title}
           </h2>
 
           <p className="text-sm leading-relaxed text-white/90 sm:text-[0.95rem]">
-            {t("description")}
+            {post.excerpt}
           </p>
-        </div>
-
-        <div className="absolute end-6 bottom-6 flex items-center gap-2 text-sm text-white sm:end-8 sm:bottom-8">
-          <CustomIcon
-            src="/icons/users.svg"
-            size={20}
-            className="size-5 text-white"
-          />
-          <span>
-            {t("views", {
-              count: viewsLabel,
-            })}
-          </span>
         </div>
       </div>
     </article>

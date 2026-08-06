@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { Search } from "lucide-react"
 
 import CustomIcon from "@/components/custom-icon"
 import { Button } from "@/components/ui/button"
@@ -11,13 +11,33 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
+import { useRouter } from "@/i18n/navigation"
 
 export default function BlogSearch() {
   const t = useTranslations("Blog")
-  const [query, setQuery] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const urlQuery = searchParams.get("q") ?? ""
+  const [query, setQuery] = useState(urlQuery)
+
+  useEffect(() => {
+    setQuery(urlQuery)
+  }, [urlQuery])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    const trimmed = query.trim()
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (trimmed) {
+      params.set("q", trimmed)
+    } else {
+      params.delete("q")
+    }
+
+    const qs = params.toString()
+    router.push(qs ? `/blog?${qs}` : "/blog")
   }
 
   return (
@@ -53,7 +73,11 @@ export default function BlogSearch() {
             className="size-10 shrink-0 rounded-full bg-foreground text-background hover:bg-foreground/90"
             aria-label={t("search.submit")}
           >
-            <CustomIcon src="/icons/search.svg" size={20} className="size-5 text-background" />
+            <CustomIcon
+              src="/icons/search.svg"
+              size={20}
+              className="size-5 text-background"
+            />
           </Button>
         </InputGroupAddon>
       </InputGroup>

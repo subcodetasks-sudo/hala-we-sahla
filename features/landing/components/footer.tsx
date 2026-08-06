@@ -1,23 +1,14 @@
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import Image from "next/image"
-import { ArrowLeft, ChevronLeft, Mail, Phone } from "lucide-react"
+import { ArrowLeft, ChevronLeft } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import CustomIcon from "@/components/custom-icon"
-
-const PHONE_NUMBER = "+966 7000 6741"
-const PHONE_HREF = "tel:+96670006741"
-const EMAIL_DISPLAY = "Info@hala&sahla.com"
-const EMAIL_HREF = "mailto:info@halawasahla.com"
-const COMMERCIAL_REGISTRATION_NUMBER = "7000000001"
-const TAX_NUMBER = "7000000006"
-
-const SOCIAL_LINKS = [
-    { key: "snapchat", href: "#", icon:"/icons/snapchat.svg" },
-    { key: "instagram", href: "#", icon: "/icons/instagram.svg" },
-    { key: "tiktok", href: "#", icon: "/icons/tiktok.svg" },
-] as const
+import { FooterContactBar } from "@/features/landing/components/footer-contact-bar"
+import { SiteLogo } from "@/features/landing/components/site-logo"
+import { buildSiteSettingsFallback } from "@/features/landing/lib/site-settings-fallback"
+import { getSiteSettings, type SiteSettingsView } from "@/features/landing/services/settings"
 
 const IMPORTANT_LINKS = [
     { key: "renewal", href: "/renewal", icon: "/icons/repeat.svg" },
@@ -34,15 +25,6 @@ const LEGAL_LINKS = [
     { key: "terms", href: "/terms" },
     { key: "privacy", href: "/privacy" },
 ] as const
-
-function DotSeparator() {
-    return (
-        <span
-            aria-hidden="true"
-            className="size-1 shrink-0 rounded-[1px] bg-white/10"
-        />
-    )
-}
 
 function FooterLinkList({
     links,
@@ -75,72 +57,42 @@ function FooterLinkList({
     )
 }
 
-export default async function Footer() {
+export default async function Footer({
+    settings: settingsProp,
+}: {
+    settings?: SiteSettingsView
+}) {
     const t = await getTranslations("Footer")
+    const locale = await getLocale()
     const year = new Date().getFullYear()
+    const settings =
+        settingsProp ??
+        (await getSiteSettings(
+            locale,
+            buildSiteSettingsFallback({ description: t("description") }),
+        ))
 
     return (
         <footer className="bg-primary">
-            <div className="border-b border-border/10 container py-10 text-white">
-                <div className="container flex flex-col items-center justify-between gap-4 py-4 text-sm text-white sm:flex-row sm:gap-6">
-                    <div className="flex items-center gap-3">
-                        <span className="font-bold text-white">
-                            {t("social.follow")}
-                        </span>
-                        <span aria-hidden="true" className=" w-6 h-px bg-white">
-                            
-                        </span>
-                        <div className="flex items-center gap-2">
-                            {SOCIAL_LINKS.map(({ key, href, icon }) => (
-                                <a
-                                    key={key}
-                                    href={href}
-                                    aria-label={t(`social.${key}`)}
-                                    className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/30"
-                                >
-                                    <CustomIcon src={icon} size={20} />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div
-                        dir="ltr"
-                        className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:justify-start f"
-                    >
-                        <a
-                            href={PHONE_HREF}
-                            className="flex items-center gap-1.5 transition-colors hover:text-accent font-clash text-2xl"
-                        >
-                            {PHONE_NUMBER}
-                            <Phone className="size-3.5 shrink-0" />
-                        </a>
-                        <DotSeparator />
-                        <a
-                            href={EMAIL_HREF}
-                            className="flex items-center gap-1.5 transition-colors hover:text-accent font-clash text-2xl"
-                        >
-                            {EMAIL_DISPLAY}
-                            <Mail className="size-3.5 shrink-0" />
-                        </a>
-                        <DotSeparator />
-                        <span dir="auto" className="font-bold ">{t("contact.supportText")}</span>
-                    </div>
-                </div>
-            </div>
+            <FooterContactBar
+                settings={settings}
+                followLabel={t("social.follow")}
+                supportText={t("contact.supportText")}
+                socialLabelFor={(key) => t(`social.${key}`)}
+            />
 
             <div className="container md:py-20 text-white">
                 <div className="grid grid-cols-1 gap-10 px-4 py-10 sm:grid-cols-2 md:grid-cols-5">
                     <div className="flex flex-col items-start gap-4 md:col-span-2 md:gap-6">
-                        <Image
-                            src="/images/logo-mono.png"
+                        <SiteLogo
+                            src={"/images/logo-mono.png"}
                             alt={t("logoAlt")}
                             width={141}
                             height={28}
-                            className="h-16 w-auto"
+                            className="h-16 w-auto "
                         />
                         <p className="max-w-sm  text-balance  leading-relaxed">
-                            {t("description")}
+                            {settings.description}
                         </p>
                         <Button
                             className="gap-1.5 h-12! text-base! rounded-full text-primary! bg-white!"
@@ -185,10 +137,10 @@ export default async function Footer() {
                         <ul className="flex flex-col gap-3 text-sm">
                             <li>
                                 {t("columns.licenses.commercialRegister")}:{" "}
-                                {COMMERCIAL_REGISTRATION_NUMBER}
+                                {settings.commercialRegister}
                             </li>
                             <li>
-                                {t("columns.licenses.taxNumber")}: {TAX_NUMBER}
+                                {t("columns.licenses.taxNumber")}: {settings.taxNumber}
                             </li>
                         </ul>
                         <Image

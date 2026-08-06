@@ -5,13 +5,15 @@ import type { ReactNode } from "react"
 
 type AnimatedStepsIntroProps = {
   eyebrow: string
-  heading: ReactNode
+  heading?: ReactNode
+  titleHtml?: string | null
   description: string
 }
 
 export default function AnimatedStepsIntro({
   eyebrow,
   heading,
+  titleHtml,
   description,
 }: AnimatedStepsIntroProps) {
   return (
@@ -23,9 +25,16 @@ export default function AnimatedStepsIntro({
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <p className="text-sm font-semibold text-accent">{eyebrow}</p>
-      <h2 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl">
-        {heading}
-      </h2>
+      {titleHtml ? (
+        <h2
+          className="mt-2 text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl [&_strong]:font-bold [&_p]:m-0 [&_br]:block"
+          dangerouslySetInnerHTML={{ __html: titleHtml }}
+        />
+      ) : (
+        <h2 className="mt-2 text-3xl font-bold leading-tight tracking-tight text-balance md:text-4xl">
+          {heading}
+        </h2>
+      )}
       <p className="mx-auto mt-4 text-muted-foreground sm:text-lg lg:w-2/3">
         {description}
       </p>

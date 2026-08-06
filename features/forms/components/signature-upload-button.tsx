@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useState } from "react"
 
 import { CustomerSignature } from "@/features/forms/components/customer-signature"
-import type { SignatureValue } from "@/features/forms/components/customer-signature"
+import type {
+  SignatureMode,
+  SignatureValue,
+} from "@/features/forms/components/customer-signature"
 import { cn } from "@/lib/utils"
 
 type SignatureUploadButtonProps = {
@@ -13,6 +16,8 @@ type SignatureUploadButtonProps = {
   onChange: (file: File | null) => void
   invalid?: boolean
   className?: string
+  /** Upload-only for worker; employer keeps draw + upload when omitted */
+  modes?: SignatureMode[]
 }
 
 export default function SignatureUploadButton({
@@ -22,6 +27,7 @@ export default function SignatureUploadButton({
   onChange,
   invalid,
   className,
+  modes,
 }: SignatureUploadButtonProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [signatureType, setSignatureType] = useState<"upload" | "draw">(
@@ -56,6 +62,7 @@ export default function SignatureUploadButton({
         label={label}
         invalid={invalid}
         variant="button"
+        modes={modes}
         onChange={(next) => {
           if (!next?.file) {
             setSignatureType("upload")

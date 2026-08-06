@@ -1,163 +1,75 @@
-import { getTranslations } from "next-intl/server"
-import Image from "next/image"
-import { ArrowLeft, FilePenLine, MessageCircle, Sparkles } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import CustomIcon from "@/components/custom-icon";
+import { getLocale, getTranslations } from "next-intl/server"
 
-const SERVICE_ITEMS = [
-    {
-        key: "request",
-        href: "/renewal",
-        icon: "/icons/receipt-edit.svg",
-        image: "/landing/servcies-1.svg",
-        tone: "primary",
-        imageFirst: false,
-    },
-    {
-        key: "whatsapp",
-        href: "/support",
-        icon: "/icons/whatsapp.svg",
-        image: "/landing/services-2.svg",
-        tone: "primary",
-        imageFirst: true,
-    },
-    {
-        key: "tracking",
-        href: "/track-orders",
-        icon: "/icons/magicpen.svg",
-        image: "/landing/services-3.svg",
-        tone: "accent",
-        imageFirst: false,
-    },
-] as const
+import ServicesContent from "@/features/landing/components/services-content"
+import {
+  getServicesContent,
+  type ServiceItemView,
+} from "@/features/landing/services/services"
+
+const FALLBACK_META = [
+  {
+    key: "request" as const,
+    href: "/renewal",
+    icon: "/icons/receipt-edit.svg",
+    image: "/landing/servcies-1.svg",
+    tone: "primary" as const,
+    imageFirst: false,
+  },
+  {
+    key: "whatsapp" as const,
+    href: "/support",
+    icon: "/icons/whatsapp.svg",
+    image: "/landing/services-2.svg",
+    tone: "whatsapp" as const,
+    imageFirst: true,
+  },
+  {
+    key: "tracking" as const,
+    href: "/track-orders",
+    icon: "/icons/magicpen.svg",
+    image: "/landing/services-3.svg",
+    tone: "accent" as const,
+    imageFirst: false,
+  },
+]
 
 export default async function Services() {
-    const t = await getTranslations("Services")
+  const t = await getTranslations("Services")
+  const locale = await getLocale()
 
-    return (
-        <section className="w-full py-16 lg:py-24">
-            <div className="">
-                <div className="mx-auto max-w-xl text-center container">
-                    <p className="text-sm font-semibold text-accent">
-                        {t("eyebrow")}
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-balance sm:text-3xl">
-                        {t.rich("heading", {
-                            br: () => <br />,
-                            primary: (chunks) => (
-                                <span className="text-primary">{chunks}</span>
-                            ),
-                        })}
-                    </h2>
-                    <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-                        {t("description")}
-                    </p>
-                </div>
+  const fallbackItems: ServiceItemView[] = FALLBACK_META.map((item) => ({
+    id: item.key,
+    title: `${t(`items.${item.key}.titleLine1`)} ${t(`items.${item.key}.titleLine2`)}`,
+    titleLine1: t(`items.${item.key}.titleLine1`),
+    titleLine2: t(`items.${item.key}.titleLine2`),
+    description: t(`items.${item.key}.description`),
+    ctaLabel: t(`items.${item.key}.cta`),
+    href: item.href,
+    external: false,
+    imageSrc: item.image,
+    imageAlt: t(`items.${item.key}.imageAlt`),
+    imageIsRemote: false,
+    iconSrc: item.icon,
+    tone: item.tone,
+    imageFirst: item.imageFirst,
+  }))
 
-                <div className="mt-16 flex flex-col gap-8 lg:mt-20 ">
-                    {SERVICE_ITEMS.map(
-                        ({ key, href, icon: Icon, image, tone, imageFirst }) => {
-                            const toneText =
-                                tone === "accent" ? "text-accent" : "text-primary"
+  const services = await getServicesContent(locale, {
+    eyebrow: t("eyebrow"),
+    description: t("description"),
+    items: fallbackItems,
+  })
 
-                            const textBlock = (
-                                <div
-                                    key="text"
-                                    className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-start"
-                                >
-                                    <span className={cn("flex size-12 items-center justify-center rounded-full bg-primary/20", key === "whatsapp" ? "bg-primary/40" : "")}>
-                                    {key === "whatsapp" ? (
-                                        <CustomIcon
-                                            size={22}
-                                            src="/icons/message.svg"
-                                            className="size-5 text-white"
-                                            aria-hidden="true"
-                                        />
-                                    ) : (
-                                        <CustomIcon
-                                            size={22}
-                                            src={Icon as string}
-                                            className={cn("size-5 text-black",)}
-                                            aria-hidden="true"
-                                        />
-                                    )}
-                                    </span>
-
-                                    <h3 className="text-2xl font-bold sm:text-3xl">
-                                        <span className="block ">
-                                            {t(`items.${key}.titleLine1`)}
-                                        </span>
-                                        <span className={cn("block", toneText)}>
-                                            {t(`items.${key}.titleLine2`)}
-                                        </span>
-                                    </h3>
-
-                                    <p className="max-w-sm">
-                                        {t(`items.${key}.description`)}
-                                    </p>
-
-                                    <Button
-            
-                                        className={cn(
-                                            "gap-1.5 h-12! text-base! rounded-full  text-white",
-                                            tone === "accent" &&
-                                                "bg-accent  hover:bg-accent/80!",
-                                            key === "whatsapp" &&
-                                                "bg-[#0DB38B] hover:bg-[#0DB38B]/80!",
-                                        )}
-                                        asChild
-                                    >
-                                        <Link href={href}>
-                                            <CustomIcon
-                                                size={16}
-                                                src={Icon as string}
-                                                className="size-4 shrink-0 text-white"
-                                                aria-hidden="true"
-                                            />
-                                            {t(`items.${key}.cta`)}
-                                            <ArrowLeft className="ltr:rotate-180" />
-                                        </Link>
-                                    </Button>
-                                </div>
-                            )
-
-                            const imageBlock = (
-                                <div
-                                    key="image"
-                                    className="mx-auto w-full grow"
-                                >
-                                    <Image
-                                        src={image}
-                                        alt={t(`items.${key}.imageAlt`)}
-                                        width={844}
-                                        height={538}
-                                        className="h-auto w-full"
-                                    />
-                                </div>
-                            )
-
-                            return (
-                                <div
-                                    key={key}
-                                    className={cn(key === "whatsapp" && "bg-footer py-10")}
-                                >
-                                    <div
-                                        className={cn(
-                                            "container grid items-center gap-10 lg:grid-cols-2 lg:gap-16",
-                                        )}
-                                    >
-                                        {imageFirst
-                                            ? [imageBlock, textBlock]
-                                            : [textBlock, imageBlock]}
-                                    </div>
-                                </div>
-                            )
-                        },
-                    )}
-                </div>
-            </div>
-        </section>
-    )
+  return (
+    <ServicesContent
+      eyebrow={services.eyebrow}
+      titleHtml={services.titleHtml}
+      titleFallback={t.rich("heading", {
+        br: () => <br />,
+        primary: (chunks) => <span className="text-primary">{chunks}</span>,
+      })}
+      description={services.description}
+      items={services.items}
+    />
+  )
 }

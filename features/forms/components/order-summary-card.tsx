@@ -12,12 +12,14 @@ type OrderSummaryCardProps = {
   serviceFee: number
   vatAmount: number
   total: number
+  taxPercent: number
 }
 
 export default function OrderSummaryCard({
   serviceFee,
   vatAmount,
   total,
+  taxPercent,
 }: OrderSummaryCardProps) {
   const t = useTranslations("Forms.renewal.wizard.summary")
   const locale = useLocale()
@@ -83,17 +85,25 @@ export default function OrderSummaryCard({
 
               <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-4 font-semibold">
                 <span className="flex items-center gap-1.5 text-muted-foreground">
-                  {t("vat")}
-                  <span title={t("vatInfo")} className="inline-flex">
+                  {t("vat", { percent: taxPercent })}
+                  <span
+                    title={t("vatInfo", { percent: taxPercent })}
+                    className="inline-flex"
+                  >
                     <Info
                       className="size-3.5 shrink-0 text-muted-foreground"
                       aria-hidden="true"
                     />
-                    <span className="sr-only">{t("vatInfo")}</span>
+                    <span className="sr-only">
+                      {t("vatInfo", { percent: taxPercent })}
+                    </span>
                   </span>
                 </span>
                 <span className="flex items-center gap-1 font-clash text-lg text-muted-foreground">
-                  {formatNumber(vatAmount, locale)}
+                  {formatNumber(vatAmount, locale, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  })}
                   <SaudiRiyal className="size-3.5" aria-hidden="true" />
                 </span>
               </div>

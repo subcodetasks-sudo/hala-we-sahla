@@ -8,11 +8,7 @@ import CopyButton from "@/components/shared/copy-button"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import PaymentDeliveryUnavailableNotice from "@/features/forms/components/payment-delivery-unavailable-notice"
-import {
-  getPaymentTotals,
-  PAYMENT_SERVICE_FEE,
-  PAYMENT_VAT_AMOUNT,
-} from "@/features/forms/components/payment-checkout-summary"
+import { usePaymentTotals } from "@/features/forms/hooks/use-order-pricing"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
@@ -30,7 +26,7 @@ export default function PaymentDeliveryUnavailable({
   const t = useTranslations("Forms.trackOrders.detail.payment.deliveryUnavailable")
   const tCheckout = useTranslations("Forms.trackOrders.detail.payment.checkout")
   const locale = useLocale()
-  const totals = getPaymentTotals("electronic")
+  const totals = usePaymentTotals("electronic")
 
   return (
     <div className="mx-auto w-full max-w-xl rounded-[28px] bg-linear-to-b from-primary to-transparent p-px sm:rounded-[32px]">
@@ -92,14 +88,16 @@ export default function PaymentDeliveryUnavailable({
               {tCheckout("serviceFee")}
             </span>
             <span className="flex items-center gap-1 font-clash text-base font-medium text-[#3d4f57]">
-              {formatNumber(PAYMENT_SERVICE_FEE, locale)}
+              {formatNumber(totals.serviceFee, locale)}
               <SaudiRiyal className="size-3.5 text-[#6b7c85]" aria-hidden />
             </span>
           </div>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-[#6b7c85]">{tCheckout("vat")}</span>
+            <span className="text-sm text-[#6b7c85]">
+              {tCheckout("vat", { percent: totals.taxPercent })}
+            </span>
             <span className="flex items-center gap-1 font-clash text-base font-medium text-[#3d4f57]">
-              {formatNumber(PAYMENT_VAT_AMOUNT, locale, {
+              {formatNumber(totals.vatAmount, locale, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}

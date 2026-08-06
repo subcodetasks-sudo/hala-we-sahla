@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { DIGITS_ONLY_PATTERN, SAUDI_PHONE_PATTERN } from "@/features/forms/lib/input-filters"
+
 export const INQUIRY_TYPE_KEYS = [
   "orderStatus",
   "payment",
@@ -17,7 +19,17 @@ type SupportInquiryMessages = {
   messageRequired: string
 }
 
-export function createSupportInquirySchema(messages: SupportInquiryMessages) {
+export function createSupportInquirySchema(
+  messages: SupportInquiryMessages,
+  inquiryTypeIds: string[],
+) {
+  const inquiryTypeSchema =
+    inquiryTypeIds.length > 0
+      ? z.enum(inquiryTypeIds as [string, ...string[]], {
+          error: () => messages.inquiryTypeRequired,
+        })
+      : z.string().min(1, { message: messages.inquiryTypeRequired })
+
   return z.object({
     fullName: z
       .string()
@@ -26,11 +38,12 @@ export function createSupportInquirySchema(messages: SupportInquiryMessages) {
     phone: z
       .string()
       .trim()
-      .regex(/^05\d{8}$/, { message: messages.phoneInvalid }),
-    orderNumber: z.string().trim(),
-    inquiryType: z.enum(INQUIRY_TYPE_KEYS, {
-      error: () => messages.inquiryTypeRequired,
-    }),
+      .regex(SAUDI_PHONE_PATTERN, { message: messages.phoneInvalid }),
+    orderNumber: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || DIGITS_ONLY_PATTERN.test(value)),
+    inquiryType: inquiryTypeSchema,
     message: z
       .string()
       .trim()

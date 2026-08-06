@@ -8,7 +8,8 @@ type LegalSectionCardProps = {
   number: string
   title: string
   subtitle: string
-  body: string
+  body?: string
+  contentHtml?: string | null
   items?: string[]
   note?: string
   className?: string
@@ -20,6 +21,7 @@ export default function LegalSectionCard({
   title,
   subtitle,
   body,
+  contentHtml,
   items,
   note,
   className,
@@ -46,7 +48,9 @@ export default function LegalSectionCard({
             <h2 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               {title}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+            {subtitle ? (
+              <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+            ) : null}
           </div>
         </div>
 
@@ -56,23 +60,32 @@ export default function LegalSectionCard({
       </div>
 
       <div className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-        <p>{body}</p>
+        {contentHtml ? (
+          <div
+            className="space-y-4 [&_li]:flex [&_li]:items-start [&_li]:gap-2.5 [&_p]:m-0 [&_ul]:flex [&_ul]:flex-col [&_ul]:gap-3"
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
+        ) : (
+          <>
+            {body ? <p>{body}</p> : null}
 
-        {items && items.length > 0 ? (
-          <ul className="flex flex-col gap-3">
-            {items.map((item) => (
-              <li key={item} className="flex items-center gap-2.5">
-                <CustomIcon
-                  size={16}
-                  className="shrink-0 text-primary"
-                  src="/icons/check-green.svg"
-                />
-                <div className="size-1.5 rounded-full bg-black"></div>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+            {items && items.length > 0 ? (
+              <ul className="flex flex-col gap-3">
+                {items.map((item) => (
+                  <li key={item} className="flex items-center gap-2.5">
+                    <CustomIcon
+                      size={16}
+                      className="shrink-0 text-primary"
+                      src="/icons/check-green.svg"
+                    />
+                    <div className="size-1.5 rounded-full bg-black"></div>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </>
+        )}
       </div>
 
       {note ? (

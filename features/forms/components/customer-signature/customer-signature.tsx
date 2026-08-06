@@ -290,44 +290,56 @@ export default function CustomerSignature({
           >
             <TabsList
               className={cn(
-                "grid h-11! w-full grid-cols-2 gap-1 rounded-full bg-[#e8f0f2] p-1 sm:h-12! sm:p-1.5 group-data-horizontal/tabs:h-11! sm:group-data-horizontal/tabs:h-12!",
+                "grid h-11! w-full gap-1 rounded-full bg-[#e8f0f2] p-1 sm:h-12! sm:p-1.5 group-data-horizontal/tabs:h-11! sm:group-data-horizontal/tabs:h-12!",
                 forcedMode && "hidden",
+                availableModes.length === 1 && "grid-cols-1",
+                availableModes.length > 1 && "grid-cols-2",
               )}
             >
-              <TabsTrigger
-                value="draw"
-                className={cn(
-                  "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
-                  "hover:text-foreground",
-                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
-                  "data-active:bg-primary data-active:text-white data-active:shadow-sm",
-                )}
-              >
-                <PenLine className="size-3.5 sm:size-4" aria-hidden="true" />
-                <span className="truncate">{t("tabs.draw")}</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="upload"
-                className={cn(
-                  "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
-                  "hover:text-foreground",
-                  "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
-                  "data-active:bg-primary data-active:text-white data-active:shadow-sm",
-                )}
-              >
-                <Upload className="size-3.5 sm:size-4" aria-hidden="true" />
-                <span className="truncate">{t("tabs.upload")}</span>
-              </TabsTrigger>
+              {availableModes.includes("draw") ? (
+                <TabsTrigger
+                  value="draw"
+                  className={cn(
+                    "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
+                    "hover:text-foreground",
+                    "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
+                    "data-active:bg-primary data-active:text-white data-active:shadow-sm",
+                  )}
+                >
+                  <PenLine className="size-3.5 sm:size-4" aria-hidden="true" />
+                  <span className="truncate">{t("tabs.draw")}</span>
+                </TabsTrigger>
+              ) : null}
+              {availableModes.includes("upload") ? (
+                <TabsTrigger
+                  value="upload"
+                  className={cn(
+                    "h-full gap-1 rounded-full px-2 text-xs font-semibold text-muted-foreground shadow-none after:hidden sm:gap-1.5 sm:px-3 sm:text-sm",
+                    "hover:text-foreground",
+                    "data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm",
+                    "data-active:bg-primary data-active:text-white data-active:shadow-sm",
+                  )}
+                >
+                  <Upload className="size-3.5 sm:size-4" aria-hidden="true" />
+                  <span className="truncate">{t("tabs.upload")}</span>
+                </TabsTrigger>
+              ) : null}
             </TabsList>
 
-            <TabsContent value="draw" className="mt-0 outline-none">
-              <SignaturePad
-                pad={pad}
-                clearLabel={t("clear")}
-                undoLabel={t("undo")}
-                padHint={t("padHint")}
-              />
-            </TabsContent>
+            {/*
+              Hand signature (draw) — disabled for worker upload-only (`modes={["upload"]}`).
+              Employer signature still uses draw + upload.
+            */}
+            {availableModes.includes("draw") ? (
+              <TabsContent value="draw" className="mt-0 outline-none">
+                <SignaturePad
+                  pad={pad}
+                  clearLabel={t("clear")}
+                  undoLabel={t("undo")}
+                  padHint={t("padHint")}
+                />
+              </TabsContent>
+            ) : null}
 
             <TabsContent value="upload" className="mt-0 outline-none">
               <div className="flex flex-col gap-3">

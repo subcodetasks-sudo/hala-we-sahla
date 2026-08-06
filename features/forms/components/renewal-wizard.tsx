@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { ArrowLeft, ChevronRight } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
@@ -51,11 +51,16 @@ import {
   type WorkerStepValues,
 } from "@/features/forms/schemas/worker-step"
 import { cn } from "@/lib/utils"
+import { calculateRenewalOrderTotals } from "@/features/forms/lib/order-pricing"
+import {
+  plansQueryOptions,
+  resolveRenewalPlanId,
+} from "@/features/landing/services/plans"
+import {
+  resolveWhatsappHref,
+  settingsQueryOptions,
+} from "@/features/landing/services/settings"
 
-const SERVICE_FEE = 199
-const VAT_AMOUNT = 29
-const TOTAL = 228
-const WHATSAPP_HREF = "https://wa.me/96670006741"
 const DRAFT_SAVE_DEBOUNCE_MS = 400
 
 const STEP_ICONS = {
@@ -72,6 +77,15 @@ export default function RenewalWizard() {
   const tDocuments = useTranslations("Forms.renewal.wizard.documents")
   const locale = useLocale()
   const queryClient = useQueryClient()
+  const plansQuery = useQuery(plansQueryOptions(locale))
+  const settingsQuery = useQuery(settingsQueryOptions(locale))
+  const renewalPlanId = resolveRenewalPlanId(plansQuery.data)
+  const whatsappHref = resolveWhatsappHref(settingsQuery.data?.social_media)
+  const orderTotals = useMemo(
+    () =>
+      calculateRenewalOrderTotals(plansQuery.data, settingsQuery.data),
+    [plansQuery.data, settingsQuery.data],
+  )
   const [step, setStep] = useState(0)
   const [maxReachedStep, setMaxReachedStep] = useState(0)
   const [draftReady, setDraftReady] = useState(false)
@@ -325,8 +339,7 @@ export default function RenewalWizard() {
             phone: values.phone,
             city_id: Number(values.city_id),
             passport_issue_place_id: Number(values.passport_issue_place_id),
-            plan_id:1
-
+            plan_id: renewalPlanId,
           })
           setRequestId(result.id)
         } catch {
@@ -548,9 +561,10 @@ export default function RenewalWizard() {
 
       <aside className="flex flex-col gap-4 lg:sticky lg:top-24 max-lg:order-first">
         <OrderSummaryCard
-          serviceFee={SERVICE_FEE}
-          vatAmount={VAT_AMOUNT}
-          total={TOTAL}
+          serviceFee={orderTotals.serviceFee}
+          vatAmount={orderTotals.vatAmount}
+          total={orderTotals.total}
+          taxPercent={orderTotals.taxPercent}
         />
 
         <Card className="gap-5 rounded-4xl border-none bg-card p-10 shadow-none ring-1 ring-border/60">
@@ -570,7 +584,7 @@ export default function RenewalWizard() {
             className="mx-auto h-12 w-fit gap-2.5 rounded-full bg-[#0DB38B] text-base text-white hover:bg-[#0DB38B]/80!"
             asChild
           >
-            <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer">
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
               <CustomIcon
                 src="/icons/whatsapp.svg"
                 size={18}

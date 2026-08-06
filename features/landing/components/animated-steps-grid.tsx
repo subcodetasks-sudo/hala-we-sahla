@@ -7,10 +7,14 @@ import StepCard from "@/features/landing/components/step-card"
 type StepItem = {
   key: string
   label: string
+  title?: string
   image: string
   imageAlt: string
-  arrowPlacement: "top" | "bottom"
+  imageIsRemote?: boolean
+  titlePlacement: "top" | "bottom"
+  iconIndex?: number
   tone: "accent" | "success"
+  framed?: boolean
 }
 
 type AnimatedStepsGridProps = {
@@ -39,20 +43,24 @@ const itemVariants: Variants = {
 export default function AnimatedStepsGrid({ items }: AnimatedStepsGridProps) {
   return (
     <motion.div
-      className="mt-12 grid grid-cols-1 items-start gap-10 sm:grid-cols-2 sm:gap-8 lg:mt-16 lg:grid-cols-4 lg:gap-6 xl:gap-8"
+      className="mt-12 grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 sm:gap-6 lg:mt-16 lg:grid-cols-4 lg:gap-5 xl:gap-6"
       variants={containerVariants}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
     >
-      {items.map((item) => (
-        <motion.div key={item.key} variants={itemVariants}>
+      {items.map((item, index) => (
+        <motion.div key={item.key} variants={itemVariants} className="h-full">
           <StepCard
             label={item.label}
+            title={item.title}
             image={item.image}
             imageAlt={item.imageAlt}
-            arrowPlacement={item.arrowPlacement}
+            imageIsRemote={item.imageIsRemote}
+            titlePlacement={item.titlePlacement}
+            iconIndex={item.iconIndex ?? index}
             tone={item.tone}
+            framed={item.framed}
           />
         </motion.div>
       ))}

@@ -13,6 +13,8 @@ import {
   WORKER_PASSPORT_ISSUE_COUNTRY,
   passportIssuePlacesQueryOptions,
 } from "@/features/forms/services/passport-issue-places"
+import { plansQueryOptions } from "@/features/landing/services/plans"
+import { settingsQueryOptions } from "@/features/landing/services/settings"
 
 export default async function CreateRenewalPage() {
   const tCommon = await getTranslations("Common")
@@ -28,6 +30,8 @@ export default async function CreateRenewalPage() {
     queryClient.prefetchQuery(
       passportIssuePlacesQueryOptions(locale, WORKER_PASSPORT_ISSUE_COUNTRY),
     ),
+    queryClient.prefetchQuery(plansQueryOptions(locale)),
+    queryClient.prefetchQuery(settingsQueryOptions(locale)),
   ])
 
   return (
