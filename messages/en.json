@@ -860,6 +860,7 @@
             "backTitle": "Payment cancelled or failed",
             "backDescription": "You returned from the payment gateway without completing the payment. You can try again later.",
             "requestNumber": "Request number",
+            "copyNumber": "Copy request number",
             "statusLabel": "Payment status",
             "statuses": {
               "paid": "Paid",
@@ -1262,7 +1263,9 @@
           "smsHint": "An SMS will be sent to the registered mobile number with the request number and confirmation of receipt.",
           "followUp": "Your request has been received. We will contact you as soon as possible.",
           "goHome": "Go to home page",
-          "trackOrder": "Track your request"
+          "trackOrder": "Track your request",
+          "tracking": "Tracking...",
+          "trackFailed": "Could not track the request. Please try again."
         }
       }
     },

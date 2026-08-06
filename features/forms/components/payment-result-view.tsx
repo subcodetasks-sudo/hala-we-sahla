@@ -13,6 +13,7 @@ import {
 import { useLocale, useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
+import CopyButton from "@/components/shared/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -358,12 +359,25 @@ export default function PaymentResultView({
                 <p className="text-sm text-muted-foreground">
                   {t("requestNumber")}
                 </p>
-                <p
-                  dir="ltr"
-                  className="font-clash text-base font-bold tracking-wide text-black"
-                >
-                  {resolvedRequestNumber}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p
+                    dir="ltr"
+                    className="font-clash text-base font-bold tracking-wide text-black"
+                  >
+                    {resolvedRequestNumber}
+                  </p>
+                  <CopyButton
+                    value={resolvedRequestNumber}
+                    label={t("copyNumber")}
+                    className="size-7 rounded-full bg-[#e8f4f6] text-[#1a3d4d] transition-colors hover:bg-[#dceef1]"
+                  >
+                    <CustomIcon
+                      src="/icons/copy.svg"
+                      size={14}
+                      className="size-3.5 text-black"
+                    />
+                  </CopyButton>
+                </div>
               </div>
             ) : null}
             {payment?.description ? (

@@ -466,7 +466,10 @@ export default function RenewalWizard() {
 
         <Card className="gap-0 rounded-2xl border border-[#cfe5e8] bg-card px-5 py-6 shadow-none ring-0 sm:px-8 sm:py-8">
           {isSubmitted && submittedRequestNumber ? (
-            <SuccessStep requestNumber={submittedRequestNumber} />
+            <SuccessStep
+              requestNumber={submittedRequestNumber}
+              phone={employerForm.getValues("phone")}
+            />
           ) : (
             <>
               {!isReviewStep ? (
