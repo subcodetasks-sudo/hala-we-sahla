@@ -46,6 +46,21 @@ function getPaymentSessionSnapshot(requestNumber?: string | null) {
   return session ? JSON.stringify(session) : null
 }
 
+const KNOWN_PAYMENT_STATUSES = new Set([
+  "paid",
+  "paid_out",
+  "captured",
+  "completed",
+  "success",
+  "failed",
+  "expired",
+  "canceled",
+  "cancelled",
+  "voided",
+  "initiated",
+  "pending",
+])
+
 function getStatusBadgeClass(outcome: PaymentOutcome) {
   if (outcome === "paid") {
     return "border-transparent bg-custom-green/15 text-custom-green"
@@ -54,6 +69,19 @@ function getStatusBadgeClass(outcome: PaymentOutcome) {
     return "border-transparent bg-destructive/10 text-destructive"
   }
   return "border-transparent bg-primary/10 text-primary"
+}
+
+function getStatusTranslationKey(status: string) {
+  return status.trim().toLowerCase().replace(/\s+/g, "_")
+}
+
+function translatePaymentStatus(
+  status: string,
+  t: ReturnType<typeof useTranslations>,
+) {
+  const key = getStatusTranslationKey(status)
+  if (!KNOWN_PAYMENT_STATUSES.has(key)) return status
+  return t(`statuses.${key}` as "statuses.paid")
 }
 
 function resolveDisplayAmount(payment: {
@@ -266,11 +294,11 @@ export default function PaymentResultView({
                 <p className="text-sm text-muted-foreground">{t("statusLabel")}</p>
                 <Badge
                   className={cn(
-                    "h-6 px-2.5 font-clash text-xs font-semibold tracking-wide uppercase",
+                    "h-6 px-2.5 text-xs font-semibold",
                     getStatusBadgeClass(outcome),
                   )}
                 >
-                  {payment.status}
+                  {translatePaymentStatus(payment.status, t)}
                 </Badge>
               </div>
             ) : null}
