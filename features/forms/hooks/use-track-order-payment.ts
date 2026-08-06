@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 const PAYMENT_CHANGE_EVENT = "track-order-payment-change"
 
@@ -60,19 +60,22 @@ export function useTrackOrderPayment(requestNumber?: string) {
     return () => window.removeEventListener(PAYMENT_CHANGE_EVENT, sync)
   }, [storageKey, requestNumber])
 
-  function markPaid(method: TrackOrderDeliveryMethod = "electronic") {
-    if (!storageKey || !requestNumber) return
+  const markPaid = useCallback(
+    (method: TrackOrderDeliveryMethod = "electronic") => {
+      if (!storageKey || !requestNumber) return
 
-    const at = Date.now()
-    window.sessionStorage.setItem(storageKey, String(at))
-    window.sessionStorage.setItem(
-      getTrackOrderDeliveryStorageKey(requestNumber),
-      method,
-    )
-    setPaidAt(new Date(at))
-    setDeliveryMethod(method)
-    window.dispatchEvent(new Event(PAYMENT_CHANGE_EVENT))
-  }
+      const at = Date.now()
+      window.sessionStorage.setItem(storageKey, String(at))
+      window.sessionStorage.setItem(
+        getTrackOrderDeliveryStorageKey(requestNumber),
+        method,
+      )
+      setPaidAt(new Date(at))
+      setDeliveryMethod(method)
+      window.dispatchEvent(new Event(PAYMENT_CHANGE_EVENT))
+    },
+    [requestNumber, storageKey],
+  )
 
   return {
     isPaid: paidAt != null,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useSyncExternalStore } from "react"
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react"
 import { useQuery } from "@tanstack/react-query"
 import {
   CircleAlert,
@@ -76,12 +76,38 @@ function getStatusTranslationKey(status: string) {
 }
 
 function translatePaymentStatus(
-  status: string,
+  status: string | null | undefined,
   t: ReturnType<typeof useTranslations>,
 ) {
+  if (!status) return ""
   const key = getStatusTranslationKey(status)
   if (!KNOWN_PAYMENT_STATUSES.has(key)) return status
-  return t(`statuses.${key}` as "statuses.paid")
+
+  switch (key) {
+    case "paid":
+    case "paid_out":
+      return t("statuses.paid")
+    case "captured":
+    case "completed":
+      return t("statuses.completed")
+    case "success":
+      return t("statuses.success")
+    case "failed":
+      return t("statuses.failed")
+    case "expired":
+      return t("statuses.expired")
+    case "canceled":
+    case "cancelled":
+      return t("statuses.cancelled")
+    case "voided":
+      return t("statuses.voided")
+    case "initiated":
+      return t("statuses.initiated")
+    case "pending":
+      return t("statuses.pending")
+    default:
+      return status
+  }
 }
 
 function resolveDisplayAmount(payment: {
@@ -164,8 +190,16 @@ export default function PaymentResultView({
 
   const displayAmount = payment ? resolveDisplayAmount(payment) : null
 
+  const markedPaidRef = useRef(false)
+
+  useEffect(() => {
+    markedPaidRef.current = false
+  }, [invoiceId])
+
   useEffect(() => {
     if (outcome !== "paid" || !resolvedRequestNumber) return
+    if (markedPaidRef.current) return
+    markedPaidRef.current = true
     markPaid(session?.deliveryMethod ?? "electronic")
   }, [markPaid, outcome, resolvedRequestNumber, session?.deliveryMethod])
 
