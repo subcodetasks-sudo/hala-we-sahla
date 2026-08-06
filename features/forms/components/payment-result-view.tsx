@@ -3,15 +3,16 @@
 import { useEffect, useMemo, useSyncExternalStore } from "react"
 import { useQuery } from "@tanstack/react-query"
 import {
-  ArrowUpLeft,
   CircleAlert,
   LoaderCircle,
   Lock,
+  SaudiRiyal,
   X,
 } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 
 import CustomIcon from "@/components/custom-icon"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
@@ -28,6 +29,7 @@ import {
   type PaymentOutcome,
 } from "@/features/forms/services/payment"
 import { Link } from "@/i18n/navigation"
+import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 type PaymentResultViewProps = {
@@ -44,6 +46,31 @@ function getPaymentSessionSnapshot(requestNumber?: string | null) {
   return session ? JSON.stringify(session) : null
 }
 
+function getStatusBadgeClass(outcome: PaymentOutcome) {
+  if (outcome === "paid") {
+    return "border-transparent bg-custom-green/15 text-custom-green"
+  }
+  if (outcome === "failed") {
+    return "border-transparent bg-destructive/10 text-destructive"
+  }
+  return "border-transparent bg-primary/10 text-primary"
+}
+
+function resolveDisplayAmount(payment: {
+  amount?: number
+  amount_format?: string
+  metadata?: { total?: number }
+}) {
+  if (typeof payment.metadata?.total === "number") {
+    return payment.metadata.total
+  }
+  if (typeof payment.amount === "number") {
+    // Moyasar amounts are in the smallest currency unit (halalas)
+    return payment.amount / 100
+  }
+  return null
+}
+
 export default function PaymentResultView({
   mode = "status",
   invoiceId: invoiceIdProp,
@@ -52,6 +79,7 @@ export default function PaymentResultView({
   className,
 }: PaymentResultViewProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment.result")
+  const tCommon = useTranslations("Common")
   const locale = useLocale()
 
   const sessionJson = useSyncExternalStore(
@@ -106,6 +134,8 @@ export default function PaymentResultView({
     Boolean(contractUrl) &&
     (renewalRequest?.actions?.can_download_contract ?? true)
 
+  const displayAmount = payment ? resolveDisplayAmount(payment) : null
+
   useEffect(() => {
     if (outcome !== "paid" || !resolvedRequestNumber) return
     markPaid(session?.deliveryMethod ?? "electronic")
@@ -116,10 +146,6 @@ export default function PaymentResultView({
     if (resolvedRequestNumber) clearPaymentSession(resolvedRequestNumber)
     else clearPaymentSession()
   }, [outcome, resolvedRequestNumber])
-
-  const trackHref = resolvedRequestNumber
-    ? `/track-orders/${encodeURIComponent(resolvedRequestNumber)}`
-    : "/track-orders"
 
   const retryHref = resolvedRequestNumber
     ? `/track-orders/${encodeURIComponent(resolvedRequestNumber)}/payment`
@@ -230,7 +256,7 @@ export default function PaymentResultView({
           </>
         ) : null}
 
-        {(payment?.amount_format ||
+        {(displayAmount != null ||
           payment?.status ||
           resolvedRequestNumber ||
           payment?.description) && (
@@ -238,19 +264,27 @@ export default function PaymentResultView({
             {payment?.status ? (
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-muted-foreground">{t("statusLabel")}</p>
-                <p
-                  dir="ltr"
-                  className="font-clash text-sm font-semibold tracking-wide text-black uppercase"
+                <Badge
+                  className={cn(
+                    "h-6 px-2.5 font-clash text-xs font-semibold tracking-wide uppercase",
+                    getStatusBadgeClass(outcome),
+                  )}
                 >
                   {payment.status}
-                </p>
+                </Badge>
               </div>
             ) : null}
-            {payment?.amount_format ? (
+            {displayAmount != null ? (
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-muted-foreground">{t("amountLabel")}</p>
-                <p className="font-clash text-lg font-bold text-primary">
-                  {payment.amount_format}
+                <p className="flex items-center gap-1 font-clash text-lg font-bold text-primary">
+                  <span dir="ltr">
+                    {formatNumber(displayAmount, locale, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <SaudiRiyal className="size-5" aria-hidden="true" />
                 </p>
               </div>
             ) : null}
@@ -284,8 +318,12 @@ export default function PaymentResultView({
               {canDownloadContract && contractUrl ? (
                 <Button asChild className="h-12 w-full gap-2 rounded-full text-base">
                   <a href={contractUrl} target="_blank" rel="noopener noreferrer">
+                    <CustomIcon
+                      src="/icons/download.svg"
+                      size={18}
+                      className="size-[18px] text-current"
+                    />
                     {t("downloadContract")}
-                    <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
                   </a>
                 </Button>
               ) : null}
@@ -294,9 +332,13 @@ export default function PaymentResultView({
                 variant={canDownloadContract && contractUrl ? "outline" : "default"}
                 className="h-12 w-full gap-2 rounded-full text-base"
               >
-                <Link href={trackHref}>
-                  {t("trackOrder")}
-                  <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
+                <Link href="/">
+                  <CustomIcon
+                    src="/icons/home.svg"
+                    size={18}
+                    className="size-[18px] text-current"
+                  />
+                  {tCommon("home")}
                 </Link>
               </Button>
             </>
@@ -308,17 +350,21 @@ export default function PaymentResultView({
                 asChild
                 className="h-12 w-full gap-2 rounded-full text-base"
               >
-                <Link href={retryHref}>
-                  {t("retry")}
-                  <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
-                </Link>
+                <Link href={retryHref}>{t("retry")}</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="h-12 w-full rounded-full text-base"
+                className="h-12 w-full gap-2 rounded-full text-base"
               >
-                <Link href={trackHref}>{t("backToTrack")}</Link>
+                <Link href="/">
+                  <CustomIcon
+                    src="/icons/home.svg"
+                    size={18}
+                    className="size-[18px] text-current"
+                  />
+                  {tCommon("home")}
+                </Link>
               </Button>
             </>
           ) : null}
