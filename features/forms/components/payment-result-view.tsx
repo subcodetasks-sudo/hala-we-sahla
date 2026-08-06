@@ -77,13 +77,14 @@ export default function PaymentResultView({
     enabled: Boolean(invoiceId),
     refetchInterval: (query) => {
       if (mode === "failed") return false
-      const status = query.state.data?.data?.status
+      const status = query.state.data?.data?.payment?.status
       if (!status) return 3000
       return resolvePaymentOutcome(status) === "pending" ? 3000 : false
     },
   })
 
-  const payment = statusQuery.data?.data
+  const payment = statusQuery.data?.data?.payment
+  const renewalRequest = statusQuery.data?.data?.renewalRequest
   const apiMessage = statusQuery.data?.message
 
   const outcome: PaymentOutcome = useMemo(() => {
@@ -95,7 +96,15 @@ export default function PaymentResultView({
   }, [mode, invoiceId, payment, statusQuery.isError])
 
   const resolvedRequestNumber =
-    payment?.metadata?.request_number || requestNumber || null
+    payment?.metadata?.request_number ||
+    renewalRequest?.request_number ||
+    requestNumber ||
+    null
+
+  const contractUrl = renewalRequest?.final_contract_url || null
+  const canDownloadContract =
+    Boolean(contractUrl) &&
+    (renewalRequest?.actions?.can_download_contract ?? true)
 
   useEffect(() => {
     if (outcome !== "paid" || !resolvedRequestNumber) return
@@ -271,12 +280,26 @@ export default function PaymentResultView({
 
         <div className="mt-8 flex flex-col gap-3">
           {outcome === "paid" ? (
-            <Button asChild className="h-12 w-full gap-2 rounded-full text-base">
-              <Link href={trackHref}>
-                {t("trackOrder")}
-                <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
-              </Link>
-            </Button>
+            <>
+              {canDownloadContract && contractUrl ? (
+                <Button asChild className="h-12 w-full gap-2 rounded-full text-base">
+                  <a href={contractUrl} target="_blank" rel="noopener noreferrer">
+                    {t("downloadContract")}
+                    <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
+                  </a>
+                </Button>
+              ) : null}
+              <Button
+                asChild
+                variant={canDownloadContract && contractUrl ? "outline" : "default"}
+                className="h-12 w-full gap-2 rounded-full text-base"
+              >
+                <Link href={trackHref}>
+                  {t("trackOrder")}
+                  <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />
+                </Link>
+              </Button>
+            </>
           ) : null}
 
           {outcome === "failed" ? (
