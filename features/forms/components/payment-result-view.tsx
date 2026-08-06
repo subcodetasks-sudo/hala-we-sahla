@@ -31,7 +31,8 @@ import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
 type PaymentResultViewProps = {
-  mode: "success" | "failed"
+  /** `status` follows the API only. `failed` forces the cancel/fail UI. */
+  mode?: "status" | "failed"
   invoiceId?: string | null
   requestNumber?: string | null
   provider?: string
@@ -44,7 +45,7 @@ function getPaymentSessionSnapshot(requestNumber?: string | null) {
 }
 
 export default function PaymentResultView({
-  mode,
+  mode = "status",
   invoiceId: invoiceIdProp,
   requestNumber: requestNumberProp,
   provider = PAYMENT_PROVIDER,
@@ -65,8 +66,7 @@ export default function PaymentResultView({
     : null
 
   const invoiceId = invoiceIdProp || session?.invoiceId || null
-  const requestNumber =
-    requestNumberProp || session?.requestNumber || null
+  const requestNumber = requestNumberProp || session?.requestNumber || null
   const resolvedProvider = provider || session?.provider || PAYMENT_PROVIDER
 
   const { markPaid } = useTrackOrderPayment(requestNumber ?? undefined)
@@ -84,13 +84,15 @@ export default function PaymentResultView({
   })
 
   const payment = statusQuery.data?.data
+  const apiMessage = statusQuery.data?.message
+
   const outcome: PaymentOutcome = useMemo(() => {
     if (mode === "failed") return "failed"
+    if (!invoiceId) return "failed"
     if (payment) return resolvePaymentOutcome(payment.status)
     if (statusQuery.isError) return "failed"
-    if (!invoiceId) return mode === "success" ? "paid" : "failed"
     return "pending"
-  }, [mode, payment, statusQuery.isError, invoiceId])
+  }, [mode, invoiceId, payment, statusQuery.isError])
 
   const resolvedRequestNumber =
     payment?.metadata?.request_number || requestNumber || null
@@ -114,6 +116,34 @@ export default function PaymentResultView({
     ? `/track-orders/${encodeURIComponent(resolvedRequestNumber)}/payment`
     : "/track-orders"
 
+  if (!invoiceId) {
+    return (
+      <div
+        className={cn(
+          "mx-auto w-full max-w-xl rounded-[28px] bg-linear-to-b from-destructive/70 to-transparent p-px sm:rounded-[32px]",
+          className,
+        )}
+      >
+        <Card className="gap-0 rounded-[28px] border-none bg-white p-6 text-center shadow-none sm:rounded-[32px] sm:p-10">
+          <div className="mx-auto flex size-24 items-center justify-center rounded-tl-[30px] rounded-tr-[13px] rounded-br-[30px] rounded-bl-[13px] bg-destructive shadow-[0_12px_40px_rgba(220,38,38,0.35)]">
+            <X className="size-12 text-white" strokeWidth={3} aria-hidden />
+          </div>
+          <h1 className="mt-6 text-2xl font-bold text-destructive sm:text-3xl">
+            {t("missingInvoiceTitle")}
+          </h1>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
+            {t("missingInvoiceDescription")}
+          </p>
+          <div className="mt-8">
+            <Button asChild className="h-12 w-full rounded-full text-base">
+              <Link href={retryHref}>{t("retry")}</Link>
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
@@ -136,7 +166,7 @@ export default function PaymentResultView({
               {t("pendingTitle")}
             </h1>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
-              {t("pendingDescription")}
+              {apiMessage || t("pendingDescription")}
             </p>
           </>
         ) : null}
@@ -170,13 +200,8 @@ export default function PaymentResultView({
               {t("successTitle")}
             </h1>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
-              {t("successDescription")}
+              {apiMessage || t("successDescription")}
             </p>
-            {payment?.amount_format ? (
-              <p className="mt-5 font-clash text-3xl font-bold text-primary">
-                {payment.amount_format}
-              </p>
-            ) : null}
           </>
         ) : null}
 
@@ -191,22 +216,58 @@ export default function PaymentResultView({
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
               {mode === "failed"
                 ? t("backDescription")
-                : statusQuery.data?.message || t("failedDescription")}
+                : apiMessage || t("failedDescription")}
             </p>
           </>
         ) : null}
 
-        {resolvedRequestNumber ? (
-          <div className="mt-8 rounded-2xl bg-background px-4 py-4">
-            <p className="text-sm text-muted-foreground">{t("requestNumber")}</p>
-            <p
-              dir="ltr"
-              className="mt-1 font-clash text-xl font-bold tracking-wide text-black"
-            >
-              {resolvedRequestNumber}
-            </p>
+        {(payment?.amount_format ||
+          payment?.status ||
+          resolvedRequestNumber ||
+          payment?.description) && (
+          <div className="mt-8 space-y-3 rounded-2xl bg-background px-4 py-4 text-start">
+            {payment?.status ? (
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">{t("statusLabel")}</p>
+                <p
+                  dir="ltr"
+                  className="font-clash text-sm font-semibold tracking-wide text-black uppercase"
+                >
+                  {payment.status}
+                </p>
+              </div>
+            ) : null}
+            {payment?.amount_format ? (
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">{t("amountLabel")}</p>
+                <p className="font-clash text-lg font-bold text-primary">
+                  {payment.amount_format}
+                </p>
+              </div>
+            ) : null}
+            {resolvedRequestNumber ? (
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                  {t("requestNumber")}
+                </p>
+                <p
+                  dir="ltr"
+                  className="font-clash text-base font-bold tracking-wide text-black"
+                >
+                  {resolvedRequestNumber}
+                </p>
+              </div>
+            ) : null}
+            {payment?.description ? (
+              <div className="border-t border-border/60 pt-3">
+                <p className="text-sm text-muted-foreground">
+                  {t("descriptionLabel")}
+                </p>
+                <p className="mt-1 text-sm text-black">{payment.description}</p>
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        )}
 
         <div className="mt-8 flex flex-col gap-3">
           {outcome === "paid" ? (
@@ -220,7 +281,10 @@ export default function PaymentResultView({
 
           {outcome === "failed" ? (
             <>
-              <Button asChild className="h-12 w-full gap-2 rounded-full text-base">
+              <Button
+                asChild
+                className="h-12 w-full gap-2 rounded-full text-base"
+              >
                 <Link href={retryHref}>
                   {t("retry")}
                   <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden />

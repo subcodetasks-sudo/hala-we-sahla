@@ -23,7 +23,6 @@ import {
 } from "@/features/forms/services/delivery-method"
 import {
   buildAppPaymentUrls,
-  buildPaymentCallbackUrl,
   PAYMENT_CURRENCY,
   PAYMENT_PROVIDER,
 } from "@/features/forms/services/payment"
@@ -110,17 +109,11 @@ export default function PaymentFlow({ requestNumber }: PaymentFlowProps) {
     }
 
     try {
-      const { success_url, back_url } = buildAppPaymentUrls(
+      const { success_url, back_url, callback_url } = buildAppPaymentUrls(
         window.location.origin,
         locale,
         { requestNumber },
       )
-      const callback_url = buildPaymentCallbackUrl()
-
-      if (!callback_url) {
-        toast.error(t("initiateError"))
-        return
-      }
 
       const customerName =
         data?.employer_name?.trim() || t("checkout.customerNameFallback")

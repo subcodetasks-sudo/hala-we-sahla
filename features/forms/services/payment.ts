@@ -97,15 +97,6 @@ export function resolvePaymentOutcome(status: string): PaymentOutcome {
   return "pending"
 }
 
-export function buildPaymentCallbackUrl() {
-  const base =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-    process.env.API_URL?.replace(/\/$/, "") ||
-    ""
-
-  return `${base}/payment/moyasar/callback`
-}
-
 export function buildAppPaymentUrls(
   origin: string,
   locale: string,
@@ -129,9 +120,15 @@ export function buildAppPaymentUrls(
   const query = params.toString()
   const suffix = query ? `?${query}` : ""
 
+  // Browser return pages after Moyasar (same host as the running app: localhost/prod)
+  const success_url = `${root}${localePrefix}/payment/success${suffix}`
+  const back_url = `${root}${localePrefix}/payment/back${suffix}`
+
   return {
-    success_url: `${root}${localePrefix}/payment/success${suffix}`,
-    back_url: `${root}${localePrefix}/payment/failed${suffix}`,
+    success_url,
+    back_url,
+    // Frontend page that receives the post-payment redirect, then calls status API
+    callback_url: success_url,
   }
 }
 

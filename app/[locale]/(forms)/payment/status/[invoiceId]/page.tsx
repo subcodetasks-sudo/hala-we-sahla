@@ -30,7 +30,7 @@ export default async function PaymentStatusPage({
       />
       <div className="mt-8 pb-10">
         <PaymentResultView
-          mode="success"
+          mode="status"
           invoiceId={invoiceId}
           requestNumber={request_number}
           provider={provider || PAYMENT_PROVIDER}

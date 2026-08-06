@@ -1,10 +1,9 @@
 import { getTranslations } from "next-intl/server"
 
 import BreadcrumbNav from "@/components/shared/breadcrumb-nav"
-import PaymentResultView from "@/features/forms/components/payment-result-view"
-import { PAYMENT_PROVIDER } from "@/features/forms/services/payment"
+import PaymentStatusResolver from "@/features/forms/components/payment-status-resolver"
 
-type PaymentSuccessPageProps = {
+type PaymentStatusIndexPageProps = {
   searchParams: Promise<{
     invoice_id?: string
     id?: string
@@ -13,13 +12,9 @@ type PaymentSuccessPageProps = {
   }>
 }
 
-/**
- * Post-payment redirect page (success_url / callback_url).
- * Calls GET /payment/status/{invoice_id}?provider=moyasar and shows the result.
- */
-export default async function PaymentSuccessPage({
+export default async function PaymentStatusIndexPage({
   searchParams,
-}: PaymentSuccessPageProps) {
+}: PaymentStatusIndexPageProps) {
   const tCommon = await getTranslations("Common")
   const t = await getTranslations("Forms.trackOrders.detail.payment")
   const params = await searchParams
@@ -34,11 +29,10 @@ export default async function PaymentSuccessPage({
         ]}
       />
       <div className="mt-8 pb-10">
-        <PaymentResultView
-          mode="status"
+        <PaymentStatusResolver
           invoiceId={params.invoice_id || params.id}
           requestNumber={params.request_number}
-          provider={params.provider || PAYMENT_PROVIDER}
+          provider={params.provider}
         />
       </div>
     </div>

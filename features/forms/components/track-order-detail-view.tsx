@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
 
 import TrackOrderCancelAction from "@/features/forms/components/track-order-cancel-action"
@@ -9,11 +9,11 @@ import TrackOrderDetailHeader from "@/features/forms/components/track-order-deta
 import TrackOrderStages from "@/features/forms/components/track-order-stages"
 import TrackOrderWhatsappFab from "@/features/forms/components/track-order-whatsapp-fab"
 import { useTrackOrderDetail } from "@/features/forms/hooks/use-track-order-detail"
-import {
-  getApiCurrentStageIndex,
-} from "@/features/forms/lib/map-track-order-timeline"
+import { getApiCurrentStageIndex } from "@/features/forms/lib/map-track-order-timeline"
+import { readPaymentSession } from "@/features/forms/lib/payment-session"
+import { PAYMENT_PROVIDER } from "@/features/forms/services/payment"
 import { useRouter } from "@/i18n/navigation"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 type TrackOrderDetailViewProps = {
   requestNumber: string
@@ -27,12 +27,33 @@ export default function TrackOrderDetailView({
   const t = useTranslations("Forms.trackOrders")
   const router = useRouter()
   const { data, hasSession, isLoading } = useTrackOrderDetail(requestNumber)
+  const handledReturn = useRef(false)
 
   useEffect(() => {
+    if (handledReturn.current) return
+
+    const params = new URLSearchParams(window.location.search)
+    const phoneFromReturn = params.get("phone")
+    const paymentSession = readPaymentSession(requestNumber)
+
+    // Backend currently returns to track-orders?phone=... after Moyasar.
+    // Send the user to payment status instead of staying on track.
+    if (phoneFromReturn && paymentSession?.invoiceId) {
+      handledReturn.current = true
+      const query = new URLSearchParams({
+        provider: paymentSession.provider || PAYMENT_PROVIDER,
+        request_number: requestNumber,
+      })
+      router.replace(
+        `/payment/status/${encodeURIComponent(paymentSession.invoiceId)}?${query.toString()}`,
+      )
+      return
+    }
+
     if (!hasSession && !isLoading) {
       router.replace("/track-orders")
     }
-  }, [hasSession, isLoading, router])
+  }, [hasSession, isLoading, requestNumber, router])
 
   if (!data) {
     return (
@@ -61,10 +82,7 @@ export default function TrackOrderDetailView({
           employerName={data.employer_name}
           workerName={data.worker_name}
         />
-        <TrackOrderStages
-          requestNumber={requestNumber}
-          trackData={data}
-        />
+        <TrackOrderStages requestNumber={requestNumber} trackData={data} />
       </div>
 
       <TrackOrderWhatsappFab />
