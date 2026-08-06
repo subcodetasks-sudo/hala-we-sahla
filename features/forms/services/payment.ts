@@ -154,9 +154,17 @@ export function normalizePaymentStatusResponse(
   message: string
   data: PaymentStatusResult
 } {
-  const nested = isNestedPaymentStatusPayload(envelope.data)
-  const payment = nested ? envelope.data.payment : envelope.data
-  const renewalRequest = nested ? envelope.data.renewal_request : null
+  const raw = envelope.data
+
+  let payment: PaymentStatusData
+  let renewalRequest: PaymentRenewalRequestSummary | null = null
+
+  if (isNestedPaymentStatusPayload(raw)) {
+    payment = raw.payment
+    renewalRequest = raw.renewal_request ?? null
+  } else {
+    payment = raw
+  }
 
   const requestNumber =
     payment.metadata?.request_number || renewalRequest?.request_number
@@ -175,7 +183,7 @@ export function normalizePaymentStatusResponse(
             : null),
         },
       },
-      renewalRequest: renewalRequest ?? null,
+      renewalRequest,
     },
   }
 }
