@@ -22,6 +22,8 @@ type TrackOrderDownloadActions = {
   invoiceLabel: string
   onDownloadContract: () => void
   onDownloadInvoice: () => void
+  showContract?: boolean
+  showInvoice?: boolean
 }
 
 type TrackOrderStageItemProps = {
@@ -273,30 +275,34 @@ export default function TrackOrderStageItem({
 
           {showDownloads && downloadActions ? (
             <div className="flex shrink-0 flex-wrap gap-2">
-              <Button
-                type="button"
-                onClick={downloadActions.onDownloadContract}
-                className="h-10 gap-2 rounded-full px-4 text-sm font-semibold sm:px-5"
-              >
-                <CustomIcon
-                  src="/icons/download.svg"
-                  size={18}
-                  className="size-4.5 text-current"
-                />
-                {downloadActions.contractLabel}
-              </Button>
-              <Button
-                type="button"
-                onClick={downloadActions.onDownloadInvoice}
-                className="h-10 gap-2 rounded-full bg-[#003143] px-4 text-sm font-semibold text-white hover:bg-[#003143]/90 sm:px-5"
-              >
-                <CustomIcon
-                  src="/icons/download.svg"
-                  size={18}
-                  className="size-4.5 text-current"
-                />
-                {downloadActions.invoiceLabel}
-              </Button>
+              {downloadActions.showContract !== false ? (
+                <Button
+                  type="button"
+                  onClick={downloadActions.onDownloadContract}
+                  className="h-10 gap-2 rounded-full px-4 text-sm font-semibold sm:px-5"
+                >
+                  <CustomIcon
+                    src="/icons/download.svg"
+                    size={18}
+                    className="size-4.5 text-current"
+                  />
+                  {downloadActions.contractLabel}
+                </Button>
+              ) : null}
+              {downloadActions.showInvoice !== false ? (
+                <Button
+                  type="button"
+                  onClick={downloadActions.onDownloadInvoice}
+                  className="h-10 gap-2 rounded-full bg-[#003143] px-4 text-sm font-semibold text-white hover:bg-[#003143]/90 sm:px-5"
+                >
+                  <CustomIcon
+                    src="/icons/download.svg"
+                    size={18}
+                    className="size-4.5 text-current"
+                  />
+                  {downloadActions.invoiceLabel}
+                </Button>
+              ) : null}
             </div>
           ) : null}
         </div>

@@ -676,14 +676,17 @@
           "workerName": "عبدالله",
           "completionPeriod": "5 أيام عمل"
         },
-        "contractPreview": {
+            "contractPreview": {
           "title": "عقد تجديد العمالة المنزلية",
           "print": "طباعة",
           "download": "تنزيل PDF",
           "close": "إغلاق",
           "downloadStarted": "تم تنزيل العقد",
           "downloadFailed": "تعذر تنزيل العقد",
-          "printFailed": "تعذر فتح نافذة الطباعة"
+          "printFailed": "تعذر فتح نافذة الطباعة",
+          "loading": "جاري تحميل العقد...",
+          "loadFailed": "تعذر عرض العقد داخل الصفحة.",
+          "openInNewTab": "فتح في تبويب جديد"
         },
         "completedResult": {
           "breadcrumb": "إصدار العقد",
@@ -697,6 +700,7 @@
           "serviceValue": "تجديد عقد العمالة المنزلية",
           "status": "الحالة",
           "statusValue": "مكتمل",
+          "deliveryMethod": "طريقة الاستلام",
           "shippingNumber": "رقم طلبية الشحن",
           "paperNote": "تم الانتهاء من إجراءات تجديد العقد بنجاح، وسيتم التواصل معكم لتنسيق عملية تسليم العقد على العنوان المسجل.",
           "contract": {
@@ -713,7 +717,8 @@
             "download": "تحميل الفاتورة",
             "view": "عرض الفاتورة",
             "downloadStarted": "بدء تحميل الفاتورة",
-            "viewStarted": "فتح الفاتورة"
+            "viewStarted": "فتح الفاتورة",
+            "unavailable": "الفاتورة غير متاحة حالياً"
           },
           "help": {
             "prefix": "تحتاج مساعدة؟",

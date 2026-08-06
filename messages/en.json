@@ -683,7 +683,10 @@
           "close": "Close",
           "downloadStarted": "Contract downloaded",
           "downloadFailed": "Could not download the contract",
-          "printFailed": "Could not open the print dialog"
+          "printFailed": "Could not open the print dialog",
+          "loading": "Loading contract...",
+          "loadFailed": "Could not preview the contract on this page.",
+          "openInNewTab": "Open in new tab"
         },
         "completedResult": {
           "breadcrumb": "Contract issuance",
@@ -697,6 +700,7 @@
           "serviceValue": "Domestic worker contract renewal",
           "status": "Status",
           "statusValue": "Completed",
+          "deliveryMethod": "Delivery method",
           "shippingNumber": "Shipping order number",
           "paperNote": "The contract renewal procedures have been completed successfully, and you will be contacted to coordinate delivering the contract to the registered address.",
           "contract": {
@@ -713,7 +717,8 @@
             "download": "Download invoice",
             "view": "View invoice",
             "downloadStarted": "Invoice download started",
-            "viewStarted": "Opening invoice"
+            "viewStarted": "Opening invoice",
+            "unavailable": "Invoice is not available yet"
           },
           "help": {
             "prefix": "Need help?",

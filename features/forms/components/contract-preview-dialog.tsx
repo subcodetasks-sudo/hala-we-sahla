@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Download, Loader2, Printer, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
@@ -28,15 +28,20 @@ import { cn } from "@/lib/utils"
 const A4_WIDTH_PX = (210 / 25.4) * 96
 
 function fitScale(availableWidth: number) {
-  // Leave a tiny inset so borders aren't clipped by rounding.
   const available = Math.max(0, availableWidth - 2)
   if (available <= 0) return null
   return Math.min(1, available / A4_WIDTH_PX)
 }
 
+function toProxiedContractUrl(pdfUrl: string) {
+  return `/api/contract-preview?url=${encodeURIComponent(pdfUrl)}`
+}
+
 type ContractPreviewDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Remote final contract PDF from the API. */
+  pdfUrl?: string | null
   data?: MusanedContractData
   className?: string
 }
@@ -44,6 +49,7 @@ type ContractPreviewDialogProps = {
 export default function ContractPreviewDialog({
   open,
   onOpenChange,
+  pdfUrl = null,
   data = sampleMusanedContractData,
   className,
 }: ContractPreviewDialogProps) {
@@ -55,6 +61,34 @@ export default function ContractPreviewDialog({
   const [busyAction, setBusyAction] = useState<"print" | "download" | null>(
     null,
   )
+  const [previewReady, setPreviewReady] = useState(false)
+  const [previewFailed, setPreviewFailed] = useState(false)
+
+  const hasPdfUrl = Boolean(pdfUrl)
+  const proxiedPdfUrl = useMemo(
+    () => (pdfUrl ? toProxiedContractUrl(pdfUrl) : null),
+    [pdfUrl],
+  )
+
+  useEffect(() => {
+    if (!open || !hasPdfUrl) {
+      setPreviewReady(false)
+      setPreviewFailed(false)
+      return
+    }
+    setPreviewReady(false)
+    setPreviewFailed(false)
+
+    // iframe `onError` is unreliable for PDFs; fail gracefully if load stalls.
+    const timeoutId = window.setTimeout(() => {
+      setPreviewReady((ready) => {
+        if (!ready) setPreviewFailed(true)
+        return ready
+      })
+    }, 15000)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [open, hasPdfUrl, proxiedPdfUrl])
 
   const updateScaleFrom = useCallback((viewport: HTMLElement) => {
     const next = fitScale(viewport.clientWidth)
@@ -62,41 +96,61 @@ export default function ContractPreviewDialog({
     setScale((prev) => (Math.abs(prev - next) < 0.001 ? prev : next))
   }, [])
 
-  // Callback ref: Radix portals the dialog after open flips, so a layout
-  // effect keyed only on `open` can miss the viewport node and leave scale=1.
   const setViewportRef = useCallback(
     (node: HTMLDivElement | null) => {
       resizeObserverRef.current?.disconnect()
       resizeObserverRef.current = null
       viewportRef.current = node
 
-      if (!node) return
+      if (!node || hasPdfUrl) return
 
       updateScaleFrom(node)
       const observer = new ResizeObserver(() => updateScaleFrom(node))
       observer.observe(node)
       resizeObserverRef.current = observer
     },
-    [updateScaleFrom],
+    [hasPdfUrl, updateScaleFrom],
   )
 
   useEffect(() => {
-    if (!open) {
+    if (!open || hasPdfUrl) {
       setScale(1)
       return
     }
 
-    // Re-measure after open animation / flex layout settles.
     const id = requestAnimationFrame(() => {
       const viewport = viewportRef.current
       if (viewport) updateScaleFrom(viewport)
     })
     return () => cancelAnimationFrame(id)
-  }, [open, updateScaleFrom])
+  }, [open, hasPdfUrl, updateScaleFrom])
 
   async function handlePrint() {
+    if (busyAction) return
+
+    if (hasPdfUrl && proxiedPdfUrl) {
+      setBusyAction("print")
+      try {
+        const printWindow = window.open(
+          proxiedPdfUrl,
+          "_blank",
+          "noopener,noreferrer",
+        )
+        if (!printWindow) throw new Error("Popup blocked")
+        printWindow.addEventListener("load", () => {
+          printWindow.focus()
+          printWindow.print()
+        })
+      } catch {
+        toast.error(t("printFailed"))
+      } finally {
+        setBusyAction(null)
+      }
+      return
+    }
+
     const contractEl = contractRef.current
-    if (!contractEl || busyAction) return
+    if (!contractEl) return
 
     setBusyAction("print")
     try {
@@ -109,8 +163,38 @@ export default function ContractPreviewDialog({
   }
 
   async function handleDownload() {
+    if (busyAction) return
+
+    if (hasPdfUrl && proxiedPdfUrl) {
+      setBusyAction("download")
+      try {
+        const response = await fetch(proxiedPdfUrl)
+        if (!response.ok) throw new Error("Download failed")
+        const blob = await response.blob()
+        const objectUrl = URL.createObjectURL(blob)
+        const anchor = document.createElement("a")
+        anchor.href = objectUrl
+        anchor.download = "musaned-contract.pdf"
+        document.body.appendChild(anchor)
+        anchor.click()
+        anchor.remove()
+        URL.revokeObjectURL(objectUrl)
+        toast.success(t("downloadStarted"))
+      } catch {
+        if (pdfUrl) {
+          window.open(pdfUrl, "_blank", "noopener,noreferrer")
+          toast.success(t("downloadStarted"))
+        } else {
+          toast.error(t("downloadFailed"))
+        }
+      } finally {
+        setBusyAction(null)
+      }
+      return
+    }
+
     const contractEl = contractRef.current
-    if (!contractEl || busyAction) return
+    if (!contractEl) return
 
     setBusyAction("download")
     try {
@@ -180,24 +264,61 @@ export default function ContractPreviewDialog({
           </div>
         </DialogHeader>
 
-        {/* Force LTR so RTL page direction doesn't clip the English column. */}
         <div
           ref={setViewportRef}
           dir="ltr"
-          className="contract-preview-scroll min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-[#e8e8e8] scrollbar-hide"
+          className="contract-preview-scroll relative min-h-0 flex-1 overflow-hidden bg-[#e8e8e8] scrollbar-hide"
         >
-          <div
-            className="contract-preview-scale mx-auto"
-            style={{
-              // `zoom` scales layout too (unlike transform), so the full page fits.
-              zoom: scale,
-              width: `${A4_WIDTH_PX}px`,
-            }}
-          >
-            <div ref={contractRef}>
-              <MusanedContract data={data} />
+          {hasPdfUrl && proxiedPdfUrl ? (
+            <div className="relative flex h-full min-h-0 flex-col">
+              {!previewReady && !previewFailed ? (
+                <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 bg-[#e8e8e8] text-sm text-muted-foreground">
+                  <Loader2 className="size-5 animate-spin" aria-hidden />
+                  {t("loading")}
+                </div>
+              ) : null}
+
+              {previewFailed ? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+                  <p className="text-sm text-muted-foreground">{t("loadFailed")}</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded-full"
+                    onClick={() =>
+                      pdfUrl &&
+                      window.open(pdfUrl, "_blank", "noopener,noreferrer")
+                    }
+                  >
+                    {t("openInNewTab")}
+                  </Button>
+                </div>
+              ) : (
+                <iframe
+                  key={proxiedPdfUrl}
+                  title={t("title")}
+                  src={proxiedPdfUrl}
+                  className="h-full min-h-[70vh] w-full flex-1 border-0 bg-white"
+                  onLoad={() => setPreviewReady(true)}
+                  onError={() => setPreviewFailed(true)}
+                />
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="h-full overflow-y-auto overflow-x-hidden">
+              <div
+                className="contract-preview-scale mx-auto"
+                style={{
+                  zoom: scale,
+                  width: `${A4_WIDTH_PX}px`,
+                }}
+              >
+                <div ref={contractRef}>
+                  <MusanedContract data={data} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

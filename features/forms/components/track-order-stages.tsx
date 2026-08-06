@@ -18,7 +18,12 @@ import {
   getCancelledTrackOrderStages,
   type TrackOrderStageStatus,
 } from "@/features/forms/lib/track-order-stages"
-import type { TrackOrderData } from "@/features/forms/services/track-order"
+import {
+  getTrackOrderContractUrl,
+  getTrackOrderInvoiceUrl,
+  isTrackOrderCompleted,
+  type TrackOrderData,
+} from "@/features/forms/services/track-order"
 import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 
@@ -33,6 +38,10 @@ function getStatusLabelKey(status: TrackOrderStageStatus) {
   if (status === "in_progress") return "inProgress"
   if (status === "cancelled") return "cancelled"
   return "upcoming"
+}
+
+function openAssetUrl(url: string) {
+  window.open(url, "_blank", "noopener,noreferrer")
 }
 
 const listVariants = {
@@ -51,6 +60,9 @@ export default function TrackOrderStages({
   className,
 }: TrackOrderStagesProps) {
   const t = useTranslations("Forms.trackOrders.detail.stages")
+  const tCompleted = useTranslations(
+    "Forms.trackOrders.detail.completedResult",
+  )
   const router = useRouter()
   const { isCancelled, cancelledAt } = useTrackOrderCancellation(requestNumber)
   const { isPaid } = useTrackOrderPayment(requestNumber)
@@ -58,6 +70,15 @@ export default function TrackOrderStages({
   const [now] = useState(() => new Date())
 
   const apiStages = mapApiTimelineToStages(trackData)
+  const contractUrl = getTrackOrderContractUrl(trackData)
+  const invoiceUrl = getTrackOrderInvoiceUrl(trackData)
+  const requestCompleted = isTrackOrderCompleted(trackData)
+  const canPay = trackData.actions?.can_pay ?? true
+  const canDownloadContract =
+    Boolean(contractUrl) && (trackData.actions?.can_download_contract ?? true)
+  const canDownloadInvoice =
+    Boolean(invoiceUrl) && (trackData.actions?.can_download_invoice ?? true)
+
   const hasApiCancelled =
     trackData.status === "cancelled" ||
     trackData.timeline.some(
@@ -85,8 +106,17 @@ export default function TrackOrderStages({
     router.push(`/track-orders/${encodeURIComponent(requestNumber)}/payment`)
   }
 
+  function handleDownloadContract() {
+    setContractOpen(true)
+  }
+
   function handleDownloadInvoice() {
-    toast.success(t("items.completed.downloadStarted"))
+    if (invoiceUrl) {
+      openAssetUrl(invoiceUrl)
+      toast.success(t("items.completed.downloadStarted"))
+      return
+    }
+    toast.error(tCompleted("invoice.unavailable"))
   }
 
   return (
@@ -118,9 +148,12 @@ export default function TrackOrderStages({
           const isPaymentAction =
             stage.key === "payment" &&
             stage.status === "in_progress" &&
-            !isPaid
+            !isPaid &&
+            canPay
           const isCompletedDownloads =
-            stage.key === "completed" && stage.status === "completed"
+            stage.key === "completed" &&
+            stage.status === "completed" &&
+            (canDownloadContract || canDownloadInvoice || Boolean(contractUrl))
 
           const statusLabel =
             "statusLabel" in stage && stage.statusLabel
@@ -147,15 +180,19 @@ export default function TrackOrderStages({
                   ? {
                       contractLabel: t("items.completed.downloadContract"),
                       invoiceLabel: t("items.completed.downloadInvoice"),
-                      onDownloadContract: () => setContractOpen(true),
+                      onDownloadContract: handleDownloadContract,
                       onDownloadInvoice: handleDownloadInvoice,
+                      showContract: canDownloadContract || Boolean(contractUrl),
+                      showInvoice: canDownloadInvoice,
                     }
                   : undefined
               }
               lineFill={
                 isCancelled
                   ? 0
-                  : getApiLineFill(index, apiStages)
+                  : requestCompleted && index < apiStages.length - 1
+                    ? 1
+                    : getApiLineFill(index, apiStages)
               }
               isLast={index === stages.length - 1}
             />
@@ -166,6 +203,7 @@ export default function TrackOrderStages({
       <ContractPreviewDialog
         open={contractOpen}
         onOpenChange={setContractOpen}
+        pdfUrl={contractUrl}
       />
     </section>
   )
