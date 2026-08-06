@@ -190,18 +190,14 @@
   }
 
   .step-arrow-in svg {
-    animation: step-arrow-reveal 1.5s cubic-bezier(0.33, 1, 0.68, 1) 0.12s
-      forwards;
+    animation: step-arrow-reveal 1.5s ease-in-out 0.12s infinite alternate;
   }
 }
 
 @keyframes step-arrow-reveal {
   0% {
-    opacity: 0;
+    opacity: 0.35;
     clip-path: inset(0 0 0 100%);
-  }
-  25% {
-    opacity: 1;
   }
   100% {
     opacity: 1;

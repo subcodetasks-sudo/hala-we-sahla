@@ -21,34 +21,86 @@ type PricingPlansProps = {
 function PlanIcon({
   plan,
   accentClass,
+  shouldReduceMotion,
 }: {
   plan: PlanView
   accentClass: string
+  shouldReduceMotion: boolean | null
 }) {
+  const isWhatsapp = plan.type === "whatsapp"
+  const pulseBorder = isWhatsapp ? "border-custom-green" : "border-primary"
+
   if (plan.iconIsRemote) {
     return (
-      <div className="flex size-14 shrink-0 items-center justify-center">
-        <Image
-          src={plan.iconSrc}
-          alt=""
-          width={56}
-          height={56}
-          unoptimized
-          className="size-14 object-contain"
-          aria-hidden="true"
-        />
+      <div className="relative inline-flex size-20 shrink-0 items-center justify-center">
+        {isWhatsapp && !shouldReduceMotion ? (
+          <motion.span
+            aria-hidden
+            className={cn(
+              "pointer-events-none absolute inset-0 rounded-full border-2",
+              pulseBorder,
+            )}
+            animate={{ scale: [1, 1.4], opacity: [0.7, 0] }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              ease: "easeOut",
+            }}
+          />
+        ) : null}
+        <div
+          className={cn(
+            "relative flex size-full items-center justify-center overflow-hidden rounded-full",
+            isWhatsapp && "border-2 border-custom-green",
+          )}
+        >
+          <Image
+            src={plan.iconSrc}
+            alt=""
+            width={80}
+            height={80}
+            unoptimized
+            className={cn(
+              "size-full object-contain",
+              !isWhatsapp && "p-1.5",
+            )}
+            aria-hidden="true"
+          />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
-      <CustomIcon
-        size={24}
-        src={plan.iconSrc}
-        className={cn("size-6", accentClass)}
-        aria-hidden="true"
-      />
+    <div className="relative inline-flex size-16 shrink-0 items-center justify-center">
+      {isWhatsapp && !shouldReduceMotion ? (
+        <motion.span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-0 rounded-full border-2",
+            pulseBorder,
+          )}
+          animate={{ scale: [1, 1.4], opacity: [0.7, 0] }}
+          transition={{
+            duration: 1.8,
+            repeat: Infinity,
+            ease: "easeOut",
+          }}
+        />
+      ) : null}
+      <div
+        className={cn(
+          "relative flex size-full items-center justify-center rounded-full shadow-sm",
+          isWhatsapp ? "border-2 border-custom-green" : "bg-white",
+        )}
+      >
+        <CustomIcon
+          size={isWhatsapp ? 36 : 28}
+          src={plan.iconSrc}
+          className={cn(isWhatsapp ? "size-9" : "size-7", accentClass)}
+          aria-hidden="true"
+        />
+      </div>
     </div>
   )
 }
@@ -111,7 +163,11 @@ export default function PricingPlans({
               )}
             >
               <div className="flex flex-col items-center gap-6 px-6 pt-8 pb-6 text-center">
-                <PlanIcon plan={plan} accentClass={accentText} />
+                <PlanIcon
+                  plan={plan}
+                  accentClass={accentText}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
                 <h3 className="font-heading text-lg font-bold">{plan.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {plan.description}

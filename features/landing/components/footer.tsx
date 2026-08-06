@@ -143,13 +143,15 @@ export default async function Footer({
                                 {t("columns.licenses.taxNumber")}: {settings.taxNumber}
                             </li>
                         </ul>
-                        <Image
-                            src="/images/maroof.png"
-                            alt={t("logoAlt")}
-                            width={141}
-                            height={28}
-                            className=" w-1/2"
-                        />
+                        <a href="https://maroof.sa/" target="_blank">
+                            <Image
+                                src="/images/maroof.png"
+                                alt={t("logoAlt")}
+                                width={141}
+                                height={28}
+                                className=" w-1/2"
+                            />
+                        </a>
                     </div>
                 </div>
 
