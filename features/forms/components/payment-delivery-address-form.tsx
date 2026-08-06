@@ -85,6 +85,97 @@ export default function PaymentDeliveryAddressForm({
         className,
       )}
     >
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold text-primary sm:text-base">
+          {t("contactTitle")}
+        </h3>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid || undefined}>
+                <InputGroup className={inputGroupClassName}>
+                  <InputGroupAddon className="ps-4">
+                    <CustomIcon
+                      src="/icons/user.svg"
+                      size={16}
+                      className="size-4 text-muted-foreground"
+                    />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder={t("namePlaceholder")}
+                    aria-invalid={fieldState.invalid}
+                    className="placeholder:text-muted-foreground"
+                    onChange={(event) =>
+                      field.onChange(keepNameTextInput(event.target.value))
+                    }
+                  />
+                </InputGroup>
+                {fieldState.error ? (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                ) : null}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="phone"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid || undefined}>
+                <InputGroup dir="ltr" className={inputGroupClassName}>
+                  <InputGroupAddon
+                    align="inline-start"
+                    className="gap-0 border-e border-border/70 pe-3 ps-3"
+                  >
+                    <InputGroupText className="font-sans text-foreground">
+                      <span className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5">
+                        <ReactCountryFlag
+                          countryCode="SA"
+                          svg
+                          style={{
+                            width: "1rem",
+                            height: "0.75rem",
+                            borderRadius: "2px",
+                          }}
+                          aria-hidden
+                        />
+                        <span
+                          dir="ltr"
+                          className="font-clash text-xs font-medium tabular-nums"
+                        >
+                          {SAUDI_COUNTRY_CODE}
+                        </span>
+                      </span>
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    {...field}
+                    value={field.value ?? ""}
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    placeholder={t("phonePlaceholder")}
+                    aria-invalid={fieldState.invalid}
+                    className=" placeholder:text-muted-foreground font-clash"
+                    onChange={(event) =>
+                      field.onChange(keepSaudiPhoneInput(event.target.value))
+                    }
+                  />
+                </InputGroup>
+                {fieldState.error ? (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                ) : null}
+              </Field>
+            )}
+          />
+        </div>
+      </div>
+
       <h3 className="text-sm font-bold text-primary sm:text-base">
         {t("title")}
       </h3>
@@ -201,97 +292,6 @@ export default function PaymentDeliveryAddressForm({
             </Field>
           )}
         />
-      </div>
-
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-primary sm:text-base">
-          {t("contactTitle")}
-        </h3>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Controller
-            name="name"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid || undefined}>
-                <InputGroup className={inputGroupClassName}>
-                  <InputGroupAddon className="ps-4">
-                    <CustomIcon
-                      src="/icons/user.svg"
-                      size={16}
-                      className="size-4 text-muted-foreground"
-                    />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    {...field}
-                    value={field.value ?? ""}
-                    placeholder={t("namePlaceholder")}
-                    aria-invalid={fieldState.invalid}
-                    className="placeholder:text-muted-foreground"
-                    onChange={(event) =>
-                      field.onChange(keepNameTextInput(event.target.value))
-                    }
-                  />
-                </InputGroup>
-                {fieldState.error ? (
-                  <FieldError>{fieldState.error.message}</FieldError>
-                ) : null}
-              </Field>
-            )}
-          />
-
-          <Controller
-            name="phone"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid || undefined}>
-                <InputGroup dir="ltr" className={inputGroupClassName}>
-                  <InputGroupAddon
-                    align="inline-start"
-                    className="gap-0 border-e border-border/70 pe-3 ps-3"
-                  >
-                    <InputGroupText className="font-sans text-foreground">
-                      <span className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5">
-                        <ReactCountryFlag
-                          countryCode="SA"
-                          svg
-                          style={{
-                            width: "1rem",
-                            height: "0.75rem",
-                            borderRadius: "2px",
-                          }}
-                          aria-hidden
-                        />
-                        <span
-                          dir="ltr"
-                          className="font-clash text-xs font-medium tabular-nums"
-                        >
-                          {SAUDI_COUNTRY_CODE}
-                        </span>
-                      </span>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    {...field}
-                    value={field.value ?? ""}
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={10}
-                    placeholder={t("phonePlaceholder")}
-                    aria-invalid={fieldState.invalid}
-                    className=" placeholder:text-muted-foreground font-clash"
-                    onChange={(event) =>
-                      field.onChange(keepSaudiPhoneInput(event.target.value))
-                    }
-                  />
-                </InputGroup>
-                {fieldState.error ? (
-                  <FieldError>{fieldState.error.message}</FieldError>
-                ) : null}
-              </Field>
-            )}
-          />
-        </div>
       </div>
 
       <Button

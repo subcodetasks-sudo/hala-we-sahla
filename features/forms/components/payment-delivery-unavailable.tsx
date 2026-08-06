@@ -14,13 +14,15 @@ import { cn } from "@/lib/utils"
 
 type PaymentDeliveryUnavailableProps = {
   requestNumber: string
-  onPay: () => void
+  onPay: () => void | Promise<void>
+  isPaying?: boolean
   className?: string
 }
 
 export default function PaymentDeliveryUnavailable({
   requestNumber,
   onPay,
+  isPaying = false,
   className,
 }: PaymentDeliveryUnavailableProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment.deliveryUnavailable")
@@ -126,9 +128,10 @@ export default function PaymentDeliveryUnavailable({
         <Button
           type="button"
           onClick={onPay}
+          disabled={isPaying}
           className="mt-6 h-12 w-full gap-2 rounded-full text-sm font-semibold sm:text-base"
         >
-          {tCheckout("pay")}
+          {isPaying ? tCheckout("paying") : tCheckout("pay")}
           <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
         </Button>
 

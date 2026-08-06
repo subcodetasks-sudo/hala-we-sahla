@@ -25,7 +25,8 @@ type DeliveryMethod = "electronic" | "paper"
 type PaymentCheckoutSummaryProps = {
   requestNumber: string
   deliveryMethod: DeliveryMethod
-  onPay: () => void
+  onPay: () => void | Promise<void>
+  isPaying?: boolean
   className?: string
 }
 
@@ -33,6 +34,7 @@ export default function PaymentCheckoutSummary({
   requestNumber,
   deliveryMethod,
   onPay,
+  isPaying = false,
   className,
 }: PaymentCheckoutSummaryProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment.checkout")
@@ -157,24 +159,6 @@ export default function PaymentCheckoutSummary({
                     />
                   </span>
                 </div>
-
-                {deliveryMethod === "paper" ? (
-                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#e8eef0] pt-4">
-                    <span className="text-sm text-[#6b7c85]">
-                      {t("deliveryFee")}
-                    </span>
-                    <span className="flex items-center gap-1 font-clash text-base font-medium text-[#3d4f57]">
-                      {formatNumber(totals.deliveryFee, locale, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                      <SaudiRiyal
-                        className="size-3.5 text-[#6b7c85]"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </div>
-                ) : null}
               </div>
             </motion.div>
           ) : null}
@@ -207,9 +191,10 @@ export default function PaymentCheckoutSummary({
       <Button
         type="button"
         onClick={onPay}
+        disabled={isPaying}
         className="mt-6 h-12 w-full gap-2 rounded-full text-sm font-semibold sm:text-base"
       >
-        {t("pay")}
+        {isPaying ? t("paying") : t("pay")}
         <ArrowUpLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
       </Button>
 

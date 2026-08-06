@@ -20,9 +20,15 @@ export default function PaymentDeliveryAddressSummary({
 }: PaymentDeliveryAddressSummaryProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment.address")
 
-  const title = [address.homeAddress, address.buildingNumber]
+  const title = address.homeAddress
+  const details = [
+    address.buildingNumber
+      ? t("summaryBuilding", { number: address.buildingNumber })
+      : null,
+    address.floor ? t("summaryFloor", { number: address.floor }) : null,
+  ]
     .filter(Boolean)
-    .join("، ")
+    .join(" · ")
 
   return (
     <div
@@ -39,9 +45,11 @@ export default function PaymentDeliveryAddressSummary({
         <p className="truncate text-sm font-bold text-primary sm:text-base">
           {title}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-          {t("summaryCity")}
-        </p>
+        {details ? (
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            {details}
+          </p>
+        ) : null}
       </div>
 
       <button

@@ -60,23 +60,11 @@ export function calculateRenewalOrderTotals(
   return calculateOrderTotals(serviceFee, taxPercent)
 }
 
-export const PAYMENT_DELIVERY_FEE = 15.99
-
-export type PaymentTotals = OrderTotals & {
-  deliveryFee: number
-}
+export type PaymentTotals = OrderTotals
 
 export function calculatePaymentTotals(
   orderTotals: OrderTotals,
-  deliveryMethod: "electronic" | "paper",
-  deliveryFee = PAYMENT_DELIVERY_FEE,
+  _deliveryMethod?: "electronic" | "paper",
 ): PaymentTotals {
-  const delivery =
-    deliveryMethod === "paper" ? roundMoney(deliveryFee) : 0
-
-  return {
-    ...orderTotals,
-    deliveryFee: delivery,
-    total: roundMoney(orderTotals.total + delivery),
-  }
+  return orderTotals
 }

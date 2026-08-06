@@ -27,4 +27,8 @@ export const formsKeys = {
   cancelStatusesList: (locale: string) =>
     [...formsKeys.cancelStatuses(), "list", locale] as const,
   cancelRequest: () => [...formsKeys.all, "cancel-request"] as const,
+  deliveryMethod: () => [...formsKeys.all, "delivery-method"] as const,
+  initiatePayment: () => [...formsKeys.all, "payment", "initiate"] as const,
+  paymentStatus: (invoiceId: string, provider: string) =>
+    [...formsKeys.all, "payment", "status", invoiceId, provider] as const,
 }

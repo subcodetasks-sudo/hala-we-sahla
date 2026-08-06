@@ -30,7 +30,11 @@ export type DeliveryOption = (typeof DELIVERY_OPTIONS)[number]["value"]
 type PaymentDeliveryFormProps = {
   deliveryMethod: DeliveryOption
   onDeliveryMethodChange: (value: DeliveryOption) => void
-  onNext: (method: DeliveryOption) => void
+  onNext: (
+    method: DeliveryOption,
+    address?: PaymentDeliveryAddressValues,
+  ) => void | Promise<void>
+  isSubmitting?: boolean
   className?: string
 }
 
@@ -38,6 +42,7 @@ export default function PaymentDeliveryForm({
   deliveryMethod,
   onDeliveryMethodChange,
   onNext,
+  isSubmitting = false,
   className,
 }: PaymentDeliveryFormProps) {
   const t = useTranslations("Forms.trackOrders.detail.payment")
@@ -60,14 +65,14 @@ export default function PaymentDeliveryForm({
     setIsEditingAddress(false)
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (isPaper && !savedAddress) {
       toast.error(t("address.addressRequired"))
       setIsEditingAddress(true)
       return
     }
 
-    onNext(deliveryMethod)
+    await onNext(deliveryMethod, isPaper ? savedAddress ?? undefined : undefined)
   }
 
   return (
@@ -201,9 +206,10 @@ export default function PaymentDeliveryForm({
         <Button
           type="button"
           onClick={handleNext}
+          disabled={isSubmitting}
           className="h-11 gap-2 rounded-full px-8 text-sm font-semibold sm:h-12 sm:text-base"
         >
-          {t("next")}
+          {isSubmitting ? t("submitting") : t("next")}
           <ArrowLeft className="size-4 ltr:rotate-180" aria-hidden="true" />
         </Button>
       </div>
