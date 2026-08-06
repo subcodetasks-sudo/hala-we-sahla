@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useSyncExternalStore } from "react"
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
 import { useQuery } from "@tanstack/react-query"
 import {
   CircleAlert,
+  Eye,
   LoaderCircle,
   Lock,
   SaudiRiyal,
@@ -15,6 +16,7 @@ import CustomIcon from "@/components/custom-icon"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import ContractPreviewDialog from "@/features/forms/components/contract-preview-dialog"
 import { useTrackOrderPayment } from "@/features/forms/hooks/use-track-order-payment"
 import {
   clearPaymentSession,
@@ -191,6 +193,7 @@ export default function PaymentResultView({
   const displayAmount = payment ? resolveDisplayAmount(payment) : null
 
   const markedPaidRef = useRef(false)
+  const [contractOpen, setContractOpen] = useState(false)
 
   useEffect(() => {
     markedPaidRef.current = false
@@ -378,16 +381,29 @@ export default function PaymentResultView({
           {outcome === "paid" ? (
             <>
               {canDownloadContract && contractUrl ? (
-                <Button asChild className="h-12 w-full gap-2 rounded-full text-base">
-                  <a href={contractUrl} target="_blank" rel="noopener noreferrer">
+                <>
+                  <Button
+                    type="button"
+                    onClick={() => setContractOpen(true)}
+                    className="h-12 w-full gap-2 rounded-full text-base"
+                  >
                     <CustomIcon
                       src="/icons/download.svg"
                       size={18}
-                      className="size-[18px] text-current"
+                      className="size-4.5 text-current"
                     />
                     {t("downloadContract")}
-                  </a>
-                </Button>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setContractOpen(true)}
+                    className="h-12 w-full gap-2 rounded-full border-primary/30 bg-white text-base font-semibold text-primary hover:bg-white hover:text-primary"
+                  >
+                    <Eye className="size-4" aria-hidden="true" />
+                    {t("viewContract")}
+                  </Button>
+                </>
               ) : null}
               <Button
                 asChild
@@ -398,7 +414,7 @@ export default function PaymentResultView({
                   <CustomIcon
                     src="/icons/home.svg"
                     size={18}
-                    className="size-[18px] text-current"
+                    className="size-4.5 text-current"
                   />
                   {tCommon("home")}
                 </Link>
@@ -423,7 +439,7 @@ export default function PaymentResultView({
                   <CustomIcon
                     src="/icons/home.svg"
                     size={18}
-                    className="size-[18px] text-current"
+                    className="size-4.5 text-current"
                   />
                   {tCommon("home")}
                 </Link>
@@ -454,6 +470,12 @@ export default function PaymentResultView({
           {t("secure")}
         </p>
       </Card>
+
+      <ContractPreviewDialog
+        open={contractOpen}
+        onOpenChange={setContractOpen}
+        pdfUrl={contractUrl}
+      />
     </div>
   )
 }

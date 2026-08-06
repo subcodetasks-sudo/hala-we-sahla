@@ -881,6 +881,7 @@
             "missingInvoiceDescription": "لم نتمكن من تحديد رقم الفاتورة. حاول إتمام الدفع مرة أخرى.",
             "trackOrder": "تتبع الطلب",
             "downloadContract": "تحميل العقد",
+            "viewContract": "عرض العقد",
             "retry": "إعادة المحاولة",
             "backToTrack": "العودة لتتبع الطلب",
             "continuePayment": "متابعة الدفع",

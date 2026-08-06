@@ -881,6 +881,7 @@
             "missingInvoiceDescription": "We could not find the invoice id. Please try completing the payment again.",
             "trackOrder": "Track order",
             "downloadContract": "Download contract",
+            "viewContract": "View contract",
             "retry": "Try again",
             "backToTrack": "Back to tracking",
             "continuePayment": "Continue payment",
